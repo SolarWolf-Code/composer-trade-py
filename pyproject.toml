@@ -1,6 +1,6 @@
 [project]
 name = "composer-trade-py"
-version = "0.0.0"
+version = "0.0.5"
 authors = [
     {name = "SolarWolf", email = "git@solarwol.xyz"},
 ]
@@ -35,10 +35,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/composer-trade/composer-trade-py"
+Homepage = "https://github.com/SolarWolf-Code/composer-trade-py"
 Documentation = "https://api.composer.trade/"
-Repository = "https://github.com/composer-trade/composer-trade-py"
-Issues = "https://github.com/composer-trade/composer-trade-py/issues"
+Repository = "https://github.com/SolarWolf-Code/composer-trade-py"
+Issues = "https://github.com/SolarWolf-Code/composer-trade-py/issues"
 
 [build-system]
 requires = ["hatchling"]
