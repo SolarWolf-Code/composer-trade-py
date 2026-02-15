@@ -42,13 +42,9 @@ class CreateSymphonyRequest(BaseModel):
     description: Optional[str] = Field(None, description="Description of the symphony")
     color: str = Field(description="Color for the symphony (hex format, e.g., #FFBB38)")
     hashtag: str = Field(description="Hashtag for the symphony (e.g., #BTD)")
-    tags: Optional[List[str]] = Field(
-        None, description="Tags for categorizing the symphony"
-    )
+    tags: Optional[List[str]] = Field(None, description="Tags for categorizing the symphony")
     # Symphony trading logic - will be wrapped in {"raw_value": ...} when serialized
-    symphony: Optional[Any] = Field(
-        None, description="The trading logic (Root node or dict)"
-    )
+    symphony: Optional[Any] = Field(None, description="The trading logic (Root node or dict)")
     benchmarks: Optional[List[Benchmark]] = Field(
         None, description="Benchmarks for performance comparison"
     )
@@ -72,9 +68,7 @@ class CopySymphonyRequest(BaseModel):
     model_config = {"populate_by_name": True}
 
     name: Optional[str] = Field(None, description="Name for the copied symphony")
-    color: Optional[str] = Field(
-        None, description="Color for the symphony (hex format)"
-    )
+    color: Optional[str] = Field(None, description="Color for the symphony (hex format)")
     hashtag: Optional[str] = Field(None, description="Hashtag for the symphony")
     benchmarks: Optional[List[Benchmark]] = Field(
         None, description="Benchmarks for performance comparison"
@@ -105,6 +99,15 @@ class UpdateSymphonyResponse(BaseModel):
     version_id: Optional[str] = Field(None, description="ID of the new version")
 
 
+class UpdateSymphonyNodesResponse(BaseModel):
+    """Response from updating symphony nodes."""
+
+    model_config = {"populate_by_name": True}
+
+    symphony_id: str = Field(description="ID of the symphony")
+    version_id: str = Field(description="ID of the new version")
+
+
 class SymphonyVersion(BaseModel):
     """A version of a symphony."""
 
@@ -123,5 +126,6 @@ __all__ = [
     "CopySymphonyRequest",
     "CopySymphonyResponse",
     "UpdateSymphonyResponse",
+    "UpdateSymphonyNodesResponse",
     "SymphonyVersion",
 ]

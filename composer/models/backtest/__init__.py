@@ -8,12 +8,18 @@ from .requests import (
     BacktestParams,
     BacktestRequest,
     BacktestExistingSymphonyRequest,
+    Quote,
+    SymphonyRebalanceState,
+    RebalanceRequest,
 )
 from .responses import (
     Costs,
     DataWarning,
     LegendEntry,
     BacktestResult,
+    RecommendedTrade,
+    SymphonyRunResult,
+    RebalanceResult,
 )
 from .symphony import (
     # Enums
@@ -31,10 +37,16 @@ from .symphony import (
     UserSymphony,
     DraftSymphony,
     WatchlistSymphony,
+    WatchlistSymphonyItem,
     UserSymphoniesResponse,
     DraftSymphoniesResponse,
     WatchlistResponse,
     SymphonyTickersResponse,
+    ModifySymphonyResponse,
+    FindAndReplaceOperation,
+    BulkModifySymphoniesRequest,
+    UpdateSymphonyResponse,
+    UpdateSymphonyNodesResponse,
 )
 
 __all__ = [
@@ -57,19 +69,31 @@ __all__ = [
     "UserSymphony",
     "DraftSymphony",
     "WatchlistSymphony",
+    "WatchlistSymphonyItem",
     "UserSymphoniesResponse",
     "DraftSymphoniesResponse",
     "WatchlistResponse",
     "SymphonyTickersResponse",
+    "ModifySymphonyResponse",
+    "FindAndReplaceOperation",
+    "BulkModifySymphoniesRequest",
+    "UpdateSymphonyResponse",
+    "UpdateSymphonyNodesResponse",
     # Symphony models (old backtest)
     "SymphonyDefinition",
     # Request models
     "BacktestParams",
     "BacktestRequest",
     "BacktestExistingSymphonyRequest",
+    "Quote",
+    "SymphonyRebalanceState",
+    "RebalanceRequest",
     # Response models
     "Costs",
     "DataWarning",
     "LegendEntry",
     "BacktestResult",
+    "RecommendedTrade",
+    "SymphonyRunResult",
+    "RebalanceResult",
 ]

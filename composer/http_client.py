@@ -36,6 +36,7 @@ class HTTPClient:
         # Build headers - auth headers only if credentials provided
         headers = {
             "User-Agent": "composer-trade-py",
+            "x-origin": "public-api",
             "Content-Type": "application/json",
         }
 
@@ -79,6 +80,9 @@ class HTTPClient:
 
     def put(self, endpoint: str, json: Optional[Dict[str, Any]] = None) -> Any:
         return self.request("PUT", endpoint, json=json)
+
+    def patch(self, endpoint: str, json: Optional[Dict[str, Any]] = None) -> Any:
+        return self.request("PATCH", endpoint, json=json)
 
     def delete(self, endpoint: str) -> Any:
         return self.request("DELETE", endpoint)

@@ -89,3 +89,35 @@ class BacktestResult(BaseModel):
 
     def __str__(self) -> str:
         return self.__repr__()
+
+
+class RecommendedTrade(BaseModel):
+    """Recommended trade from rebalance."""
+
+    ticker: str
+    action: str
+    quantity: float
+    estimated_price: Optional[float] = None
+    estimated_value: Optional[float] = None
+
+
+class SymphonyRunResult(BaseModel):
+    """Result of running a single symphony during rebalance."""
+
+    next_rebalanced_after: Optional[str] = None
+    rebalanced: bool = False
+    active_asset_nodes: Optional[Dict[str, float]] = None
+    recommended_trades: Optional[List[RecommendedTrade]] = None
+
+
+class RebalanceResult(BaseModel):
+    """
+    Result from a rebalance request.
+
+    Contains quotes, fractionability info, and run results for each symphony.
+    """
+
+    quotes: Optional[Dict[str, Any]] = None
+    fractionability: Optional[Dict[str, bool]] = None
+    adjusted_for_dtbp: bool = False
+    run_results: Optional[Dict[str, SymphonyRunResult]] = None

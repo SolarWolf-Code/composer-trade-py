@@ -32,9 +32,18 @@ from .models import (
     BacktestParams,
     BacktestRequest,
     BacktestExistingSymphonyRequest,
+    Quote,
+    SymphonyRebalanceState,
+    RebalanceRequest,
     Costs,
     DataWarning,
     BacktestResult,
+    RecommendedTrade,
+    SymphonyRunResult,
+    RebalanceResult,
+    # Symphony response models
+    UpdateSymphonyResponse,
+    UpdateSymphonyNodesResponse,
     # Backward compatibility
     BacktestResponse,
 )
@@ -73,9 +82,18 @@ __all__ = [
     "BacktestParams",
     "BacktestRequest",
     "BacktestExistingSymphonyRequest",
+    "Quote",
+    "SymphonyRebalanceState",
+    "RebalanceRequest",
     "Costs",
     "DataWarning",
     "BacktestResult",
+    "RecommendedTrade",
+    "SymphonyRunResult",
+    "RebalanceResult",
+    # Symphony response models
+    "UpdateSymphonyResponse",
+    "UpdateSymphonyNodesResponse",
     # Backward compatibility
     "BacktestResponse",
 ]

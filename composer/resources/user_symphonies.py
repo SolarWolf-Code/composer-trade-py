@@ -1,12 +1,13 @@
 """User Symphonies resource - endpoints for user's symphony lists."""
 
-from typing import List
+from typing import List, Optional, Any, Dict
 from ..http_client import HTTPClient
 from ..models.backtest import (
     UserSymphony,
     DraftSymphony,
     UserSymphoniesResponse,
     DraftSymphoniesResponse,
+    BulkModifySymphoniesRequest,
 )
 
 
@@ -58,3 +59,69 @@ class UserSymphonies:
         response = self._client.get("/api/v1/user/symphonies/drafts")
         result = DraftSymphoniesResponse.model_validate(response)
         return result.symphonies
+
+    def bulk_modify_symphonies(
+        self, old_ticker: str, new_ticker: str, user_id: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Bulk modify all symphonies in the user's library by finding and replacing a ticker.
+
+        Args:
+            old_ticker: The ticker symbol to find (e.g., "SPY").
+            new_ticker: The ticker symbol to replace with (e.g., "TQQQ").
+            user_id: Optional user ID. If not provided, uses the authenticated user.
+
+        Returns:
+            List[Dict[str, Any]]: Response from the bulk modify operation.
+
+        Example:
+            >>> result = client.user_symphonies.bulk_modify_symphonies(
+            ...     "SPY",
+            ...     "TQQQ"
+            ... )
+            >>> print(result)
+        """
+        request_body = {
+            "op": "FIND_AND_REPLACE",
+            "old_ticker": old_ticker,
+            "new_ticker": new_ticker,
+        }
+        if user_id:
+            request_body["user_id"] = user_id
+        response = self._client.post(
+            "/api/v1/user/symphonies/modify",
+            json=request_body,
+        )
+        return response
+
+    def pubsub_modify_symphonies(
+        self,
+        subscription: str,
+        message: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """
+        Programmatically modify all of a user's symphonies via pub/sub.
+
+        Args:
+            subscription: The pub/sub subscription name.
+            message: The message containing modification instructions.
+
+        Returns:
+            Dict[str, Any]: Response from the API.
+
+        Example:
+            >>> result = client.user_symphonies.pubsub_modify_symphonies(
+            ...     subscription="my-subscription",
+            ...     message={"publish_time": "2024-01-01", "data": {...}}
+            ... )
+            >>> print(result)
+        """
+        request_body = {
+            "subscription": subscription,
+            "message": message,
+        }
+        response = self._client.post(
+            "/api/v1/pubsub/symphonies/modify",
+            json=request_body,
+        )
+        return response

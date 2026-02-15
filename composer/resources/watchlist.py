@@ -4,6 +4,7 @@ from typing import List
 from ..http_client import HTTPClient
 from ..models.backtest import (
     WatchlistSymphony,
+    WatchlistSymphonyItem,
     WatchlistResponse,
 )
 
@@ -37,4 +38,33 @@ class Watchlist:
         """
         response = self._client.get("/api/v1/watchlist")
         result = WatchlistResponse.model_validate(response)
-        return result.watchlist
+        return result.watchlist or [] or []
+
+    def add_to_watchlist(self, symphony_id: str) -> WatchlistSymphonyItem:
+        """
+        Add a symphony to the user's watchlist.
+
+        Args:
+            symphony_id: The unique identifier of the symphony to add.
+
+        Returns:
+            WatchlistSymphonyItem: The added symphony with its details.
+
+        Example:
+            >>> result = client.watchlist.add_to_watchlist("fk6VGRDAAgiH120TfUPS")
+            >>> print(f"Added: {result.name}")
+        """
+        response = self._client.post(f"/api/v1/watchlist/{symphony_id}")
+        return WatchlistSymphonyItem.model_validate(response)
+
+    def remove_from_watchlist(self, symphony_id: str) -> None:
+        """
+        Remove a symphony from the user's watchlist.
+
+        Args:
+            symphony_id: The unique identifier of the symphony to remove.
+
+        Example:
+            >>> client.watchlist.remove_from_watchlist("fk6VGRDAAgiH120TfUPS")
+        """
+        self._client.delete(f"/api/v1/watchlist/{symphony_id}")

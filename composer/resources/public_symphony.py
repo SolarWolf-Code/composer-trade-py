@@ -1,6 +1,6 @@
 """Public Symphony resource - public endpoints for accessing symphony data."""
 
-from typing import List, Optional
+from typing import List, Optional, Dict, Any, Union
 from ..http_client import HTTPClient
 from ..models.backtest import (
     Indicator,
@@ -9,6 +9,8 @@ from ..models.backtest import (
     SymphonyDetail,
     SymphonyVersionInfo,
     TickersResponse,
+    BacktestParams,
+    BacktestResult,
 )
 from ..models.common import Root
 
@@ -166,3 +168,102 @@ class PublicSymphony:
         response = self._client.get(f"/api/v1/public/symphonies/{symphony_id}/tickers")
         result = TickersResponse.model_validate(response)
         return result.tickers
+
+    def backtest_symphony(
+        self,
+        symphony_id: str,
+        params: Optional[Union[Dict[str, Any], BacktestParams]] = None,
+    ) -> BacktestResult:
+        """
+        Run a backtest for a public symphony by its ID.
+
+        Args:
+            symphony_id: The ID of the symphony to backtest.
+            params: Optional backtest parameters.
+
+        Returns:
+            BacktestResult: Parsed backtest result with all statistics.
+
+        Example:
+            >>> result = client.public_symphony.backtest_symphony("sym-abc123")
+            >>> print(f"Sharpe: {result.stats.sharpe_ratio}")
+        """
+        if params is None:
+            params = BacktestParams()
+
+        if isinstance(params, BacktestParams):
+            payload = params.model_dump(by_alias=True, exclude_none=True, mode="json")
+        else:
+            payload = params
+
+        raw_response = self._client.post(
+            f"/api/v1/public/symphonies/{symphony_id}/backtest",
+            json=payload,
+        )
+        return BacktestResult.model_validate(raw_response)
+
+    def backtest(
+        self,
+        params: Optional[Union[Dict[str, Any], BacktestParams]] = None,
+    ) -> BacktestResult:
+        """
+        Run a standalone backtest with a custom symphony definition.
+
+        Args:
+            params: Optional backtest parameters including symphony definition.
+
+        Returns:
+            BacktestResult: Parsed backtest result with all statistics.
+
+        Example:
+            >>> result = client.public_symphony.backtest(
+            ...     BacktestParams(symphony={...})
+            ... )
+            >>> print(f"Sharpe: {result.stats.sharpe_ratio}")
+        """
+        if params is None:
+            params = BacktestParams()
+
+        if isinstance(params, BacktestParams):
+            payload = params.model_dump(by_alias=True, exclude_none=True, mode="json")
+        else:
+            payload = params
+
+        raw_response = self._client.post(
+            "/api/v1/public/backtest",
+            json=payload,
+        )
+        return BacktestResult.model_validate(raw_response)
+
+    def backtest_symphony_v2(
+        self,
+        symphony_id: str,
+        params: Optional[Union[Dict[str, Any], BacktestParams]] = None,
+    ) -> BacktestResult:
+        """
+        Run a backtest for a public symphony by its ID (v2).
+
+        Args:
+            symphony_id: The ID of the symphony to backtest.
+            params: Optional backtest parameters.
+
+        Returns:
+            BacktestResult: Parsed backtest result with all statistics.
+
+        Example:
+            >>> result = client.public_symphony.backtest_symphony_v2("sym-abc123")
+            >>> print(f"Sharpe: {result.stats.sharpe_ratio}")
+        """
+        if params is None:
+            params = BacktestParams()
+
+        if isinstance(params, BacktestParams):
+            payload = params.model_dump(by_alias=True, exclude_none=True, mode="json")
+        else:
+            payload = params
+
+        raw_response = self._client.post(
+            f"/api/v2/public/symphonies/{symphony_id}/backtest",
+            json=payload,
+        )
+        return BacktestResult.model_validate(raw_response)

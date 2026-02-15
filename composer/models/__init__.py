@@ -73,6 +73,7 @@ from .symphony import (
     CreateSymphonyResponse,
     CopySymphonyResponse,
     UpdateSymphonyResponse,
+    UpdateSymphonyNodesResponse,
     SymphonyVersion,
 )
 
@@ -149,11 +150,17 @@ from .backtest import (
     BacktestParams,
     BacktestRequest,
     BacktestExistingSymphonyRequest,
+    Quote,
+    SymphonyRebalanceState,
+    RebalanceRequest,
     # Response models
     Costs,
     DataWarning,
     LegendEntry,
     BacktestResult,
+    RecommendedTrade,
+    SymphonyRunResult,
+    RebalanceResult,
 )
 
 # For backward compatibility, also export old model names
@@ -220,6 +227,7 @@ __all__ = [
     "CopySymphonyRequest",
     "CopySymphonyResponse",
     "UpdateSymphonyResponse",
+    "UpdateSymphonyNodesResponse",
     "SymphonyVersion",
     # Trading
     "OrderStatus",
@@ -283,10 +291,16 @@ __all__ = [
     "BacktestParams",
     "BacktestRequest",
     "BacktestExistingSymphonyRequest",
+    "Quote",
+    "SymphonyRebalanceState",
+    "RebalanceRequest",
     "Costs",
     "DataWarning",
     "LegendEntry",
     "BacktestResult",
+    "RecommendedTrade",
+    "SymphonyRunResult",
+    "RebalanceResult",
     # Backward compatibility
     "BacktestResponse",
 ]

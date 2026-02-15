@@ -79,34 +79,34 @@ class SymphonyMetaResponse(BaseModel):
 class SymphonyDetail(BaseModel):
     """Detailed symphony information."""
 
-    symphony_id: int = Field(alias="symphony_id")
-    symphony_sid: str = Field(alias="symphony_sid")
-    created_at: str = Field(alias="created_at")
-    updated_at: str = Field(alias="updated_at")
-    asset_class: AssetClass
-    asset_classes: List[AssetClass]
+    symphony_id: Optional[int] = Field(alias="symphony_id", default=None)
+    id: Optional[str] = Field(alias="id", default=None)
+    created_at: Optional[str] = Field(alias="created_at", default=None)
+    updated_at: Optional[str] = Field(alias="updated_at", default=None)
+    asset_class: Optional[AssetClass] = None
+    asset_classes: Optional[List[AssetClass]] = Field(default_factory=list)
     user_id: Optional[int] = Field(alias="user_id", default=None)
     user_sid: Optional[str] = Field(alias="user_sid", default=None)
     community_review_status: Optional[str] = Field(alias="community_review_status", default=None)
     copied_from_symphony_id: Optional[int] = Field(alias="copied_from_symphony_id", default=None)
     copied_from_symphony_sid: Optional[str] = Field(alias="copied_from_symphony_sid", default=None)
-    is_discover_symphony: bool = Field(alias="is_discover_symphony")
-    is_deleted: bool = Field(alias="is_deleted")
-    last_semantic_update_at: str = Field(alias="last_semantic_update_at")
+    is_discover_symphony: Optional[bool] = Field(alias="is_discover_symphony", default=None)
+    is_deleted: Optional[bool] = Field(alias="is_deleted", default=None)
+    last_semantic_update_at: Optional[str] = Field(alias="last_semantic_update_at", default=None)
     name: Optional[str] = None
     description: Optional[str] = None
-    rebalance_frequency: str = Field(alias="rebalance_frequency")
+    rebalance_frequency: Optional[str] = Field(alias="rebalance_frequency", default=None)
     rebalance_corridor_width: Optional[float] = Field(
         alias="rebalance_corridor_width", default=None
     )
-    is_shared: bool = Field(alias="is_shared")
-    is_searchable: bool = Field(alias="is_searchable")
+    is_shared: Optional[bool] = Field(alias="is_shared", default=None)
+    is_searchable: Optional[bool] = Field(alias="is_searchable", default=None)
     is_searchable_updated_at: Optional[str] = Field(alias="is_searchable_updated_at", default=None)
     investor_count: Optional[int] = Field(alias="investor_count", default=None)
     watcher_count: Optional[int] = Field(alias="watcher_count", default=None)
-    color: str
+    color: Optional[str] = None
     hashtag: Optional[str] = None
-    tags: List[str]
+    tags: Optional[List[str]] = Field(default_factory=list)
     sparkgraph_gcs_url: Optional[str] = Field(alias="sparkgraph_gcs_url", default=None)
     last_backtest_first_market_day: Optional[str] = Field(
         alias="last_backtest_first_market_day", default=None
@@ -216,24 +216,26 @@ class AISymphonyDescription(BaseModel):
 class UserSymphony(BaseModel):
     """Symphony in user's library."""
 
-    symphony_sid: str = Field(alias="symphony_sid")
+    id: Optional[str] = Field(alias="id", default=None)
     name: Optional[str] = None
     description: Optional[str] = None
-    asset_classes: List[AssetClass]
-    rebalance_frequency: str = Field(alias="rebalance_frequency")
+    asset_classes: Optional[List[AssetClass]] = Field(default_factory=list)
+    rebalance_frequency: Optional[str] = Field(alias="rebalance_frequency", default=None)
     rebalance_corridor_width: Optional[float] = Field(
         alias="rebalance_corridor_width", default=None
     )
     sparkgraph_gcs_url: Optional[str] = Field(alias="sparkgraph_gcs_url", default=None)
-    color: str
-    num_node_asset: int = Field(alias="num_node_asset")
-    num_node_filter: int = Field(alias="num_node_filter")
-    num_node_group: int = Field(alias="num_node_group")
-    num_node_if: int = Field(alias="num_node_if")
-    num_node_if_child: int = Field(alias="num_node_if_child")
-    num_node_wt_cash_equal: int = Field(alias="num_node_wt_cash_equal")
-    num_node_wt_cash_specified: int = Field(alias="num_node_wt_cash_specified")
-    num_node_wt_inverse_vol: int = Field(alias="num_node_wt_inverse_vol")
+    color: Optional[str] = None
+    num_node_asset: Optional[int] = Field(alias="num_node_asset", default=None)
+    num_node_filter: Optional[int] = Field(alias="num_node_filter", default=None)
+    num_node_group: Optional[int] = Field(alias="num_node_group", default=None)
+    num_node_if: Optional[int] = Field(alias="num_node_if", default=None)
+    num_node_if_child: Optional[int] = Field(alias="num_node_if_child", default=None)
+    num_node_wt_cash_equal: Optional[int] = Field(alias="num_node_wt_cash_equal", default=None)
+    num_node_wt_cash_specified: Optional[int] = Field(
+        alias="num_node_wt_cash_specified", default=None
+    )
+    num_node_wt_inverse_vol: Optional[int] = Field(alias="num_node_wt_inverse_vol", default=None)
     oos_annualized_rate_of_return: Optional[float] = Field(
         alias="oos_annualized_rate_of_return", default=None
     )
@@ -333,24 +335,26 @@ class UserSymphony(BaseModel):
 class DraftSymphony(BaseModel):
     """Draft symphony with statistics."""
 
-    symphony_sid: str = Field(alias="symphony_sid")
+    symphony_sid: Optional[str] = Field(alias="symphony_sid", default=None)
     name: Optional[str] = None
     description: Optional[str] = None
-    asset_classes: List[AssetClass]
-    rebalance_frequency: str = Field(alias="rebalance_frequency")
+    asset_classes: Optional[List[AssetClass]] = Field(default_factory=list)
+    rebalance_frequency: Optional[str] = Field(alias="rebalance_frequency", default=None)
     rebalance_corridor_width: Optional[float] = Field(
         alias="rebalance_corridor_width", default=None
     )
     sparkgraph_gcs_url: Optional[str] = Field(alias="sparkgraph_gcs_url", default=None)
     color: Optional[str] = None
-    num_node_asset: int = Field(alias="num_node_asset")
-    num_node_filter: int = Field(alias="num_node_filter")
-    num_node_group: int = Field(alias="num_node_group")
-    num_node_if: int = Field(alias="num_node_if")
-    num_node_if_child: int = Field(alias="num_node_if_child")
-    num_node_wt_cash_equal: int = Field(alias="num_node_wt_cash_equal")
-    num_node_wt_cash_specified: int = Field(alias="num_node_wt_cash_specified")
-    num_node_wt_inverse_vol: int = Field(alias="num_node_wt_inverse_vol")
+    num_node_asset: Optional[int] = Field(alias="num_node_asset", default=None)
+    num_node_filter: Optional[int] = Field(alias="num_node_filter", default=None)
+    num_node_group: Optional[int] = Field(alias="num_node_group", default=None)
+    num_node_if: Optional[int] = Field(alias="num_node_if", default=None)
+    num_node_if_child: Optional[int] = Field(alias="num_node_if_child", default=None)
+    num_node_wt_cash_equal: Optional[int] = Field(alias="num_node_wt_cash_equal", default=None)
+    num_node_wt_cash_specified: Optional[int] = Field(
+        alias="num_node_wt_cash_specified", default=None
+    )
+    num_node_wt_inverse_vol: Optional[int] = Field(alias="num_node_wt_inverse_vol", default=None)
     oos_annualized_rate_of_return: Optional[float] = Field(
         alias="oos_annualized_rate_of_return", default=None
     )
@@ -400,24 +404,26 @@ class DraftSymphony(BaseModel):
 class WatchlistSymphony(BaseModel):
     """Symphony on user's watchlist."""
 
-    symphony_sid: str = Field(alias="symphony_sid")
+    id: Optional[str] = Field(alias="id", default=None)
     name: Optional[str] = None
     description: Optional[str] = None
-    asset_classes: List[AssetClass]
-    rebalance_frequency: str = Field(alias="rebalance_frequency")
+    asset_classes: Optional[List[AssetClass]] = Field(default_factory=list)
+    rebalance_frequency: Optional[str] = Field(alias="rebalance_frequency", default=None)
     rebalance_corridor_width: Optional[float] = Field(
         alias="rebalance_corridor_width", default=None
     )
     sparkgraph_gcs_url: Optional[str] = Field(alias="sparkgraph_gcs_url", default=None)
-    color: str
-    num_node_asset: int = Field(alias="num_node_asset")
-    num_node_filter: int = Field(alias="num_node_filter")
-    num_node_group: int = Field(alias="num_node_group")
-    num_node_if: int = Field(alias="num_node_if")
-    num_node_if_child: int = Field(alias="num_node_if_child")
-    num_node_wt_cash_equal: int = Field(alias="num_node_wt_cash_equal")
-    num_node_wt_cash_specified: int = Field(alias="num_node_wt_cash_specified")
-    num_node_wt_inverse_vol: int = Field(alias="num_node_wt_inverse_vol")
+    color: Optional[str] = None
+    num_node_asset: Optional[int] = Field(alias="num_node_asset", default=None)
+    num_node_filter: Optional[int] = Field(alias="num_node_filter", default=None)
+    num_node_group: Optional[int] = Field(alias="num_node_group", default=None)
+    num_node_if: Optional[int] = Field(alias="num_node_if", default=None)
+    num_node_if_child: Optional[int] = Field(alias="num_node_if_child", default=None)
+    num_node_wt_cash_equal: Optional[int] = Field(alias="num_node_wt_cash_equal", default=None)
+    num_node_wt_cash_specified: Optional[int] = Field(
+        alias="num_node_wt_cash_specified", default=None
+    )
+    num_node_wt_inverse_vol: Optional[int] = Field(alias="num_node_wt_inverse_vol", default=None)
     oos_annualized_rate_of_return: Optional[float] = Field(
         alias="oos_annualized_rate_of_return", default=None
     )
@@ -458,10 +464,93 @@ class DraftSymphoniesResponse(BaseModel):
 class WatchlistResponse(BaseModel):
     """Response for watchlist."""
 
-    watchlist: List[WatchlistSymphony]
+    symphonies: Optional[List[WatchlistSymphony]] = Field(default_factory=list)
+    watchlist: Optional[List[WatchlistSymphony]] = Field(default_factory=list)
+
+    def __init__(self, **data):
+        if "symphonies" in data and "watchlist" not in data:
+            data["watchlist"] = data.pop("symphonies")
+        super().__init__(**data)
 
 
 class SymphonyTickersResponse(BaseModel):
     """Response for symphony tickers."""
 
     tickers: List[str]
+
+
+class WatchlistSymphonyItem(BaseModel):
+    """Symphony item when adding to watchlist."""
+
+    id: Optional[str] = None
+    asset_classes: Optional[List[AssetClass]] = Field(default_factory=list)
+    tickers: Optional[List[str]] = Field(default_factory=list)
+    name: Optional[str] = None
+    color: Optional[str] = None
+    description: Optional[str] = None
+    last_semantic_update_at: Optional[str] = Field(alias="last_semantic_update_at", default=None)
+    tags: Optional[List[str]] = Field(default_factory=list)
+    rebalance_frequency: Optional[str] = Field(alias="rebalance_frequency", default=None)
+    is_shared: Optional[bool] = Field(alias="is_shared", default=None)
+    rebalance_corridor_width: Optional[float] = Field(
+        alias="rebalance_corridor_width", default=None
+    )
+    annualized_rate_of_return: Optional[float] = Field(
+        alias="annualized_rate_of_return", default=None
+    )
+    simple_return: Optional[float] = Field(alias="simple_return", default=None)
+    sharpe_ratio: Optional[float] = Field(alias="sharpe_ratio", default=None)
+    calmar_ratio: Optional[float] = Field(alias="calmar_ratio", default=None)
+    standard_deviation: Optional[float] = Field(alias="standard_deviation", default=None)
+    trailing_one_month_return: Optional[float] = Field(
+        alias="trailing_one_month_return", default=None
+    )
+    trailing_three_month_return: Optional[float] = Field(
+        alias="trailing_three_month_return", default=None
+    )
+    max_drawdown: Optional[float] = Field(alias="max_drawdown", default=None)
+    last_backtest_holdings: Optional[Dict[str, float]] = Field(
+        alias="last_backtest_holdings", default=None
+    )
+    last_backtest_value: Optional[float] = Field(alias="last_backtest_value", default=None)
+    owns_symphony: Optional[bool] = Field(alias="owns_symphony", default=None)
+    watched_since: Optional[str] = Field(alias="watched_since", default=None)
+    created_at: Optional[str] = Field(alias="created_at", default=None)
+
+
+class ModifySymphonyResponse(BaseModel):
+    """Response for modify symphony operation."""
+
+    symphony_id: str = Field(alias="symphony_id")
+    version_id: str = Field(alias="version_id")
+
+
+class FindAndReplaceOperation(BaseModel):
+    """Find and replace operation for modifying symphonies."""
+
+    op: str = Field(default="FIND_AND_REPLACE")
+    old_ticker: str = Field(alias="old_ticker")
+    new_ticker: str = Field(alias="new_ticker")
+
+
+class BulkModifySymphoniesRequest(BaseModel):
+    """Request for bulk modifying user symphonies."""
+
+    op: str = Field(default="FIND_AND_REPLACE")
+    user_id: Optional[str] = Field(alias="user_id", default=None)
+    old_ticker: str = Field(alias="old_ticker")
+    new_ticker: str = Field(alias="new_ticker")
+
+
+class UpdateSymphonyResponse(BaseModel):
+    """Response for updating a symphony."""
+
+    existing_version_id: str = Field(alias="existing_version_id")
+    version_id: str = Field(alias="version_id")
+
+
+class UpdateSymphonyNodesResponse(BaseModel):
+    """Response for updating symphony nodes."""
+
+    symphony_id: str = Field(alias="symphony_id")
+    version_id: str = Field(alias="version_id")

@@ -169,7 +169,8 @@ def main():
     try:
         symphonies = client.user_symphonies.list_symphonies()
         print(f"   SUCCESS: Found {len(symphonies)} symphonies")
-        print(symphonies)
+        for symphony in symphonies[:3]:
+            print(symphony)
     except Exception as e:
         print(f"   ERROR: {e}")
 
@@ -178,7 +179,9 @@ def main():
     try:
         drafts = client.user_symphonies.list_drafts()
         print(f"   SUCCESS: Found {len(drafts)} drafts")
-        print(drafts)
+        # print(drafts)
+        for draft in drafts[:3]:
+            print(draft)
     except Exception as e:
         print(f"   ERROR: {e}")
 

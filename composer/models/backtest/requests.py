@@ -46,9 +46,7 @@ class SymphonyDefinition(BaseModel):
     raw_value: Optional[SymphonyScoreRoot] = Field(
         None, description="Full symphony definition as structured object"
     )
-    encoded_value: Optional[str] = Field(
-        None, description="Transit-encoded symphony string"
-    )
+    encoded_value: Optional[str] = Field(None, description="Transit-encoded symphony string")
     encoding_type: Optional[Literal["transit_json"]] = Field(
         None,
         description="Encoding format (must be 'transit_json' if using encoded_value)",
@@ -65,9 +63,7 @@ class SymphonyDefinition(BaseModel):
         if has_raw and has_encoded:
             raise ValueError("Cannot provide both raw_value and encoded_value")
         if has_encoded and self.encoding_type != "transit_json":
-            raise ValueError(
-                'encoding_type must be "transit_json" when using encoded_value'
-            )
+            raise ValueError('encoding_type must be "transit_json" when using encoded_value')
 
         return self
 
@@ -85,9 +81,7 @@ class BacktestParams(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    capital: float = Field(
-        default=10000.0, description="Initial capital for the backtest"
-    )
+    capital: float = Field(default=10000.0, description="Initial capital for the backtest")
     abbreviate_days: Optional[int] = Field(
         None, description="Number of days to abbreviate the backtest (for testing)"
     )
@@ -129,9 +123,7 @@ class BacktestParams(BaseModel):
         None,
         description="List of ticker symbols to use as benchmarks (e.g., ['SPY', 'QQQ'])",
     )
-    sparkgraph_color: Optional[str] = Field(
-        None, description="Custom color for performance chart"
-    )
+    sparkgraph_color: Optional[str] = Field(None, description="Custom color for performance chart")
 
 
 class BacktestRequest(BacktestParams):
@@ -154,3 +146,46 @@ class BacktestExistingSymphonyRequest(BacktestParams):
     """
 
     pass
+
+
+class Quote(BaseModel):
+    """Quote for a single ticker in rebalance."""
+
+    ticker: str
+    trading_halted: bool = False
+    open: float
+    close: Optional[float] = None
+    low: float
+    high: float
+    volume: int
+    bid: Optional[Dict[str, Any]] = None
+    ask: Optional[Dict[str, Any]] = None
+    last: Optional[Dict[str, Any]] = None
+    source: Optional[str] = None
+    timestamp: Optional[str] = None
+
+
+class SymphonyRebalanceState(BaseModel):
+    """State of a single symphony for rebalance."""
+
+    last_rebalanced_on: Optional[str] = None
+    cash: float
+    unsettled_cash: float = 0.0
+    shares: Dict[str, float]
+
+
+class RebalanceRequest(BaseModel):
+    """
+    Request body for the rebalance endpoint.
+
+    Used to run a rebalance for specified symphonies given a starting state.
+    """
+
+    dry_run: bool = False
+    broker: Broker = Broker.ALPACA_WHITE_LABEL
+    adjust_for_dtbp: bool = False
+    disable_fractional_trading: bool = False
+    fractionability: Optional[Dict[str, bool]] = None
+    end_date: Optional[str] = None
+    quotes: Optional[Dict[str, Quote]] = None
+    symphonies: Dict[str, SymphonyRebalanceState]
