@@ -26,20 +26,25 @@ class ComposerAPIError(ComposerError):
 class HTTPClient:
     def __init__(
         self,
-        api_key: str,
-        api_secret: str,
+        api_key: Optional[str] = None,
+        api_secret: Optional[str] = None,
         base_url: str = "https://api.composer.trade/",
     ):
         self.base_url = base_url
         self.session = requests.Session()
-        self.session.headers.update(
-            {
-                "x-api-key-id": api_key,
-                "authorization": f"Bearer {api_secret}",
-                "User-Agent": "composer-trade-py/0.1.0",
-                "Content-Type": "application/json",
-            }
-        )
+
+        # Build headers - auth headers only if credentials provided
+        headers = {
+            "User-Agent": "composer-trade-py",
+            "Content-Type": "application/json",
+        }
+
+        if api_key:
+            headers["x-api-key-id"] = api_key
+        if api_secret:
+            headers["authorization"] = f"Bearer {api_secret}"
+
+        self.session.headers.update(headers)
 
     def request(self, method: str, endpoint: str, **kwargs) -> Any:
         url = urljoin(self.base_url, endpoint)

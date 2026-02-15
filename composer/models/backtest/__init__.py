@@ -15,13 +15,53 @@ from .responses import (
     LegendEntry,
     BacktestResult,
 )
+from .symphony import (
+    # Enums
+    ParameterType,
+    AssetClass,
+    # Models
+    IndicatorParameter,
+    Indicator,
+    SymphonyMeta,
+    SymphonyMetaResponse,
+    SymphonyDetail,
+    SymphonyVersionInfo,
+    TickersResponse,
+    AISymphonyDescription,
+    UserSymphony,
+    DraftSymphony,
+    WatchlistSymphony,
+    UserSymphoniesResponse,
+    DraftSymphoniesResponse,
+    WatchlistResponse,
+    SymphonyTickersResponse,
+)
 
 __all__ = [
-    # Enums
+    # Enums - Backtest
     "BacktestVersion",
     "Broker",
     "ApplySubscription",
+    # Enums - Symphony
+    "ParameterType",
+    "AssetClass",
     # Symphony models
+    "IndicatorParameter",
+    "Indicator",
+    "SymphonyMeta",
+    "SymphonyMetaResponse",
+    "SymphonyDetail",
+    "SymphonyVersionInfo",
+    "TickersResponse",
+    "AISymphonyDescription",
+    "UserSymphony",
+    "DraftSymphony",
+    "WatchlistSymphony",
+    "UserSymphoniesResponse",
+    "DraftSymphoniesResponse",
+    "WatchlistResponse",
+    "SymphonyTickersResponse",
+    # Symphony models (old backtest)
     "SymphonyDefinition",
     # Request models
     "BacktestParams",
