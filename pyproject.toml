@@ -1,6 +1,6 @@
 [project]
 name = "composer-trade-py"
-version = "0.0.5"
+version = "1.0.0"
 authors = [
     {name = "SolarWolf", email = "git@solarwol.xyz"},
 ]
@@ -36,7 +36,6 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/SolarWolf-Code/composer-trade-py"
-Documentation = "https://api.composer.trade/"
 Repository = "https://github.com/SolarWolf-Code/composer-trade-py"
 Issues = "https://github.com/SolarWolf-Code/composer-trade-py/issues"
 

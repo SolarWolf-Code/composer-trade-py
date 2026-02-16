@@ -4,7 +4,7 @@ from enum import Enum
 from typing import List, Optional, Dict, Any, Literal
 from pydantic import BaseModel, Field, model_validator
 
-from ..common.symphony import Root as SymphonyScoreRoot
+from ..common.symphony import SymphonyDefinition
 
 
 class BacktestVersion(str, Enum):
@@ -30,42 +30,6 @@ class ApplySubscription(str, Enum):
     NONE = "none"
     MONTHLY = "monthly"
     YEARLY = "yearly"
-
-
-class SymphonyDefinition(BaseModel):
-    """
-    Wrapper for symphony score definition.
-
-    Can be provided either as:
-    1. raw_value: Full symphony object as Root model
-    2. encoded_value + encoding_type: Transit-encoded string
-    """
-
-    model_config = {"populate_by_name": True}
-
-    raw_value: Optional[SymphonyScoreRoot] = Field(
-        None, description="Full symphony definition as structured object"
-    )
-    encoded_value: Optional[str] = Field(None, description="Transit-encoded symphony string")
-    encoding_type: Optional[Literal["transit_json"]] = Field(
-        None,
-        description="Encoding format (must be 'transit_json' if using encoded_value)",
-    )
-
-    @model_validator(mode="after")
-    def validate_symphony_definition(self):
-        """Ensure exactly one of raw_value or encoded_value is provided."""
-        has_raw = self.raw_value is not None
-        has_encoded = self.encoded_value is not None
-
-        if not has_raw and not has_encoded:
-            raise ValueError("Must provide either raw_value or encoded_value")
-        if has_raw and has_encoded:
-            raise ValueError("Cannot provide both raw_value and encoded_value")
-        if has_encoded and self.encoding_type != "transit_json":
-            raise ValueError('encoding_type must be "transit_json" when using encoded_value')
-
-        return self
 
 
 class BacktestParams(BaseModel):

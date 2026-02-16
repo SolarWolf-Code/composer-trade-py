@@ -7,7 +7,6 @@ the symphony node types, then backtest it.
 
 from composer import ComposerClient, BacktestRequest
 from composer.models.common.symphony import (
-    Root,
     Asset,
     If,
     IfChildTrue,
@@ -17,12 +16,19 @@ from composer.models.common.symphony import (
     RebalanceFrequency,
 )
 from composer.models.backtest import SymphonyDefinition
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Initialize client
-client = ComposerClient(api_key="your-api-key", api_secret="your-api-secret")
+client = ComposerClient(
+    api_key=os.getenv("COMPOSER_API_KEY"),
+    api_secret=os.getenv("COMPOSER_API_SECRET"),
+)
 
 # Build a simple symphony: "Buy TQQQ if price > 200-day MA, else buy UVXY"
-symphony = Root(
+symphony = SymphonyDefinition(
     name="Trend Following",
     description="Buy leveraged QQQ on uptrend, VIX on downtrend",
     rebalance=RebalanceFrequency.DAILY,
@@ -40,17 +46,11 @@ symphony = Root(
                             rhs_fixed_value=False,
                             rhs_fn=Function.MOVING_AVERAGE_PRICE,
                             rhs_window_days=200,
-                            children=[
-                                Asset(ticker="TQQQ", name="ProShares UltraPro QQQ")
-                            ],
+                            children=[Asset(ticker="TQQQ", name="ProShares UltraPro QQQ")],
                         ),
                         # False condition: Buy UVXY (volatility)
                         IfChildFalse(
-                            children=[
-                                Asset(
-                                    ticker="UVXY", name="ProShares Ultra VIX Short-Term"
-                                )
-                            ]
+                            children=[Asset(ticker="UVXY", name="ProShares Ultra VIX Short-Term")]
                         ),
                     ]
                 )
@@ -61,7 +61,7 @@ symphony = Root(
 
 # Backtest the symphony
 print("\nRunning backtest...")
-result = client.backtest.run(
+result = client.backtest.run_v2(
     BacktestRequest(
         capital=10000.0,
         start_date="2020-01-01",

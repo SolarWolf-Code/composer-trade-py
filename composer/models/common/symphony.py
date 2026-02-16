@@ -2,14 +2,43 @@
 Symphony Score Schema - Complete type definitions for Composer trading strategies.
 
 This module defines all node types used to build automated trading strategies (Symphonies).
-Each symphony is a tree structure with a Root node containing nested weight, filter,
+Each symphony is a tree structure with a SymphonyDefinition containing nested weight, filter,
 if/else, and asset nodes.
 """
 
 from enum import Enum
-from typing import Dict, List, Optional, Union, Literal, Any, TYPE_CHECKING
+from typing import Dict, List, Optional, Union, Literal, Any, TYPE_CHECKING, get_args, get_origin
 from pydantic import BaseModel, Field, field_validator, model_validator
 import uuid
+
+
+# Mapping of step values to model classes
+NODE_TYPE_MAP: Dict[str, type[BaseModel]] = {}
+
+
+def _register_node_type(step: str, model_class: type[BaseModel]):
+    """Register a node type for recursive parsing."""
+    NODE_TYPE_MAP[step] = model_class
+
+
+def _parse_node(data: Any) -> Any:
+    """Recursively parse dicts into typed model instances."""
+    if isinstance(data, dict):
+        step = data.get("step")
+        if step == "if-child":
+            # Check is_else_condition to determine which model to use
+            is_else = data.get("is-else-condition?", False)
+            if is_else:
+                return IfChildFalse.model_validate(data)
+            else:
+                return IfChildTrue.model_validate(data)
+        elif step in NODE_TYPE_MAP:
+            return NODE_TYPE_MAP[step].model_validate(data)
+        # Unknown step type, return as-is
+        return data
+    if isinstance(data, list):
+        return [_parse_node(item) for item in data]
+    return data
 
 
 class Function(str, Enum):
@@ -80,9 +109,14 @@ class BaseNode(BaseModel):
         default_factory=lambda: str(uuid.uuid4()),
         description="Unique identifier for this node (auto-generated UUID or custom ID)",
     )
-    weight: Optional[WeightMap] = Field(
-        None, description="Weight fraction for this node"
-    )
+    weight: Optional[WeightMap] = Field(None, description="Weight fraction for this node")
+
+    @model_validator(mode="after")
+    def parse_children(self):
+        """Recursively parse children dicts into typed models."""
+        if hasattr(self, "children") and self.children:
+            self.children = _parse_node(self.children)
+        return self
 
 
 class Asset(BaseNode):
@@ -100,12 +134,18 @@ class Asset(BaseNode):
     children_count: Optional[int] = Field(None, alias="children-count")
 
 
+_register_node_type("asset", Asset)
+
+
 class Empty(BaseNode):
     """Empty/cash placeholder node."""
 
     model_config = {"populate_by_name": True}
 
     step: Literal["empty"] = Field(default="empty")
+
+
+_register_node_type("empty", Empty)
 
 
 class IfChildTrue(BaseNode):
@@ -115,12 +155,11 @@ class IfChildTrue(BaseNode):
 
     step: Literal["if-child"] = Field(default="if-child")
     is_else_condition: Literal[False] = Field(False, alias="is-else-condition?")
-    comparator: Literal["gt", "gte", "eq", "lt", "lte"] = Field(
-        description="Comparison operator"
-    )
+    comparator: Literal["gt", "gte", "eq", "lt", "lte"] = Field(description="Comparison operator")
     lhs_fn: Function = Field(alias="lhs-fn")
     lhs_window_days: Optional[int] = Field(None, alias="lhs-window-days")
     lhs_val: str = Field(alias="lhs-val")
+    lhs_fn_params: Optional[Dict[str, Any]] = Field(None, alias="lhs-fn-params")
     rhs_val: Union[str, float] = Field(alias="rhs-val")
     rhs_fixed_value: bool = Field(alias="rhs-fixed-value?")
     rhs_fn: Optional[Function] = Field(None, alias="rhs-fn")
@@ -136,6 +175,9 @@ class IfChildFalse(BaseNode):
     step: Literal["if-child"] = Field(default="if-child")
     is_else_condition: Literal[True] = Field(True, alias="is-else-condition?")
     children: List[Any] = Field(default_factory=list)
+
+
+_register_node_type("if-child", IfChildTrue)
 
 
 class If(BaseNode):
@@ -162,6 +204,9 @@ class If(BaseNode):
         return v
 
 
+_register_node_type("if", If)
+
+
 class Filter(BaseNode):
     """Filter node for selecting top/bottom N assets."""
 
@@ -173,8 +218,12 @@ class Filter(BaseNode):
     select_n: Optional[int] = Field(None, alias="select-n")
     sort_by_: Optional[bool] = Field(None, alias="sort-by?")
     sort_by_fn: Optional[Function] = Field(None, alias="sort-by-fn")
+    sort_by_fn_params: Optional[Dict[str, Any]] = Field(None, alias="sort-by-fn-params")
     sort_by_window_days: Optional[int] = Field(None, alias="sort-by-window-days")
     children: List[Any] = Field(default_factory=list)
+
+
+_register_node_type("filter", Filter)
 
 
 class WeightInverseVol(BaseNode):
@@ -185,6 +234,9 @@ class WeightInverseVol(BaseNode):
     step: Literal["wt-inverse-vol"] = Field(default="wt-inverse-vol")
     window_days: Optional[int] = Field(None, alias="window-days")
     children: List[Any] = Field(default_factory=list)
+
+
+_register_node_type("wt-inverse-vol", WeightInverseVol)
 
 
 class Group(BaseNode):
@@ -204,6 +256,9 @@ class Group(BaseNode):
         return v
 
 
+_register_node_type("group", Group)
+
+
 class WeightCashEqual(BaseNode):
     """Equal weighting across all children."""
 
@@ -211,6 +266,9 @@ class WeightCashEqual(BaseNode):
 
     step: Literal["wt-cash-equal"] = Field(default="wt-cash-equal")
     children: List[Any] = Field(default_factory=list)
+
+
+_register_node_type("wt-cash-equal", WeightCashEqual)
 
 
 class WeightCashSpecified(BaseNode):
@@ -222,8 +280,11 @@ class WeightCashSpecified(BaseNode):
     children: List[Any] = Field(default_factory=list)
 
 
-class Root(BaseNode):
-    """Root node of a symphony."""
+_register_node_type("wt-cash-specified", WeightCashSpecified)
+
+
+class SymphonyDefinition(BaseNode):
+    """Definition of a symphony/strategy."""
 
     model_config = {"populate_by_name": True}
 
@@ -231,11 +292,9 @@ class Root(BaseNode):
     name: str = Field(description="Display name of the symphony")
     description: str = Field(default="", description="Description of the strategy")
     rebalance: RebalanceFrequency = Field(description="Rebalancing frequency")
-    rebalance_corridor_width: Optional[float] = Field(
-        None, alias="rebalance-corridor-width"
-    )
-    children: List[Union[WeightCashEqual, WeightCashSpecified, WeightInverseVol]] = (
-        Field(default_factory=list)
+    rebalance_corridor_width: Optional[float] = Field(None, alias="rebalance-corridor-width")
+    children: List[Union[WeightCashEqual, WeightCashSpecified, WeightInverseVol]] = Field(
+        default_factory=list
     )
 
     @field_validator("rebalance_corridor_width")
@@ -244,22 +303,22 @@ class Root(BaseNode):
         """Corridor width only allowed when rebalance is 'none'."""
         rebalance = info.data.get("rebalance")
         if v is not None and rebalance != "none":
-            raise ValueError(
-                'rebalance_corridor_width can only be set when rebalance is "none"'
-            )
+            raise ValueError('rebalance_corridor_width can only be set when rebalance is "none"')
         return v
 
     @field_validator("children")
     @classmethod
     def validate_single_child(cls, v):
-        """Root must have exactly one weight child."""
+        """SymphonyDefinition must have exactly one weight child."""
         if len(v) != 1:
-            raise ValueError("Root must have exactly one child")
+            raise ValueError("SymphonyDefinition must have exactly one child")
         return v
 
 
-# Type alias for convenience
-SymphonyScore = Root
+_register_node_type("root", SymphonyDefinition)
+
+
+SymphonyScore = SymphonyDefinition
 
 
 def validate_symphony_score(score):
@@ -267,29 +326,23 @@ def validate_symphony_score(score):
     Validate a symphony score and check crypto rebalancing rules.
 
     Args:
-        score: Symphony score as Root model or dict
+        score: Symphony score as SymphonyDefinition model or dict
 
     Returns:
-        Validated Root model
+        Validated SymphonyDefinition model
     """
     if isinstance(score, dict):
-        score = Root.model_validate(score)
+        score = SymphonyDefinition.model_validate(score)
 
     # Check for crypto assets
     crypto_tickers = []
 
     def find_crypto(node):
         """Recursively find crypto assets."""
-        if (
-            isinstance(node, Asset)
-            and node.ticker
-            and node.ticker.startswith("CRYPTO::")
-        ):
+        if isinstance(node, Asset) and node.ticker and node.ticker.startswith("CRYPTO::"):
             crypto_tickers.append(node.ticker)
         # Check children recursively for nodes that have children
-        elif (
-            not isinstance(node, Asset) and hasattr(node, "children") and node.children
-        ):
+        elif not isinstance(node, Asset) and hasattr(node, "children") and node.children:
             for child in node.children:
                 if isinstance(child, BaseModel):
                     find_crypto(child)

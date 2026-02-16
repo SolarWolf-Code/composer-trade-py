@@ -316,7 +316,7 @@ wheels = [
 
 [[package]]
 name = "composer-trade-py"
-version = "0.0.5"
+version = "1.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },

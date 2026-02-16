@@ -195,3 +195,87 @@ class PortfolioHistory(BaseModel):
 
     epoch_ms: List[int]
     series: List[float]
+
+
+class SymphonyHoldings(BaseModel):
+    """Current holdings of a symphony."""
+
+    model_config = {"populate_by_name": True}
+
+    cash: float
+    last_rebalance_on: Optional[str] = None
+    liquidated: bool
+    net_deposits: float
+    shares: Optional[dict] = None
+    symphony_id: str
+
+
+class SymphonyStats(BaseModel):
+    """Stats for a symphony in the stats endpoint."""
+
+    model_config = {"populate_by_name": True}
+
+    id: str
+    position_id: str
+    as_of: Optional[str] = None
+    holdings: List[SymphonyHolding] = []
+    simple_return: float
+    time_weighted_return: float
+    net_deposits: float
+    last_dollar_change: float
+    cash: float
+    value: float
+    deposit_adjusted_value: float
+    annualized_rate_of_return: float
+    sharpe_ratio: float
+    max_drawdown: float
+    last_percent_change: float
+    invested_since: str
+
+
+class SymphonyStatsResponse(BaseModel):
+    """Response from getting symphony stats."""
+
+    model_config = {"populate_by_name": True}
+
+    stats: dict = {}
+
+
+class ActivityHistoryItem(BaseModel):
+    """An activity history item for a symphony."""
+
+    model_config = {"populate_by_name": True}
+
+    type: str
+    symphony_id: str
+    symphony_name: str
+    version_id: Optional[str] = None
+    at: Optional[str] = None
+
+
+class ActivityHistoryResponse(BaseModel):
+    """Response from getting activity history."""
+
+    model_config = {"populate_by_name": True}
+
+    data: List[ActivityHistoryItem] = []
+
+
+class DeployHistoryItem(BaseModel):
+    """A deploy history item."""
+
+    model_config = {"populate_by_name": True}
+
+    type: str
+    symphony_id: str
+    symphony_name: str
+    version_id: str
+    at: Optional[str] = None
+
+
+class DeployHistoryResponse(BaseModel):
+    """Response from getting deploy history."""
+
+    model_config = {"populate_by_name": True}
+
+    deploy_history: List[DeployHistoryItem] = []

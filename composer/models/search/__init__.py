@@ -17,10 +17,10 @@ class SymphonyAIDescription(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    summary: str
-    categories: str
-    how_it_works: str
-    value_proposition: str
+    summary: Optional[str] = None
+    categories: Optional[str] = None
+    how_it_works: Optional[str] = None
+    value_proposition: Optional[str] = None
 
 
 class SearchSymphonyResult(BaseModel):

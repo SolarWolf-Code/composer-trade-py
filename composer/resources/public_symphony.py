@@ -12,7 +12,7 @@ from ..models.backtest import (
     BacktestParams,
     BacktestResult,
 )
-from ..models.common import Root
+from ..models.common import SymphonyDefinition
 
 
 class PublicSymphony:
@@ -105,7 +105,7 @@ class PublicSymphony:
 
     def get_version_score(
         self, symphony_id: str, version_id: str, score_version: str = "v1"
-    ) -> Root:
+    ) -> SymphonyDefinition:
         """
         Get an existing symphony version's EDN (score).
 
@@ -115,7 +115,7 @@ class PublicSymphony:
             score_version: Score version to retrieve ("v1" or "v2"). Defaults to "v1".
 
         Returns:
-            Root: The symphony score/parsed EDN structure.
+            SymphonyDefinition: The symphony score/parsed EDN structure.
 
         Example:
             >>> score = client.public_symphony.get_version_score(
@@ -129,9 +129,9 @@ class PublicSymphony:
         response = self._client.get(
             f"/api/v1/public/symphonies/{symphony_id}/versions/{version_id}/score", params=params
         )
-        return Root.model_validate(response)
+        return SymphonyDefinition.model_validate(response)
 
-    def get_score(self, symphony_id: str, score_version: str = "v1") -> Root:
+    def get_score(self, symphony_id: str, score_version: str = "v1") -> SymphonyDefinition:
         """
         Get an existing symphony's EDN (score).
 
@@ -140,7 +140,7 @@ class PublicSymphony:
             score_version: Score version to retrieve ("v1" or "v2"). Defaults to "v1".
 
         Returns:
-            Root: The symphony score/parsed EDN structure.
+            SymphonyDefinition: The symphony score/parsed EDN structure.
 
         Example:
             >>> score = client.public_symphony.get_score("sym-abc123")
@@ -149,7 +149,7 @@ class PublicSymphony:
         """
         params = {"score_version": score_version}
         response = self._client.get(f"/api/v1/public/symphonies/{symphony_id}/score", params=params)
-        return Root.model_validate(response)
+        return SymphonyDefinition.model_validate(response)
 
     def get_tickers(self, symphony_id: str) -> List[str]:
         """

@@ -21,8 +21,8 @@ from .models import (
     Group,
     WeightCashEqual,
     WeightCashSpecified,
-    Root,
     SymphonyScore,
+    SymphonyDefinition,
     validate_symphony_score,
     # Backtest models
     BacktestVersion,
@@ -70,8 +70,8 @@ __all__ = [
     "Group",
     "WeightCashEqual",
     "WeightCashSpecified",
-    "Root",
     "SymphonyScore",
+    "SymphonyDefinition",
     "validate_symphony_score",
     # Backtest enums
     "BacktestVersion",

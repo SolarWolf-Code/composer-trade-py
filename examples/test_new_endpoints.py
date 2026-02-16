@@ -22,7 +22,6 @@ from composer import (
     BacktestParams,
     BacktestRequest,
     SymphonyDefinition,
-    Root,
     Asset,
     WeightCashEqual,
     RebalanceRequest,
@@ -101,7 +100,7 @@ def main():
 
     print("\n5. POST /api/v2/backtest (v2 generic)")
     try:
-        symphony = Root(
+        symphony = SymphonyDefinition(
             name="Test Strategy - Python SDK",
             description="A test symphony created via Python SDK",
             rebalance="daily",
@@ -109,7 +108,7 @@ def main():
                 WeightCashEqual(children=[Asset(ticker="AAPL", name="Apple Inc", exchange="XNAS")])
             ],
         )
-        request = BacktestRequest(symphony=SymphonyDefinition(raw_value=symphony), capital=10000)
+        request = BacktestRequest(symphony=symphony, capital=10000)
         result = client.backtest.run_v2(request)
         print(f"   SUCCESS: V2 backtest completed")
     except Exception as e:
@@ -117,7 +116,7 @@ def main():
 
     print("\n6. POST /api/v2/public/backtest (v2 public)")
     try:
-        symphony = Root(
+        symphony = SymphonyDefinition(
             name="Test Strategy - Python SDK",
             description="A test symphony created via Python SDK",
             rebalance="daily",
@@ -125,7 +124,7 @@ def main():
                 WeightCashEqual(children=[Asset(ticker="AAPL", name="Apple Inc", exchange="XNAS")])
             ],
         )
-        request = BacktestRequest(symphony=SymphonyDefinition(raw_value=symphony), capital=10000)
+        request = BacktestRequest(symphony=symphony, capital=10000)
         result = client.backtest.run_public_v2(request)
         print(f"   SUCCESS: V2 public backtest completed")
     except Exception as e:

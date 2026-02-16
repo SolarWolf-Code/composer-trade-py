@@ -13,7 +13,7 @@ from ..models.backtest import (
     BacktestParams,
     BacktestResult,
 )
-from ..models.common import Root
+from ..models.common import SymphonyDefinition
 from ..models.symphony import (
     CreateSymphonyRequest,
     CreateSymphonyResponse,
@@ -91,7 +91,7 @@ class UserSymphony:
 
     def get_version_score(
         self, symphony_id: str, version_id: str, score_version: str = "v1"
-    ) -> Root:
+    ) -> SymphonyDefinition:
         """
         Get an existing symphony version's EDN (score) - authenticated.
 
@@ -101,7 +101,7 @@ class UserSymphony:
             score_version: Score version to retrieve ("v1" or "v2"). Defaults to "v1".
 
         Returns:
-            Root: The symphony score/parsed EDN structure.
+            SymphonyDefinition: The symphony score/parsed EDN structure.
 
         Example:
             >>> score = client.user_symphony.get_version_score(
@@ -115,9 +115,9 @@ class UserSymphony:
         response = self._client.get(
             f"/api/v1/symphonies/{symphony_id}/versions/{version_id}/score", params=params
         )
-        return Root.model_validate(response)
+        return SymphonyDefinition.model_validate(response)
 
-    def get_score(self, symphony_id: str, score_version: str = "v1") -> Root:
+    def get_score(self, symphony_id: str, score_version: str = "v1") -> SymphonyDefinition:
         """
         Get an existing symphony's EDN (score) - authenticated.
 
@@ -126,7 +126,7 @@ class UserSymphony:
             score_version: Score version to retrieve ("v1" or "v2"). Defaults to "v1".
 
         Returns:
-            Root: The symphony score/parsed EDN structure.
+            SymphonyDefinition: The symphony score/parsed EDN structure.
 
         Example:
             >>> score = client.user_symphony.get_score("sym-abc123")
@@ -135,7 +135,7 @@ class UserSymphony:
         """
         params = {"score_version": score_version}
         response = self._client.get(f"/api/v1/symphonies/{symphony_id}/score", params=params)
-        return Root.model_validate(response)
+        return SymphonyDefinition.model_validate(response)
 
     def modify_symphony(
         self, symphony_id: str, old_ticker: str, new_ticker: str
@@ -272,7 +272,7 @@ class UserSymphony:
         color: Optional[str] = None,
         hashtag: Optional[str] = None,
         tags: Optional[List[str]] = None,
-        symphony: Optional[Dict[str, Any]] = None,
+        symphony: Optional[SymphonyDefinition] = None,
         benchmarks: Optional[List[Dict[str, Any]]] = None,
     ) -> CreateSymphonyResponse:
         """
@@ -285,16 +285,18 @@ class UserSymphony:
             color: Optional color (hex code).
             hashtag: Optional hashtag.
             tags: Optional list of tags.
-            symphony: Optional symphony score/EDN definition.
+            symphony: Optional symphony definition (SymphonyDefinition model).
             benchmarks: Optional list of benchmark configurations.
 
         Returns:
             CreateSymphonyResponse: Contains symphony_id and version_id.
 
         Example:
+            >>> from composer.models.common import Asset, WeightCashEqual, SymphonyDefinition
+            >>> symphony = SymphonyDefinition(name="My Strategy", rebalance="daily", children=[...])
             >>> result = client.user_symphony.create_symphony(
             ...     name="My Strategy",
-            ...     description="My new strategy"
+            ...     symphony=symphony
             ... )
             >>> print(f"Created: {result.symphony_id}")
         """
@@ -308,7 +310,9 @@ class UserSymphony:
         if tags is not None:
             request_body["tags"] = tags
         if symphony is not None:
-            request_body["symphony"] = symphony
+            request_body["symphony"] = {
+                "raw_value": symphony.model_dump(by_alias=True, mode="json", exclude_none=True)
+            }
         if benchmarks is not None:
             request_body["benchmarks"] = benchmarks
 

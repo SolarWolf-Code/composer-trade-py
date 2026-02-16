@@ -8,6 +8,10 @@ from ..models.market_data import (
     ContractType,
     OptionSortBy,
     SortOrder,
+    MarketSnapshot,
+    CustomBars,
+    MarketOverview,
+    TopMoversResponse,
 )
 
 
@@ -15,7 +19,7 @@ class MarketData:
     """Resource for market data endpoints."""
 
     def __init__(self, http_client):
-        self.http_client = http_client
+        self._client = http_client
 
     def get_options_chain(
         self,
@@ -60,9 +64,7 @@ class MarketData:
         if limit:
             params["limit"] = limit
 
-        response = self.http_client.get(
-            "/api/v1/market-data/options/chain", params=params
-        )
+        response = self._client.get("/api/v1/market-data/options/chain", params=params)
         return OptionsChainResponse.model_validate(response)
 
     def get_options_contract(self, symbol: str) -> OptionsContractResponse:
@@ -75,10 +77,10 @@ class MarketData:
         Returns:
             OptionsContractResponse with contract market data
         """
-        response = self.http_client.get(
+        response = self._client.get(
             "/api/v1/market-data/options/contract", params={"symbol": symbol}
         )
-        
+
         return OptionsContractResponse.model_validate(response)
 
     def get_options_overview(self, symbol: str) -> OptionsOverview:
@@ -91,7 +93,73 @@ class MarketData:
         Returns:
             OptionsOverview with available expiration dates
         """
-        response = self.http_client.get(
+        response = self._client.get(
             "/api/v1/market-data/options/overview", params={"symbol": symbol}
         )
         return OptionsOverview.model_validate(response)
+
+    def get_snapshot(self, symbol: str) -> MarketSnapshot:
+        """
+        Get a snapshot of live market data.
+
+        Args:
+            symbol: The symbol to get snapshot for (e.g., "AAPL", "BTC-USD")
+
+        Returns:
+            MarketSnapshot with bid, ask, last trade, and change data
+        """
+        response = self._client.get("/api/v1/market-data/snapshot", params={"symbol": symbol})
+        return MarketSnapshot.model_validate(response)
+
+    def get_custom_bars(
+        self,
+        symbol: str,
+        range_date_from: Optional[str] = None,
+        range_date_to: Optional[str] = None,
+        range_preset: Optional[str] = None,
+    ) -> CustomBars:
+        """
+        Get custom bars market data.
+
+        Args:
+            symbol: The symbol to get bars for (e.g., "AAPL", "BTC-USD")
+            range_date_from: Start date (YYYY-MM-DD format)
+            range_date_to: End date (YYYY-MM-DD format)
+            range_preset: Preset range (e.g., "1M", "3M", "1Y", "5Y")
+
+        Returns:
+            CustomBars with OHLCV data
+        """
+        params = {"symbol": symbol}
+        if range_date_from:
+            params["range_date_from"] = range_date_from
+        if range_date_to:
+            params["range_date_to"] = range_date_to
+        if range_preset:
+            params["range_preset"] = range_preset
+
+        response = self._client.get("/api/v1/market-data/custom-bars", params=params)
+        return CustomBars.model_validate(response)
+
+    def get_market_overview(self, symbol: str) -> MarketOverview:
+        """
+        Get an overview of reference data for a symbol.
+
+        Args:
+            symbol: The symbol to get overview for (e.g., "AAPL", "BTC-USD")
+
+        Returns:
+            MarketOverview with company info, market cap, etc.
+        """
+        response = self._client.get("/api/v1/market-data/overview", params={"symbol": symbol})
+        return MarketOverview.model_validate(response)
+
+    def get_top_movers(self) -> TopMoversResponse:
+        """
+        Get top movers market data.
+
+        Returns:
+            TopMoversResponse with list of top gaining/losing symbols
+        """
+        response = self._client.get("/api/v1/market-data/top-movers")
+        return TopMoversResponse.model_validate(response)

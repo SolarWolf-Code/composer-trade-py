@@ -1,6 +1,6 @@
 """Market data models."""
 
-from typing import List, Optional
+from typing import List, Optional, Dict
 from enum import Enum
 from pydantic import BaseModel, Field
 
@@ -145,3 +145,144 @@ class OptionsOverview(BaseModel):
 
     symbol: str
     calendar: List[str] = []
+
+
+# New models for additional market data endpoints
+
+
+class MarketSnapshotPrice(BaseModel):
+    """Price information for market snapshot."""
+
+    model_config = {"populate_by_name": True}
+
+    price: Optional[float] = None
+    size: Optional[float] = None
+
+
+class MarketSnapshot(BaseModel):
+    """Snapshot of live market data for a symbol."""
+
+    model_config = {"populate_by_name": True}
+
+    symbol: Optional[str] = None
+    ask: Optional[MarketSnapshotPrice] = None
+    bid: Optional[MarketSnapshotPrice] = None
+    last_trade: Optional[MarketSnapshotPrice] = None
+    last_trade_size: Optional[float] = None
+    last_trade_time: Optional[str] = None
+    todays_change: Optional[float] = None
+    todays_change_percent: Optional[float] = None
+    market_status: Optional[str] = None
+    asset_type: Optional[str] = None
+
+
+class BarData(BaseModel):
+    """Individual bar data point."""
+
+    model_config = {"populate_by_name": True}
+
+    volume: float
+    open: float
+    close: float
+    high: float
+    low: float
+    volume_weighted_average_price: float
+    timestamp: int
+
+
+class CustomBars(BaseModel):
+    """Custom bars market data response."""
+
+    model_config = {"populate_by_name": True}
+
+    symbol: Optional[str] = None
+    data: List[BarData] = []
+
+
+class AssetType(str, Enum):
+    """Asset type for market overview."""
+
+    CRYPTO = "CRYPTO"
+    STOCK = "STOCK"
+    ETF = "ETF"
+
+
+class HQAddress(BaseModel):
+    """Headquarters address."""
+
+    model_config = {"populate_by_name": True}
+
+    address1: Optional[str] = None
+    address2: Optional[str] = None
+    city: Optional[str] = None
+    postal_code: Optional[str] = None
+    state: Optional[str] = None
+
+
+class MarketOverview(BaseModel):
+    """Market overview response."""
+
+    model_config = {"populate_by_name": True}
+
+    symbol: Optional[str] = None
+    name: Optional[str] = None
+    asset_type: Optional[AssetType] = None
+    description: Optional[str] = None
+    hq: Optional[HQAddress] = None
+    sector: Optional[str] = None
+    industry: Optional[str] = None
+    website: Optional[str] = None
+    market_cap: Optional[float] = None
+    shares_outstanding: Optional[float] = None
+
+
+class TopMover(BaseModel):
+    """Individual top mover."""
+
+    model_config = {"populate_by_name": True}
+
+    symbol: str
+    name: Optional[str] = None
+    last_price: float
+    todays_change: float
+    todays_change_percent: float
+    volume: float
+
+
+class TopMoversResponse(BaseModel):
+    """Response with top movers."""
+
+    model_config = {"populate_by_name": True}
+
+    top_movers: List[TopMover] = []
+
+
+class QuoteResult(BaseModel):
+    """Quote result for a single symbol."""
+
+    model_config = {"populate_by_name": True}
+
+    name: str
+    price: float
+    previous_price: float
+
+
+class QuotesResponse(BaseModel):
+    """Response from getting quotes."""
+
+    model_config = {"populate_by_name": True}
+
+    def __getitem__(self, key: str) -> QuoteResult:
+        return QuoteResult(**self.__dict__.get(key, {}))
+
+    def __iter__(self):
+        return iter(self.__dict__.keys())
+
+    def keys(self):
+        return self.__dict__.keys()
+
+    def values(self):
+        return self.__dict__.values()
+
+    def items(self):
+        return self.__dict__.items()

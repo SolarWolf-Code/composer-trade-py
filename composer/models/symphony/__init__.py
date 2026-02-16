@@ -44,7 +44,9 @@ class CreateSymphonyRequest(BaseModel):
     hashtag: str = Field(description="Hashtag for the symphony (e.g., #BTD)")
     tags: Optional[List[str]] = Field(None, description="Tags for categorizing the symphony")
     # Symphony trading logic - will be wrapped in {"raw_value": ...} when serialized
-    symphony: Optional[Any] = Field(None, description="The trading logic (Root node or dict)")
+    symphony: Optional[Any] = Field(
+        None, description="The trading logic (SymphonyDefinition node or dict)"
+    )
     benchmarks: Optional[List[Benchmark]] = Field(
         None, description="Benchmarks for performance comparison"
     )

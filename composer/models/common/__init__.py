@@ -16,8 +16,8 @@ from .symphony import (
     Group,
     WeightCashEqual,
     WeightCashSpecified,
-    Root,
     SymphonyScore,
+    SymphonyDefinition,
     validate_symphony_score,
 )
 
@@ -41,7 +41,7 @@ __all__ = [
     "Group",
     "WeightCashEqual",
     "WeightCashSpecified",
-    "Root",
     "SymphonyScore",
+    "SymphonyDefinition",
     "validate_symphony_score",
 ]

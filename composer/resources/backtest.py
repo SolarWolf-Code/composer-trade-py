@@ -27,17 +27,9 @@ class Backtest:
             result = client.backtest.run(
                 BacktestRequest(
                     symphony=SymphonyDefinition(
-                        raw_value=Root(name="My Strategy", ...)
-                    )
-                )
-            )
-
-            # Backtest with encoded EDN
-            result = client.backtest.run(
-                BacktestRequest(
-                    symphony=SymphonyDefinition(
-                        encoded_value="...transit...",
-                        encoding_type="transit_json"
+                        name="My Strategy",
+                        rebalance="daily",
+                        children=[...]
                     )
                 )
             )
@@ -45,6 +37,8 @@ class Backtest:
         payload = request
         if isinstance(request, BacktestRequest):
             payload = request.model_dump(by_alias=True, exclude_none=True, mode="json")
+            if "symphony" in payload and payload["symphony"]:
+                payload["symphony"] = {"raw_value": payload["symphony"]}
 
         raw_response = self.http_client.post("/api/v1/backtest", json=payload)
         return BacktestResult.model_validate(raw_response)
@@ -68,7 +62,8 @@ class Backtest:
         payload = request
         if isinstance(request, (BacktestRequest, BacktestParams)):
             payload = request.model_dump(by_alias=True, exclude_none=True, mode="json")
-
+            if "symphony" in payload and payload["symphony"]:
+                payload["symphony"] = {"raw_value": payload["symphony"]}
 
         raw_response = self.http_client.post("/api/v2/backtest", json=payload)
         return BacktestResult.model_validate(raw_response)
@@ -92,6 +87,8 @@ class Backtest:
         payload = request
         if isinstance(request, (BacktestRequest, BacktestParams)):
             payload = request.model_dump(by_alias=True, exclude_none=True, mode="json")
+            if "symphony" in payload and payload["symphony"]:
+                payload["symphony"] = {"raw_value": payload["symphony"]}
 
         raw_response = self.http_client.post("/api/v2/public/backtest", json=payload)
         return BacktestResult.model_validate(raw_response)

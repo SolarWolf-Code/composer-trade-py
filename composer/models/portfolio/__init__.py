@@ -11,10 +11,22 @@ from .responses import (
     HoldingStatsResponse,
     TotalStats,
     SymphonyHolding,
+    SymphonyStats,
     SymphonyStatsMeta,
     SymphonyStatsMetaResponse,
+    SymphonyStatsResponse,
     TimeSeries,
     PortfolioHistory,
+    SymphonyHoldings,
+    ActivityHistoryItem,
+    ActivityHistoryResponse,
+    DeployHistoryItem,
+    DeployHistoryResponse,
+)
+
+from .requests import (
+    GetAccountHoldingsParams,
+    GetActivityHistoryParams,
 )
 
 __all__ = [
@@ -28,8 +40,17 @@ __all__ = [
     "HoldingStatsResponse",
     "TotalStats",
     "SymphonyHolding",
+    "SymphonyStats",
     "SymphonyStatsMeta",
     "SymphonyStatsMetaResponse",
+    "SymphonyStatsResponse",
     "TimeSeries",
     "PortfolioHistory",
+    "SymphonyHoldings",
+    "ActivityHistoryItem",
+    "ActivityHistoryResponse",
+    "DeployHistoryItem",
+    "DeployHistoryResponse",
+    "GetAccountHoldingsParams",
+    "GetActivityHistoryParams",
 ]

@@ -103,3 +103,29 @@ class TradePreviewRequest(BaseModel):
 
     amount: Optional[float] = None
     broker_account_uuid: Optional[str] = None
+
+
+class AccountSource(str, Enum):
+    """Account source for dry run."""
+
+    QUEUED = "queued"
+    DEPLOYABLE = "deployable"
+    ALL_TRADABLE = "all_tradable"
+
+
+class CreateDryRunRequest(BaseModel):
+    """Request body for rebalance dry run endpoint."""
+
+    account_source: AccountSource = Field(
+        default=AccountSource.QUEUED, description="Account source to include in dry run"
+    )
+    dry_run_time: Optional[str] = Field(
+        None, description="Time to run the dry run (ISO 8601 format)"
+    )
+
+
+class DryRunEnqueueResponse(BaseModel):
+    """Response from enqueuing a dry run."""
+
+    num_accounts: int = Field(description="Number of accounts included in dry run")
+    dry_run_time: str = Field(description="Time the dry run was triggered")

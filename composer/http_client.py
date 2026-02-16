@@ -1,5 +1,5 @@
 import requests
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 from urllib.parse import urljoin
 
 
@@ -21,6 +21,21 @@ class ComposerAPIError(ComposerError):
         super().__init__(message)
         self.status_code = status_code
         self.response = response
+
+
+def _convert_params(params: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    """Convert params to ensure booleans are properly serialized as lowercase strings."""
+    if params is None:
+        return None
+    result = {}
+    for key, value in params.items():
+        if isinstance(value, bool):
+            result[key] = str(value).lower()
+        elif isinstance(value, (list, tuple)):
+            result[key] = value
+        elif value is not None:
+            result[key] = value
+    return result if result else None
 
 
 class HTTPClient:
@@ -73,7 +88,7 @@ class HTTPClient:
             raise ComposerError(f"Request failed: {str(e)}")
 
     def get(self, endpoint: str, params: Optional[Dict[str, Any]] = None) -> Any:
-        return self.request("GET", endpoint, params=params)
+        return self.request("GET", endpoint, params=_convert_params(params))
 
     def post(self, endpoint: str, json: Optional[Dict[str, Any]] = None) -> Any:
         return self.request("POST", endpoint, json=json)
