@@ -21,23 +21,34 @@ def _register_node_type(step: str, model_class: type[BaseModel]):
     NODE_TYPE_MAP[step] = model_class
 
 
-def _parse_node(data: Any) -> Any:
+def _parse_node(data: Any, depth: int = 0) -> Any:
     """Recursively parse dicts into typed model instances."""
+    if depth > 100:
+        return data
+
     if isinstance(data, dict):
         step = data.get("step")
         if step == "if-child":
-            # Check is_else_condition to determine which model to use
             is_else = data.get("is-else-condition?", False)
             if is_else:
-                return IfChildFalse.model_validate(data)
+                return IfChildFalse.model_validate(data, context={"skip_children": True})
             else:
-                return IfChildTrue.model_validate(data)
+                return IfChildTrue.model_validate(data, context={"skip_children": True})
         elif step in NODE_TYPE_MAP:
-            return NODE_TYPE_MAP[step].model_validate(data)
-        # Unknown step type, return as-is
+            try:
+                return NODE_TYPE_MAP[step].model_validate(data, context={"skip_children": True})
+            except Exception:
+                return data
         return data
     if isinstance(data, list):
-        return [_parse_node(item) for item in data]
+        result = []
+        for item in data:
+            parsed = _parse_node(item, depth + 1)
+            # Also process children of typed objects
+            if hasattr(parsed, "children") and parsed.children:
+                parsed.children = _parse_node(parsed.children, depth + 1)
+            result.append(parsed)
+        return result
     return data
 
 
@@ -87,10 +98,10 @@ class WeightMap(BaseModel):
     @field_validator("num", "den")
     @classmethod
     def validate_positive(cls, v):
-        """Ensure weight values are positive."""
+        """Ensure weight values are non-negative."""
         val = float(v) if isinstance(v, str) else v
-        if val <= 0:
-            raise ValueError("Weight numerator and denominator must be positive")
+        if val < 0:
+            raise ValueError("Weight numerator and denominator must be non-negative")
         return v
 
 
@@ -111,11 +122,30 @@ class BaseNode(BaseModel):
     )
     weight: Optional[WeightMap] = Field(None, description="Weight fraction for this node")
 
+    @field_validator("id")
+    @classmethod
+    def validate_id(cls, v):
+        """Ensure ID is a valid UUID. If not, auto-generate one."""
+        try:
+            uuid.UUID(v)
+            return v
+        except (ValueError, AttributeError):
+            # Not a valid UUID, generate a new one
+            return str(uuid.uuid4())
+
+    def model_dump(self, **kwargs) -> Dict[str, Any]:
+        """Override model_dump to exclude None values by default."""
+        kwargs.setdefault("exclude_none", True)
+        return super().model_dump(**kwargs)
+
+    def model_dump_json(self, **kwargs) -> str:
+        """Override model_dump_json to exclude None values by default."""
+        kwargs.setdefault("exclude_none", True)
+        return super().model_dump_json(**kwargs)
+
     @model_validator(mode="after")
     def parse_children(self):
         """Recursively parse children dicts into typed models."""
-        if hasattr(self, "children") and self.children:
-            self.children = _parse_node(self.children)
         return self
 
 
@@ -154,14 +184,16 @@ class IfChildTrue(BaseNode):
     model_config = {"populate_by_name": True}
 
     step: Literal["if-child"] = Field(default="if-child")
-    is_else_condition: Literal[False] = Field(False, alias="is-else-condition?")
-    comparator: Literal["gt", "gte", "eq", "lt", "lte"] = Field(description="Comparison operator")
-    lhs_fn: Function = Field(alias="lhs-fn")
+    is_else_condition: Optional[Literal[False]] = Field(False, alias="is-else-condition?")
+    comparator: Optional[Literal["gt", "gte", "eq", "lt", "lte"]] = Field(
+        None, description="Comparison operator"
+    )
+    lhs_fn: Optional[Function] = Field(None, alias="lhs-fn")
     lhs_window_days: Optional[int] = Field(None, alias="lhs-window-days")
-    lhs_val: str = Field(alias="lhs-val")
+    lhs_val: Optional[str] = Field(None, alias="lhs-val")
     lhs_fn_params: Optional[Dict[str, Any]] = Field(None, alias="lhs-fn-params")
-    rhs_val: Union[str, float] = Field(alias="rhs-val")
-    rhs_fixed_value: bool = Field(alias="rhs-fixed-value?")
+    rhs_val: Optional[Union[str, float]] = Field(None, alias="rhs-val")
+    rhs_fixed_value: Optional[bool] = Field(None, alias="rhs-fixed-value?")
     rhs_fn: Optional[Function] = Field(None, alias="rhs-fn")
     rhs_window_days: Optional[int] = Field(None, alias="rhs-window-days")
     children: List[Any] = Field(default_factory=list)
@@ -173,7 +205,7 @@ class IfChildFalse(BaseNode):
     model_config = {"populate_by_name": True}
 
     step: Literal["if-child"] = Field(default="if-child")
-    is_else_condition: Literal[True] = Field(True, alias="is-else-condition?")
+    is_else_condition: Optional[Literal[True]] = Field(True, alias="is-else-condition?")
     children: List[Any] = Field(default_factory=list)
 
 
@@ -231,7 +263,7 @@ class WeightInverseVol(BaseNode):
 
     model_config = {"populate_by_name": True}
 
-    step: Literal["wt-inverse-vol"] = Field(default="wt-inverse-vol")
+    step: Optional[Literal["wt-inverse-vol"]] = Field("wt-inverse-vol")
     window_days: Optional[int] = Field(None, alias="window-days")
     children: List[Any] = Field(default_factory=list)
 
@@ -246,6 +278,7 @@ class Group(BaseNode):
 
     step: Literal["group"] = Field(default="group")
     name: Optional[str] = Field(None)
+    collapsed: Optional[bool] = Field(None, alias="collapsed?")
     children: List[Any] = Field(default_factory=list)
 
     @field_validator("children")
@@ -264,7 +297,7 @@ class WeightCashEqual(BaseNode):
 
     model_config = {"populate_by_name": True}
 
-    step: Literal["wt-cash-equal"] = Field(default="wt-cash-equal")
+    step: Optional[Literal["wt-cash-equal"]] = Field("wt-cash-equal")
     children: List[Any] = Field(default_factory=list)
 
 
@@ -276,7 +309,7 @@ class WeightCashSpecified(BaseNode):
 
     model_config = {"populate_by_name": True}
 
-    step: Literal["wt-cash-specified"] = Field(default="wt-cash-specified")
+    step: Optional[Literal["wt-cash-specified"]] = Field("wt-cash-specified")
     children: List[Any] = Field(default_factory=list)
 
 
@@ -296,6 +329,13 @@ class SymphonyDefinition(BaseNode):
     children: List[Union[WeightCashEqual, WeightCashSpecified, WeightInverseVol]] = Field(
         default_factory=list
     )
+
+    @model_validator(mode="after")
+    def parse_children(self):
+        """Recursively parse children dicts into typed models."""
+        if self.children:
+            self.children = _parse_node(self.children)
+        return self
 
     @field_validator("rebalance_corridor_width")
     @classmethod

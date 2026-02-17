@@ -29,7 +29,6 @@ from .models import (
     Broker,
     ApplySubscription,
     SymphonyDefinition,
-    BacktestParams,
     BacktestRequest,
     BacktestExistingSymphonyRequest,
     Quote,
@@ -79,7 +78,6 @@ __all__ = [
     "ApplySubscription",
     # Backtest models
     "SymphonyDefinition",
-    "BacktestParams",
     "BacktestRequest",
     "BacktestExistingSymphonyRequest",
     "Quote",

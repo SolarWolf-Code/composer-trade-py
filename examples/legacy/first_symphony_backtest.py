@@ -14,7 +14,7 @@ Usage:
 """
 
 import os
-from composer import BacktestParams, ComposerClient
+from composer import ComposerClient
 from dotenv import load_dotenv
 
 
@@ -41,7 +41,7 @@ def main():
     print(f"First symphony: {first.name} (ID: {first.id})")
 
     print("\nRunning backtest...")
-    result = client.user_symphony.backtest_symphony(first.id, BacktestParams(benchmark_tickers=["QQQ"]))
+    result = client.user_symphony.backtest_symphony(first.id, benchmark_tickers=["QQQ"])
 
     print(result.dvm_capital["QQQ"])
 

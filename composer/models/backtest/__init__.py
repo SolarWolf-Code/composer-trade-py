@@ -5,7 +5,6 @@ from .requests import (
     Broker,
     ApplySubscription,
     SymphonyDefinition,
-    BacktestParams,
     BacktestRequest,
     BacktestExistingSymphonyRequest,
     Quote,
@@ -82,7 +81,6 @@ __all__ = [
     # Symphony models (old backtest)
     "SymphonyDefinition",
     # Request models
-    "BacktestParams",
     "BacktestRequest",
     "BacktestExistingSymphonyRequest",
     "Quote",

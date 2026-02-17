@@ -74,8 +74,6 @@ from .portfolio import (
     ActivityHistoryResponse,
     DeployHistoryItem,
     DeployHistoryResponse,
-    GetAccountHoldingsParams,
-    GetActivityHistoryParams,
 )
 
 # Cash section
@@ -205,7 +203,6 @@ from .backtest import (
     WatchlistResponse,
     SymphonyTickersResponse,
     # Request models
-    BacktestParams,
     BacktestRequest,
     BacktestExistingSymphonyRequest,
     Quote,
@@ -293,8 +290,6 @@ __all__ = [
     "ActivityHistoryResponse",
     "DeployHistoryItem",
     "DeployHistoryResponse",
-    "GetAccountHoldingsParams",
-    "GetActivityHistoryParams",
     # Cash
     "TransferConstraints",
     "ACHRelationship",
@@ -398,7 +393,6 @@ __all__ = [
     "SymphonyTickersResponse",
     # Backtest models
     "SymphonyDefinition",
-    "BacktestParams",
     "BacktestRequest",
     "BacktestExistingSymphonyRequest",
     "Quote",

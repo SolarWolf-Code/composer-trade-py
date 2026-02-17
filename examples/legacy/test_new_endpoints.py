@@ -19,7 +19,6 @@ Usage:
 import os
 from composer import (
     ComposerClient,
-    BacktestParams,
     BacktestRequest,
     SymphonyDefinition,
     Asset,
@@ -71,8 +70,10 @@ def main():
 
     print("\n2. POST /api/v1/public/backtest")
     try:
-        params = BacktestParams(capital=10000)
-        result = client.public_symphony.backtest(params=params)
+        result = client.public_symphony.backtest(
+            symphony=None,  # Would need a SymphonyDefinition to work
+            capital=10000,
+        )
         print(f"   SUCCESS: Standalone backtest completed")
         print(f"   Cumulative return: {result.stats.cumulative_return}")
     except Exception as e:

@@ -1,8 +1,35 @@
 """Portfolio response models."""
 
-from typing import List, Optional
+from datetime import date, datetime, timezone, timedelta
+from typing import Dict, List, Optional
 from enum import Enum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, model_validator
+
+EST_OFFSET = timedelta(hours=5)
+
+
+def _epoch_ms_to_date_string(epoch_ms: int) -> str:
+    """Convert epoch milliseconds to ISO date string (assuming EST timestamp from API)."""
+    dt = datetime.fromtimestamp(epoch_ms / 1000, tz=timezone.utc) + EST_OFFSET
+    return dt.date().isoformat()
+
+
+def _transform_epoch_series_to_by_date(
+    epoch_ms: List[int],
+    series: List[float],
+    deposit_adjusted_series: Optional[List[float]] = None,
+) -> "Dict[str, TimeSeriesEntry]":
+    """Transform epoch_ms + series to {date: TimeSeriesEntry} format."""
+    result: "Dict[str, TimeSeriesEntry]" = {}
+
+    for i, epoch in enumerate(epoch_ms):
+        date_str = _epoch_ms_to_date_string(epoch)
+        entry: Dict[str, float] = {"series": series[i]}
+        if deposit_adjusted_series:
+            entry["deposit_adjusted_series"] = deposit_adjusted_series[i]
+        result[date_str] = TimeSeriesEntry(**entry)
+
+    return dict(sorted(result.items()))
 
 
 class AssetClass(str, Enum):
@@ -178,14 +205,30 @@ class SymphonyStatsMetaResponse(BaseModel):
     symphonies: List[SymphonyStatsMeta] = []
 
 
+class TimeSeriesEntry(BaseModel):
+    """A single time series data point."""
+
+    series: float
+    deposit_adjusted_series: Optional[float] = None
+
+
 class TimeSeries(BaseModel):
     """Portfolio value over time."""
 
     model_config = {"populate_by_name": True}
 
-    epoch_ms: List[int]
-    series: List[float]
-    deposit_adjusted_series: Optional[List[float]] = None
+    dates: Dict[str, TimeSeriesEntry] = {}
+
+    @model_validator(mode="before")
+    @classmethod
+    def transform_epoch_to_dates(cls, v):
+        if isinstance(v, dict) and "epoch_ms" in v:
+            epoch_ms = v.get("epoch_ms", [])
+            series = v.get("series", [])
+            deposit_adjusted_series = v.get("deposit_adjusted_series")
+            dates = _transform_epoch_series_to_by_date(epoch_ms, series, deposit_adjusted_series)
+            return {"dates": dates}
+        return v
 
 
 class PortfolioHistory(BaseModel):
@@ -193,8 +236,17 @@ class PortfolioHistory(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    epoch_ms: List[int]
-    series: List[float]
+    dates: Dict[str, TimeSeriesEntry] = {}
+
+    @model_validator(mode="before")
+    @classmethod
+    def transform_epoch_to_dates(cls, v):
+        if isinstance(v, dict) and "epoch_ms" in v:
+            epoch_ms = v.get("epoch_ms", [])
+            series = v.get("series", [])
+            dates = _transform_epoch_series_to_by_date(epoch_ms, series)
+            return {"dates": dates}
+        return v
 
 
 class SymphonyHoldings(BaseModel):

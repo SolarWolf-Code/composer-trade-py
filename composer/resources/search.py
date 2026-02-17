@@ -72,5 +72,4 @@ class Search:
             "/api/v1/public/search/symphonies-v2",
             json=request,
         )
-
         return [SearchSymphonyResult.model_validate(r) for r in response]

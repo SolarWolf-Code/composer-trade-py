@@ -1,9 +1,37 @@
 """Backtest response models (output models)."""
 
+from datetime import date
 from typing import Optional, Dict, Any, List
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from ..common.stats import Stats
+
+
+def _epoch_day_to_date_string(epoch_day: int) -> str:
+    """Convert Java LocalDate.ofEpochDay integer to ISO date string."""
+    d = date.fromordinal(epoch_day + date(1970, 1, 1).toordinal())
+    return d.isoformat()
+
+
+def _transform_dvm_to_by_date(
+    dvm: Optional[Dict[str, Dict[str, float]]],
+) -> Optional[Dict[str, Dict[str, float]]]:
+    """Transform DVM from {series: {epoch_day: value}} to {date: {series: value}}."""
+    if dvm is None:
+        return None
+
+    result: Dict[str, Dict[str, float]] = {}
+
+    for series, values in dvm.items():
+        for epoch_day_str, value in values.items():
+            epoch_day = int(epoch_day_str)
+            date_str = _epoch_day_to_date_string(epoch_day)
+
+            if date_str not in result:
+                result[date_str] = {}
+            result[date_str][series] = value
+
+    return dict(sorted(result.items()))
 
 
 class Costs(BaseModel):
@@ -57,6 +85,16 @@ class BacktestResult(BaseModel):
 
     # Time-Dependent Value Metrics (TDVM) weights
     tdvm_weights: Optional[Dict[str, Dict[str, float]]] = None
+
+    @field_validator("dvm_capital", mode="before")
+    @classmethod
+    def transform_dvm_capital(cls, v):
+        return _transform_dvm_to_by_date(v)
+
+    @field_validator("tdvm_weights", mode="before")
+    @classmethod
+    def transform_tdvm_weights(cls, v):
+        return _transform_dvm_to_by_date(v)
 
     # Rebalancing information
     rebalance_days: Optional[List[int]] = None

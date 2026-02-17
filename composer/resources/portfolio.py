@@ -11,7 +11,6 @@ from ..models.portfolio import (
     SymphonyHoldings,
     ActivityHistoryResponse,
     DeployHistoryResponse,
-    GetActivityHistoryParams,
 )
 from ..models.accounts import Holding
 
@@ -151,6 +150,7 @@ class Portfolio:
         response = self._client.get(
             f"/api/v1/portfolio/accounts/{account_id}/symphonies/{symphony_id}/holdings",
         )
+        print(response)
         return SymphonyHoldings.model_validate(response)
 
     def get_holdings_by_position(self, position_id: str) -> SymphonyHoldings:
@@ -193,12 +193,13 @@ class Portfolio:
         Returns:
             Activity history for the symphony
         """
-        params = GetActivityHistoryParams(
-            start_date=start_date,
-            end_date=end_date,
-            limit=limit,
-            offset=offset,
-        ).model_dump(exclude_none=True)
+        params = {
+            "start_date": start_date,
+            "end_date": end_date,
+            "limit": limit,
+            "offset": offset,
+        }
+        params = {k: v for k, v in params.items() if v is not None}
         response = self._client.get(
             f"/api/v1/portfolio/accounts/{account_id}/symphonies/{symphony_id}/activity-history",
             params=params,

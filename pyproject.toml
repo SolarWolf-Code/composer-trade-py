@@ -32,6 +32,7 @@ dev = [
     "hatch>=1.16.3",
     "twine>=6.2.0",
     "build>=1.4.0",
+    "ipykernel>=6.0.0",
 ]
 
 [project.urls]

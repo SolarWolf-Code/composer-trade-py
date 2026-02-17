@@ -24,11 +24,6 @@ from .responses import (
     DeployHistoryResponse,
 )
 
-from .requests import (
-    GetAccountHoldingsParams,
-    GetActivityHistoryParams,
-)
-
 __all__ = [
     "AssetClass",
     "PositionDirection",
@@ -51,6 +46,4 @@ __all__ = [
     "ActivityHistoryResponse",
     "DeployHistoryItem",
     "DeployHistoryResponse",
-    "GetAccountHoldingsParams",
-    "GetActivityHistoryParams",
 ]

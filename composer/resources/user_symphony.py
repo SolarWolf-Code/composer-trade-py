@@ -10,8 +10,10 @@ from ..models.backtest import (
     FindAndReplaceOperation,
     UpdateSymphonyResponse,
     UpdateSymphonyNodesResponse,
-    BacktestParams,
     BacktestResult,
+    BacktestVersion,
+    Broker,
+    ApplySubscription,
 )
 from ..models.common import SymphonyDefinition
 from ..models.symphony import (
@@ -135,6 +137,7 @@ class UserSymphony:
         """
         params = {"score_version": score_version}
         response = self._client.get(f"/api/v1/symphonies/{symphony_id}/score", params=params)
+        print(response)
         return SymphonyDefinition.model_validate(response)
 
     def modify_symphony(
@@ -366,14 +369,40 @@ class UserSymphony:
     def backtest_symphony(
         self,
         symphony_id: str,
-        params: Optional[Union[Dict[str, Any], BacktestParams]] = None,
+        capital: float = 10000.0,
+        abbreviate_days: Optional[int] = None,
+        apply_reg_fee: bool = True,
+        apply_taf_fee: bool = True,
+        apply_subscription: ApplySubscription = ApplySubscription.NONE,
+        backtest_version: BacktestVersion = BacktestVersion.V2,
+        slippage_percent: float = 0.0001,
+        spread_markup: float = 0.0,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        broker: Broker = Broker.ALPACA_WHITE_LABEL,
+        benchmark_symphonies: Optional[List[str]] = None,
+        benchmark_tickers: Optional[List[str]] = None,
+        sparkgraph_color: Optional[str] = None,
     ) -> BacktestResult:
         """
         Run a backtest for an existing symphony by its ID.
 
         Args:
             symphony_id: The ID of the symphony to backtest.
-            params: Optional backtest parameters.
+            capital: Initial capital for the backtest (default: 10000.0).
+            abbreviate_days: Number of days to abbreviate the backtest (for testing).
+            apply_reg_fee: Whether to apply regulatory fees (SEC fees).
+            apply_taf_fee: Whether to apply TAF (Trading Activity Fee).
+            apply_subscription: Composer subscription level to simulate (affects fees).
+            backtest_version: Backtest engine version to use.
+            slippage_percent: Slippage assumption as decimal (0.0001 = 0.01%).
+            spread_markup: Bid-ask spread markup as decimal (0.001 = 0.1%).
+            start_date: Backtest start date (YYYY-MM-DD). Defaults to earliest available data.
+            end_date: Backtest end date (YYYY-MM-DD). Defaults to latest available data.
+            broker: Broker to simulate for fee calculations.
+            benchmark_symphonies: List of symphony IDs to use as benchmarks.
+            benchmark_tickers: List of ticker symbols to use as benchmarks (e.g., ['SPY', 'QQQ']).
+            sparkgraph_color: Custom color for performance chart.
 
         Returns:
             BacktestResult: Parsed backtest result with all statistics.
@@ -382,13 +411,23 @@ class UserSymphony:
             >>> result = client.user_symphony.backtest_symphony("fk6VGRDAAgiH120TfUPS")
             >>> print(f"Sharpe: {result.stats.sharpe_ratio}")
         """
-        if params is None:
-            params = BacktestParams()
-
-        if isinstance(params, BacktestParams):
-            payload = params.model_dump(by_alias=True, exclude_none=True, mode="json")
-        else:
-            payload = params
+        payload = {
+            "capital": capital,
+            "abbreviate_days": abbreviate_days,
+            "apply_reg_fee": apply_reg_fee,
+            "apply_taf_fee": apply_taf_fee,
+            "apply_subscription": apply_subscription.value if apply_subscription else None,
+            "backtest_version": backtest_version.value if backtest_version else None,
+            "slippage_percent": slippage_percent,
+            "spread_markup": spread_markup,
+            "start_date": start_date,
+            "end_date": end_date,
+            "broker": broker.value if broker else None,
+            "benchmark_symphonies": benchmark_symphonies,
+            "benchmark_tickers": benchmark_tickers,
+            "sparkgraph_color": sparkgraph_color,
+        }
+        payload = {k: v for k, v in payload.items() if v is not None}
 
         raw_response = self._client.post(
             f"/api/v1/symphonies/{symphony_id}/backtest",
@@ -399,14 +438,40 @@ class UserSymphony:
     def backtest_symphony_v2(
         self,
         symphony_id: str,
-        params: Optional[Union[Dict[str, Any], BacktestParams]] = None,
+        capital: float = 10000.0,
+        abbreviate_days: Optional[int] = None,
+        apply_reg_fee: bool = True,
+        apply_taf_fee: bool = True,
+        apply_subscription: ApplySubscription = ApplySubscription.NONE,
+        backtest_version: BacktestVersion = BacktestVersion.V2,
+        slippage_percent: float = 0.0001,
+        spread_markup: float = 0.0,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        broker: Broker = Broker.ALPACA_WHITE_LABEL,
+        benchmark_symphonies: Optional[List[str]] = None,
+        benchmark_tickers: Optional[List[str]] = None,
+        sparkgraph_color: Optional[str] = None,
     ) -> BacktestResult:
         """
         Run a backtest for an existing symphony by its ID (v2).
 
         Args:
             symphony_id: The ID of the symphony to backtest.
-            params: Optional backtest parameters.
+            capital: Initial capital for the backtest (default: 10000.0).
+            abbreviate_days: Number of days to abbreviate the backtest (for testing).
+            apply_reg_fee: Whether to apply regulatory fees (SEC fees).
+            apply_taf_fee: Whether to apply TAF (Trading Activity Fee).
+            apply_subscription: Composer subscription level to simulate (affects fees).
+            backtest_version: Backtest engine version to use.
+            slippage_percent: Slippage assumption as decimal (0.0001 = 0.01%).
+            spread_markup: Bid-ask spread markup as decimal (0.001 = 0.1%).
+            start_date: Backtest start date (YYYY-MM-DD). Defaults to earliest available data.
+            end_date: Backtest end date (YYYY-MM-DD). Defaults to latest available data.
+            broker: Broker to simulate for fee calculations.
+            benchmark_symphonies: List of symphony IDs to use as benchmarks.
+            benchmark_tickers: List of ticker symbols to use as benchmarks (e.g., ['SPY', 'QQQ']).
+            sparkgraph_color: Custom color for performance chart.
 
         Returns:
             BacktestResult: Parsed backtest result with all statistics.
@@ -415,13 +480,23 @@ class UserSymphony:
             >>> result = client.user_symphony.backtest_symphony_v2("fk6VGRDAAgiH120TfUPS")
             >>> print(f"Sharpe: {result.stats.sharpe_ratio}")
         """
-        if params is None:
-            params = BacktestParams()
-
-        if isinstance(params, BacktestParams):
-            payload = params.model_dump(by_alias=True, exclude_none=True, mode="json")
-        else:
-            payload = params
+        payload = {
+            "capital": capital,
+            "abbreviate_days": abbreviate_days,
+            "apply_reg_fee": apply_reg_fee,
+            "apply_taf_fee": apply_taf_fee,
+            "apply_subscription": apply_subscription.value if apply_subscription else None,
+            "backtest_version": backtest_version.value if backtest_version else None,
+            "slippage_percent": slippage_percent,
+            "spread_markup": spread_markup,
+            "start_date": start_date,
+            "end_date": end_date,
+            "broker": broker.value if broker else None,
+            "benchmark_symphonies": benchmark_symphonies,
+            "benchmark_tickers": benchmark_tickers,
+            "sparkgraph_color": sparkgraph_color,
+        }
+        payload = {k: v for k, v in payload.items() if v is not None}
 
         raw_response = self._client.post(
             f"/api/v2/symphonies/{symphony_id}/backtest",
