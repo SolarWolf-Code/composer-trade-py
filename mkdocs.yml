@@ -6,14 +6,14 @@ theme:
   name: material
   palette:
     - scheme: slate
-      primary: black
-      accent: black
+      primary: green
+      accent: green
       toggle:
         icon: octicons/moon-24
         name: Dark mode
     - scheme: default
-      primary: black
-      accent: black
+      primary: green
+      accent: green
       toggle:
         icon: octicons/sun-24
         name: Light mode
