@@ -52,6 +52,15 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - API Reference:
+      - Overview: api/reference.md
+      - Client: api/client.md
+      - Portfolio: api/portfolio.md
+      - Backtest & Symphonies: api/backtest.md
+      - Trading: api/trading.md
+      - Market Data: api/market-data.md
+      - Advanced: api/advanced.md
+      - Models: api/models.md
   - Examples:
       - Account Holdings: examples/account_holdings.md
       - Account Returns: examples/account_returns.md
@@ -68,12 +77,3 @@ nav:
       - Symphony Holdings: examples/symphony_holdings.md
       - Symphony Live vs Backtest: examples/symphony_live_vs_backtest.md
       - Symphony Score: examples/symphony_score.md
-  - API Reference:
-      - Overview: api/reference.md
-      - Client: api/client.md
-      - Portfolio: api/portfolio.md
-      - Backtest & Symphonies: api/backtest.md
-      - Trading: api/trading.md
-      - Market Data: api/market-data.md
-      - Advanced: api/advanced.md
-      - Models: api/models.md
