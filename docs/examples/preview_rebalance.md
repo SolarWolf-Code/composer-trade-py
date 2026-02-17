@@ -139,6 +139,52 @@ except ComposerAPIError as e:
 ```
 Previewing rebalance for: The Holy Grail (Invest Copy) (Buy Copy)
 Symphony ID: SvfHiUshxXcHUfoCyvn5
+============================================================
+REBALANCE PREVIEW SUMMARY
+============================================================
+Symphony Name: The Holy Grail (Invest Copy) (Buy Copy)
+Current Value: $12,054.15
+Needs Rebalance: Yes
+Next Rebalance After: 2026-02-17
+Queued Cash Change: $0.00
+
+------------------------------------------------------------
+RECOMMENDED TRADES
+------------------------------------------------------------
+
+Symbol     Name                      Side       Shares        Price      Value Chg
+--------------------------------------------------------------------------------
+TQQQ       ProShares Trust - ProS... BUY    0.022593015 $      48.24 $        -1.09
+$USD       Symphony Cash Remainder   SELL   -1.0899999999999999 $       1.00 $        -1.09
+--------------------------------------------------------------------------------
+Total Buys:                                $         0.00
+Total Sells:                               $         2.18
+Net:                                       $        -2.18
+
+------------------------------------------------------------
+WEIGHT CHANGES
+------------------------------------------------------------
+
+Symbol         Previous       Target       Change
+--------------------------------------------------
+TQQQ             99.89%       99.90%       +0.01%
+$USD              0.11%        0.10%       -0.01%
+
+============================================================
+NOTE: This is a preview only. No trades have been placed.
+To execute, use: client.deploy.rebalance(symphony_id)
+============================================================
+============================================================
+```
+
+!!! warning
+
+    If market is closed, it will throw an error
+
+**Output:**
+```
+Previewing rebalance for: The Holy Grail (Invest Copy) (Buy Copy)
+Symphony ID: SvfHiUshxXcHUfoCyvn5
 
 ============================================================
 MARKETS CLOSED
