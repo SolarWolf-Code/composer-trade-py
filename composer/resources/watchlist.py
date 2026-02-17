@@ -31,8 +31,8 @@ class Watchlist:
             List[WatchlistSymphony]: List of watchlist symphonies with statistics.
 
         Example:
-            >>> watchlist = client.watchlist.get_watchlist()
-            >>> for item in watchlist:
+             watchlist = client.watchlist.get_watchlist()
+             for item in watchlist:
             ...     print(f"Watching: {item.name}")
             ...     print(f"  Sharpe: {item.oos_sharpe_ratio}")
         """
@@ -51,8 +51,8 @@ class Watchlist:
             WatchlistSymphonyItem: The added symphony with its details.
 
         Example:
-            >>> result = client.watchlist.add_to_watchlist("fk6VGRDAAgiH120TfUPS")
-            >>> print(f"Added: {result.name}")
+             result = client.watchlist.add_to_watchlist("fk6VGRDAAgiH120TfUPS")
+             print(f"Added: {result.name}")
         """
         response = self._client.post(f"/api/v1/watchlist/{symphony_id}")
         return WatchlistSymphonyItem.model_validate(response)
@@ -65,6 +65,6 @@ class Watchlist:
             symphony_id: The unique identifier of the symphony to remove.
 
         Example:
-            >>> client.watchlist.remove_from_watchlist("fk6VGRDAAgiH120TfUPS")
+             client.watchlist.remove_from_watchlist("fk6VGRDAAgiH120TfUPS")
         """
         self._client.delete(f"/api/v1/watchlist/{symphony_id}")

@@ -40,8 +40,8 @@ class PublicSymphony:
                 parameters and metadata.
 
         Example:
-            >>> indicators = client.public_symphony.get_indicators()
-            >>> for indicator in indicators:
+             indicators = client.public_symphony.get_indicators()
+             for indicator in indicators:
             ...     print(f"{indicator.name}: {indicator.description}")
         """
         response = self._client.get("/api/v1/public/symphony-scores/indicators")
@@ -58,8 +58,8 @@ class PublicSymphony:
             List[SymphonyMeta]: List of symphony metadata objects.
 
         Example:
-            >>> meta = client.public_symphony.get_symphony_meta(["sym-abc123"])
-            >>> for symphony in meta:
+             meta = client.public_symphony.get_symphony_meta(["sym-abc123"])
+             for symphony in meta:
             ...     print(f"{symphony.name}: {symphony.rebalance_frequency}")
         """
         response = self._client.post(
@@ -80,9 +80,9 @@ class PublicSymphony:
                 backtest data, and metadata.
 
         Example:
-            >>> symphony = client.public_symphony.get_symphony("sym-abc123")
-            >>> print(f"Name: {symphony.name}")
-            >>> print(f"Sharpe: {symphony.stats_oos_sharpe_ratio}")
+             symphony = client.public_symphony.get_symphony("sym-abc123")
+             print(f"Name: {symphony.name}")
+             print(f"Sharpe: {symphony.stats_oos_sharpe_ratio}")
         """
         response = self._client.get(f"/api/v1/public/symphonies/{symphony_id}")
         return SymphonyDetail.model_validate(response)
@@ -98,8 +98,8 @@ class PublicSymphony:
             List[SymphonyVersionInfo]: List of version information.
 
         Example:
-            >>> versions = client.public_symphony.get_versions("sym-abc123")
-            >>> for version in versions:
+             versions = client.public_symphony.get_versions("sym-abc123")
+             for version in versions:
             ...     print(f"Version {version.version_id}: {version.created_at}")
         """
         response = self._client.get(f"/api/v1/public/symphonies/{symphony_id}/versions")
@@ -120,12 +120,12 @@ class PublicSymphony:
             SymphonyDefinition: The symphony score/parsed EDN structure.
 
         Example:
-            >>> score = client.public_symphony.get_version_score(
+             score = client.public_symphony.get_version_score(
             ...     "sym-abc123",
             ...     "ver-xyz789"
             ... )
-            >>> print(score.name)
-            >>> print(score.rebalance)
+             print(score.name)
+             print(score.rebalance)
         """
         params = {"score_version": score_version}
         response = self._client.get(
@@ -145,9 +145,9 @@ class PublicSymphony:
             SymphonyDefinition: The symphony score/parsed EDN structure.
 
         Example:
-            >>> score = client.public_symphony.get_score("sym-abc123")
-            >>> print(score.name)
-            >>> print(score.rebalance)
+             score = client.public_symphony.get_score("sym-abc123")
+             print(score.name)
+             print(score.rebalance)
         """
         params = {"score_version": score_version}
         response = self._client.get(f"/api/v1/public/symphonies/{symphony_id}/score", params=params)
@@ -164,8 +164,8 @@ class PublicSymphony:
             List[str]: List of ticker symbols used in the symphony.
 
         Example:
-            >>> tickers = client.public_symphony.get_tickers("sym-abc123")
-            >>> print(f"Symphony uses: {', '.join(tickers)}")
+             tickers = client.public_symphony.get_tickers("sym-abc123")
+             print(f"Symphony uses: {', '.join(tickers)}")
         """
         response = self._client.get(f"/api/v1/public/symphonies/{symphony_id}/tickers")
         result = TickersResponse.model_validate(response)
@@ -213,8 +213,8 @@ class PublicSymphony:
             BacktestResult: Parsed backtest result with all statistics.
 
         Example:
-            >>> result = client.public_symphony.backtest_symphony("sym-abc123")
-            >>> print(f"Sharpe: {result.stats.sharpe_ratio}")
+            result = client.public_symphony.backtest_symphony("sym-abc123")
+            print(f"Sharpe: {result.stats.sharpe_ratio}")
         """
         payload = {
             "capital": capital,
@@ -282,8 +282,8 @@ class PublicSymphony:
             BacktestResult: Parsed backtest result with all statistics.
 
         Example:
-            >>> result = client.public_symphony.backtest(symphony=SymphonyDefinition(...))
-            >>> print(f"Sharpe: {result.stats.sharpe_ratio}")
+             result = client.public_symphony.backtest(symphony=SymphonyDefinition(...))
+             print(f"Sharpe: {result.stats.sharpe_ratio}")
         """
         payload = {
             "symphony": {"raw_value": symphony.model_dump(by_alias=True, exclude_none=True)},
@@ -352,8 +352,8 @@ class PublicSymphony:
             BacktestResult: Parsed backtest result with all statistics.
 
         Example:
-            >>> result = client.public_symphony.backtest_symphony_v2("sym-abc123")
-            >>> print(f"Sharpe: {result.stats.sharpe_ratio}")
+             result = client.public_symphony.backtest_symphony_v2("sym-abc123")
+             print(f"Sharpe: {result.stats.sharpe_ratio}")
         """
         payload = {
             "capital": capital,

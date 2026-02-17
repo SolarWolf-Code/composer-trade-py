@@ -33,8 +33,8 @@ class UserSymphonies:
             List[UserSymphony]: List of user's symphonies with statistics.
 
         Example:
-            >>> symphonies = client.user_symphonies.list_symphonies()
-            >>> for symphony in symphonies:
+             symphonies = client.user_symphonies.list_symphonies()
+             for symphony in symphonies:
             ...     print(f"{symphony.name}: Sharpe={symphony.oos_sharpe_ratio}")
         """
         response = self._client.get("/api/v1/user/symphonies")
@@ -52,8 +52,8 @@ class UserSymphonies:
             List[DraftSymphony]: List of user's draft symphonies with statistics.
 
         Example:
-            >>> drafts = client.user_symphonies.list_drafts()
-            >>> for draft in drafts:
+             drafts = client.user_symphonies.list_drafts()
+             for draft in drafts:
             ...     print(f"Draft: {draft.name}")
         """
         response = self._client.get("/api/v1/user/symphonies/drafts")
@@ -75,11 +75,11 @@ class UserSymphonies:
             List[Dict[str, Any]]: Response from the bulk modify operation.
 
         Example:
-            >>> result = client.user_symphonies.bulk_modify_symphonies(
+             result = client.user_symphonies.bulk_modify_symphonies(
             ...     "SPY",
             ...     "TQQQ"
             ... )
-            >>> print(result)
+             print(result)
         """
         request_body = {
             "op": "FIND_AND_REPLACE",
@@ -110,11 +110,11 @@ class UserSymphonies:
             Dict[str, Any]: Response from the API.
 
         Example:
-            >>> result = client.user_symphonies.pubsub_modify_symphonies(
+             result = client.user_symphonies.pubsub_modify_symphonies(
             ...     subscription="my-subscription",
             ...     message={"publish_time": "2024-01-01", "data": {...}}
             ... )
-            >>> print(result)
+             print(result)
         """
         request_body = {
             "subscription": subscription,

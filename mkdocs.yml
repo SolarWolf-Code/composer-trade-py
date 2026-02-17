@@ -1,0 +1,79 @@
+site_name: Composer Trade SDK
+site_description: Python SDK for Composer.trade API
+site_url: https://solarwolf-code.github.io/composer-trade-py/
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: black
+      accent: black
+      toggle:
+        icon: octicons/moon-24
+        name: Dark mode
+    - scheme: default
+      primary: black
+      accent: black
+      toggle:
+        icon: octicons/sun-24
+        name: Light mode
+  logo: images/composer-trade-py.png
+  favicon: images/composer-trade-py.png
+  features:
+    - search.suggest
+    - search.highlight
+    - search.share
+    - navigation.expand
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: true
+            show_root_heading: true
+            show_category_heirarchy: true
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __pyobj__
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+nav:
+  - Home: index.md
+  - Examples:
+      - Account Holdings: examples/account_holdings.md
+      - Account Returns: examples/account_returns.md
+      - Account Stats: examples/account_stats.md
+      - Copy Symphony: examples/copy_symphony.md
+      - Create Symphony: examples/create_symphony.md
+      - Create Symphony Blocks: examples/create_symphony_blocks.md
+      - Place Market Order: examples/place_market_order.md
+      - Preview Rebalance: examples/preview_rebalance.md
+      - Remove Metadata: examples/remove_metadata.md
+      - Search Symphonies: examples/search_symphonies.md
+      - Simple Backtest: examples/simple_backtest.md
+      - Symphony Correlation: examples/symphony_correlation.md
+      - Symphony Holdings: examples/symphony_holdings.md
+      - Symphony Live vs Backtest: examples/symphony_live_vs_backtest.md
+      - Symphony Score: examples/symphony_score.md
+  - API Reference:
+      - Overview: api/reference.md
+      - Client: api/client.md
+      - Portfolio: api/portfolio.md
+      - Backtest & Symphonies: api/backtest.md
+      - Trading: api/trading.md
+      - Market Data: api/market-data.md
+      - Advanced: api/advanced.md
+      - Models: api/models.md

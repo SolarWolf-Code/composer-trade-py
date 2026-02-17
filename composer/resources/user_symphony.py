@@ -47,8 +47,8 @@ class UserSymphony:
                 parameters and metadata.
 
         Example:
-            >>> indicators = client.user_symphony.get_indicators()
-            >>> for indicator in indicators:
+             indicators = client.user_symphony.get_indicators()
+             for indicator in indicators:
             ...     print(f"{indicator.name}: {indicator.description}")
         """
         response = self._client.get("/api/v1/symphony-scores/indicators")
@@ -66,9 +66,9 @@ class UserSymphony:
                 backtest data, and metadata.
 
         Example:
-            >>> symphony = client.user_symphony.get_symphony("sym-abc123")
-            >>> print(f"Name: {symphony.name}")
-            >>> print(f"Sharpe: {symphony.stats_oos_sharpe_ratio}")
+             symphony = client.user_symphony.get_symphony("sym-abc123")
+             print(f"Name: {symphony.name}")
+             print(f"Sharpe: {symphony.stats_oos_sharpe_ratio}")
         """
         response = self._client.get(f"/api/v1/symphonies/{symphony_id}")
         return SymphonyDetail.model_validate(response)
@@ -84,8 +84,8 @@ class UserSymphony:
             List[SymphonyVersionInfo]: List of version information.
 
         Example:
-            >>> versions = client.user_symphony.get_versions("sym-abc123")
-            >>> for version in versions:
+             versions = client.user_symphony.get_versions("sym-abc123")
+             for version in versions:
             ...     print(f"Version {version.version_id}: {version.created_at}")
         """
         response = self._client.get(f"/api/v1/symphonies/{symphony_id}/versions")
@@ -106,12 +106,12 @@ class UserSymphony:
             SymphonyDefinition: The symphony score/parsed EDN structure.
 
         Example:
-            >>> score = client.user_symphony.get_version_score(
+             score = client.user_symphony.get_version_score(
             ...     "sym-abc123",
             ...     "ver-xyz789"
             ... )
-            >>> print(score.name)
-            >>> print(score.rebalance)
+             print(score.name)
+             print(score.rebalance)
         """
         params = {"score_version": score_version}
         response = self._client.get(
@@ -131,9 +131,9 @@ class UserSymphony:
             SymphonyDefinition: The symphony score/parsed EDN structure.
 
         Example:
-            >>> score = client.user_symphony.get_score("sym-abc123")
-            >>> print(score.name)
-            >>> print(score.rebalance)
+             score = client.user_symphony.get_score("sym-abc123")
+             print(score.name)
+             print(score.rebalance)
         """
         params = {"score_version": score_version}
         response = self._client.get(f"/api/v1/symphonies/{symphony_id}/score", params=params)
@@ -156,12 +156,12 @@ class UserSymphony:
                 the modified symphony.
 
         Example:
-            >>> result = client.user_symphony.modify_symphony(
+             result = client.user_symphony.modify_symphony(
             ...     "fk6VGRDAAgiH120TfUPS",
             ...     "SPY",
             ...     "TQQQ"
             ... )
-            >>> print(f"Modified symphony: {result.symphony_id}, version: {result.version_id}")
+             print(f"Modified symphony: {result.symphony_id}, version: {result.version_id}")
         """
         request_body = {
             "op": "FIND_AND_REPLACE",
@@ -204,12 +204,12 @@ class UserSymphony:
             UpdateSymphonyResponse: Contains existing_version_id and version_id.
 
         Example:
-            >>> result = client.user_symphony.update_symphony(
+             result = client.user_symphony.update_symphony(
             ...     "fk6VGRDAAgiH120TfUPS",
             ...     name="New Name",
             ...     description="New description"
             ... )
-            >>> print(f"New version: {result.version_id}")
+             print(f"New version: {result.version_id}")
         """
         request_body: Dict[str, Any] = {}
         if name is not None:
@@ -243,7 +243,7 @@ class UserSymphony:
             symphony_id: Unique identifier for the symphony to delete.
 
         Example:
-            >>> client.user_symphony.delete_symphony("fk6VGRDAAgiH120TfUPS")
+             client.user_symphony.delete_symphony("fk6VGRDAAgiH120TfUPS")
         """
         self._client.delete(f"/api/v1/symphonies/{symphony_id}")
 
@@ -261,8 +261,8 @@ class UserSymphony:
             Dict[str, Any]: Response from the API.
 
         Example:
-            >>> result = client.user_symphony.submit_to_community("fk6VGRDAAgiH120TfUPS")
-            >>> print(result)
+             result = client.user_symphony.submit_to_community("fk6VGRDAAgiH120TfUPS")
+             print(result)
         """
         response = self._client.put(f"/api/v1/symphonies/{symphony_id}/submit-to-community")
         return response
@@ -295,13 +295,13 @@ class UserSymphony:
             CreateSymphonyResponse: Contains symphony_id and version_id.
 
         Example:
-            >>> from composer.models.common import Asset, WeightCashEqual, SymphonyDefinition
-            >>> symphony = SymphonyDefinition(name="My Strategy", rebalance="daily", children=[...])
-            >>> result = client.user_symphony.create_symphony(
+             from composer.models.common import Asset, WeightCashEqual, SymphonyDefinition
+             symphony = SymphonyDefinition(name="My Strategy", rebalance="daily", children=[...])
+             result = client.user_symphony.create_symphony(
             ...     name="My Strategy",
             ...     symphony=symphony
             ... )
-            >>> print(f"Created: {result.symphony_id}")
+             print(f"Created: {result.symphony_id}")
         """
         request_body: Dict[str, Any] = {"name": name, "asset_class": asset_class}
         if description is not None:
@@ -344,11 +344,11 @@ class UserSymphony:
             CopySymphonyResponse: Contains the new symphony_id and version_id.
 
         Example:
-            >>> result = client.user_symphony.copy_symphony(
+             result = client.user_symphony.copy_symphony(
             ...     "fk6VGRDAAgiH120TfUPS",
             ...     name="My Copy"
             ... )
-            >>> print(f"Copied: {result.symphony_id}")
+             print(f"Copied: {result.symphony_id}")
         """
         request_body: Dict[str, Any] = {}
         if name is not None:
@@ -408,8 +408,8 @@ class UserSymphony:
             BacktestResult: Parsed backtest result with all statistics.
 
         Example:
-            >>> result = client.user_symphony.backtest_symphony("fk6VGRDAAgiH120TfUPS")
-            >>> print(f"Sharpe: {result.stats.sharpe_ratio}")
+             result = client.user_symphony.backtest_symphony("fk6VGRDAAgiH120TfUPS")
+             print(f"Sharpe: {result.stats.sharpe_ratio}")
         """
         payload = {
             "capital": capital,
@@ -477,8 +477,8 @@ class UserSymphony:
             BacktestResult: Parsed backtest result with all statistics.
 
         Example:
-            >>> result = client.user_symphony.backtest_symphony_v2("fk6VGRDAAgiH120TfUPS")
-            >>> print(f"Sharpe: {result.stats.sharpe_ratio}")
+             result = client.user_symphony.backtest_symphony_v2("fk6VGRDAAgiH120TfUPS")
+             print(f"Sharpe: {result.stats.sharpe_ratio}")
         """
         payload = {
             "capital": capital,
@@ -522,12 +522,12 @@ class UserSymphony:
             UpdateSymphonyNodesResponse: Response containing symphony_id and version_id.
 
         Example:
-            >>> result = client.user_symphony.update_symphony_nodes(
+             result = client.user_symphony.update_symphony_nodes(
             ...     "fk6VGRDAAgiH120TfUPS",
             ...     "v1",
             ...     [{"id": "node-123", "ticker": "QQQ"}]
             ... )
-            >>> print(result.symphony_id, result.version_id)
+             print(result.symphony_id, result.version_id)
         """
         request_body = {"updates": updates}
         response = self._client.patch(

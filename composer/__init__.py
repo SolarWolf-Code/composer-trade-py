@@ -1,6 +1,7 @@
 """Composer API Client."""
 
 from .client import ComposerClient
+from . import resources
 from .models import (
     # Common stats
     Stats,

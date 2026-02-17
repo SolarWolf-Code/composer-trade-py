@@ -88,8 +88,8 @@ class Backtest:
             BacktestResult: Parsed backtest result with all statistics
 
         Example:
-            >>> result = client.backtest.run_v2(symphony=SymphonyDefinition(...))
-            >>> print(f"Sharpe: {result.stats.sharpe_ratio}")
+             result = client.backtest.run_v2(symphony=SymphonyDefinition(...))
+             print(f"Sharpe: {result.stats.sharpe_ratio}")
         """
         payload = {
             "symphony": {"raw_value": symphony.model_dump(by_alias=True, exclude_none=True)}
@@ -157,8 +157,8 @@ class Backtest:
             BacktestResult: Parsed backtest result with all statistics
 
         Example:
-            >>> result = client.backtest.run_public_v2(symphony=SymphonyDefinition(...))
-            >>> print(f"Sharpe: {result.stats.sharpe_ratio}")
+             result = client.backtest.run_public_v2(symphony=SymphonyDefinition(...))
+             print(f"Sharpe: {result.stats.sharpe_ratio}")
         """
         payload = {
             "symphony": {"raw_value": symphony.model_dump(by_alias=True, exclude_none=True)}
@@ -195,13 +195,13 @@ class Backtest:
             RebalanceResult: Rebalance result with quotes and run results.
 
         Example:
-            >>> request = RebalanceRequest(
+             request = RebalanceRequest(
             ...     symphonies={
             ...         "sym-123": SymphonyRebalanceState(cash=10000, shares={})
             ...     }
             ... )
-            >>> result = client.backtest.rebalance(request)
-            >>> print(result.run_results)
+             result = client.backtest.rebalance(request)
+             print(result.run_results)
         """
         payload = request
         if isinstance(request, RebalanceRequest):
