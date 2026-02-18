@@ -24,6 +24,7 @@ theme:
     - search.highlight
     - search.share
     - navigation.expand
+    - content.code.copy
 
 plugins:
   - search
@@ -80,3 +81,4 @@ nav:
       - Symphony Holdings: examples/symphony_holdings.md
       - Symphony Live vs Backtest: examples/symphony_live_vs_backtest.md
       - Symphony Score: examples/symphony_score.md
+      - Symphony to Python: examples/symphony_to_python.md

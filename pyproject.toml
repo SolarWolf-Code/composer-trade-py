@@ -20,6 +20,7 @@ dependencies = [
     "requests>=2.31.0",
     "pydantic>=2.0.0",
     "python-dotenv>=1.2.1",
+    "ruff>=0.15.1",
 ]
 
 [dependency-groups]
@@ -31,7 +32,6 @@ docs = [
 dev = [
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
-    "black>=23.0.0",
     "ruff>=0.1.0",
     "mypy>=1.0.0",
     "hatch>=1.16.3",

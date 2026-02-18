@@ -196,6 +196,7 @@ class IfChildTrue(BaseNode):
     rhs_fixed_value: Optional[bool] = Field(None, alias="rhs-fixed-value?")
     rhs_fn: Optional[Function] = Field(None, alias="rhs-fn")
     rhs_window_days: Optional[int] = Field(None, alias="rhs-window-days")
+    rhs_fn_params: Optional[Dict[str, Any]] = Field(None, alias="rhs-fn-params")
     children: List[Any] = Field(default_factory=list)
 
 
