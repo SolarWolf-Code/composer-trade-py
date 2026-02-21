@@ -1,6 +1,8 @@
 """Market data models."""
 
 from typing import List, Optional, Dict
+
+import pandas as pd
 from enum import Enum
 from pydantic import BaseModel, Field
 
@@ -265,6 +267,30 @@ class QuoteResult(BaseModel):
     name: str
     price: float
     previous_price: float
+
+
+class _QuoteDict(dict):
+    """Dict subclass with .df property for quote data."""
+
+    @property
+    def df(self) -> pd.DataFrame:
+        """Convert quotes to DataFrame."""
+        if not self:
+            return pd.DataFrame()
+
+        data = []
+        for ticker, quote in self.items():
+            data.append(
+                {
+                    "ticker": ticker,
+                    "name": quote.name,
+                    "price": quote.price,
+                    "previous_price": quote.previous_price,
+                }
+            )
+
+        df = pd.DataFrame(data).set_index("ticker")
+        return df
 
 
 class QuotesResponse(BaseModel):
