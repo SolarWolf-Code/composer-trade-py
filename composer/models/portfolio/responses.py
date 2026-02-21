@@ -3,6 +3,8 @@
 from datetime import date, datetime, timezone, timedelta
 from typing import Dict, List, Optional
 from enum import Enum
+
+import pandas as pd
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 EST_OFFSET = timedelta(hours=5)
@@ -230,6 +232,23 @@ class TimeSeries(BaseModel):
             return {"dates": dates}
         return v
 
+    @property
+    def df(self) -> pd.DataFrame:
+        """Convert dates to DataFrame with dates as index."""
+        if not self.dates:
+            return pd.DataFrame()
+
+        sorted_dates = sorted(self.dates.keys())
+        data = {"series": [], "deposit_adjusted_series": []}
+        for d in sorted_dates:
+            entry = self.dates[d]
+            data["series"].append(entry.series)
+            data["deposit_adjusted_series"].append(entry.deposit_adjusted_series)
+
+        df = pd.DataFrame(data, index=sorted_dates)
+        df.index.name = "date"
+        return df
+
 
 class PortfolioHistory(BaseModel):
     """Account portfolio history."""
@@ -247,6 +266,30 @@ class PortfolioHistory(BaseModel):
             dates = _transform_epoch_series_to_by_date(epoch_ms, series)
             return {"dates": dates}
         return v
+
+    @property
+    def df(self) -> pd.DataFrame:
+        """Convert dates to DataFrame with dates as index."""
+        if not self.dates:
+            return pd.DataFrame()
+
+        sorted_dates = sorted(self.dates.keys())
+        data = {"series": []}
+        has_deposit_adjusted = False
+
+        for d in sorted_dates:
+            entry = self.dates[d]
+            data["series"].append(entry.series)
+            if entry.deposit_adjusted_series is not None:
+                has_deposit_adjusted = True
+                if "deposit_adjusted_series" not in data:
+                    data["deposit_adjusted_series"] = []
+            if has_deposit_adjusted:
+                data["deposit_adjusted_series"].append(entry.deposit_adjusted_series)
+
+        df = pd.DataFrame(data, index=sorted_dates)
+        df.index.name = "date"
+        return df
 
 
 class SymphonyHoldings(BaseModel):

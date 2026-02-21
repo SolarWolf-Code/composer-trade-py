@@ -21,6 +21,7 @@ dependencies = [
     "pydantic>=2.0.0",
     "python-dotenv>=1.2.1",
     "ruff>=0.15.1",
+    "pandas>=3.0.1",
 ]
 
 [dependency-groups]

@@ -2,7 +2,9 @@
 
 from datetime import date, datetime
 from typing import Optional, Dict, Any, List
-from pydantic import BaseModel, field_validator
+
+import pandas as pd
+from pydantic import BaseModel, ConfigDict, field_validator
 
 from ..common.stats import Stats
 
@@ -32,6 +34,35 @@ def _transform_dvm_to_by_date(
             result[date_str][series] = value
 
     return dict(sorted(result.items()))
+
+
+class _DateSeriesDict(dict):
+    """Dict subclass with .df property for date-indexed series data."""
+
+    def __init__(self, *args, fill_value=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fill_value = fill_value
+
+    @property
+    def df(self) -> pd.DataFrame:
+        """Convert to DataFrame with dates as index and series as columns."""
+        if not self:
+            return pd.DataFrame()
+
+        sorted_dates = sorted(self.keys())
+        all_series = set()
+        for series_dict in self.values():
+            all_series.update(series_dict.keys())
+
+        data = {series: [] for series in all_series}
+        for d in sorted_dates:
+            series_dict = self.get(d, {})
+            for series in all_series:
+                data[series].append(series_dict.get(series, self.fill_value))
+
+        df = pd.DataFrame(data, index=sorted_dates)
+        df.index.name = "date"
+        return df
 
 
 class Costs(BaseModel):
@@ -74,6 +105,8 @@ class BacktestResult(BaseModel):
     Contains performance metrics, holdings history, costs, and statistics.
     """
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     # Timing and metadata
     last_semantic_update_at: Optional[str] = None
     sparkgraph_url: Optional[str] = None
@@ -81,20 +114,30 @@ class BacktestResult(BaseModel):
     last_market_day: Optional[str] = None
 
     # Daily Value Metrics (DVM)
-    dvm_capital: Optional[Dict[str, Dict[str, float]]] = None
+    dvm_capital: Optional[_DateSeriesDict] = None
 
     # Time-Dependent Value Metrics (TDVM) weights
-    tdvm_weights: Optional[Dict[str, Dict[str, float]]] = None
+    tdvm_weights: Optional[_DateSeriesDict] = None
 
     @field_validator("dvm_capital", mode="before")
     @classmethod
     def transform_dvm_capital(cls, v):
-        return _transform_dvm_to_by_date(v)
+        transformed = _transform_dvm_to_by_date(v)
+        if transformed is None:
+            return None
+        return _DateSeriesDict(transformed)
 
     @field_validator("tdvm_weights", mode="before")
     @classmethod
     def transform_tdvm_weights(cls, v):
-        return _transform_dvm_to_by_date(v)
+        transformed = _transform_dvm_to_by_date(v)
+        if transformed is None:
+            return None
+        result = _DateSeriesDict(transformed, fill_value=False)
+        for date in result:
+            for ticker in result[date]:
+                result[date][ticker] = bool(result[date][ticker])
+        return result
 
     @field_validator("first_day", mode="before")
     @classmethod
