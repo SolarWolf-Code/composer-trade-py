@@ -1,6 +1,6 @@
 """Backtest response models (output models)."""
 
-from datetime import date
+from datetime import date, datetime
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel, field_validator
 
@@ -77,8 +77,8 @@ class BacktestResult(BaseModel):
     # Timing and metadata
     last_semantic_update_at: Optional[str] = None
     sparkgraph_url: Optional[str] = None
-    first_day: Optional[int] = None
-    last_market_day: Optional[int] = None
+    first_day: Optional[str] = None
+    last_market_day: Optional[str] = None
 
     # Daily Value Metrics (DVM)
     dvm_capital: Optional[Dict[str, Dict[str, float]]] = None
@@ -96,8 +96,29 @@ class BacktestResult(BaseModel):
     def transform_tdvm_weights(cls, v):
         return _transform_dvm_to_by_date(v)
 
+    @field_validator("first_day", mode="before")
+    @classmethod
+    def transform_first_day(cls, v):
+        if v is None:
+            return None
+        return _epoch_day_to_date_string(v)
+
+    @field_validator("last_market_day", mode="before")
+    @classmethod
+    def transform_last_market_day(cls, v):
+        if v is None:
+            return None
+        return _epoch_day_to_date_string(v)
+
+    @field_validator("rebalance_days", mode="before")
+    @classmethod
+    def transform_rebalance_days(cls, v):
+        if v is None:
+            return None
+        return [_epoch_day_to_date_string(d) for d in v]
+
     # Rebalancing information
-    rebalance_days: Optional[List[int]] = None
+    rebalance_days: Optional[List[str]] = None
     active_asset_nodes: Optional[Dict[str, float]] = None
 
     # Costs breakdown
@@ -122,7 +143,9 @@ class BacktestResult(BaseModel):
         if self.last_market_days_value is not None:
             parts.append(f"final_value={self.last_market_days_value:,.2f}")
         if self.first_day is not None and self.last_market_day is not None:
-            parts.append(f"days={self.last_market_day - self.first_day}")
+            first = datetime.strptime(self.first_day, "%Y-%m-%d").date()
+            last = datetime.strptime(self.last_market_day, "%Y-%m-%d").date()
+            parts.append(f"days={(last - first).days}")
         return f"BacktestResult({', '.join(parts)})"
 
     def __str__(self) -> str:
