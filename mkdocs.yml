@@ -69,11 +69,14 @@ nav:
       - Account Holdings: examples/account_holdings.md
       - Account Returns: examples/account_returns.md
       - Account Stats: examples/account_stats.md
+      - Backtest DataFrame: examples/backtest_dataframe.md
       - Copy Symphony: examples/copy_symphony.md
       - Create Symphony: examples/create_symphony.md
       - Create Symphony Blocks: examples/create_symphony_blocks.md
       - Place Market Order: examples/place_market_order.md
+      - Portfolio DataFrame: examples/portfolio_dataframe.md
       - Preview Rebalance: examples/preview_rebalance.md
+      - Quotes: examples/quotes.md
       - Remove Metadata: examples/remove_metadata.md
       - Search Symphonies: examples/search_symphonies.md
       - Simple Backtest: examples/simple_backtest.md
