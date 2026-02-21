@@ -4,7 +4,7 @@
   <img src="images/composer-trade-py.png" alt="Composer Trade" width="200">
 </p>
 
-Python SDK for [Composer.trade](https://composer.trade) API.
+Unofficial Python SDK for [Composer.trade](https://composer.trade) API.
 
 ## Installation
 
