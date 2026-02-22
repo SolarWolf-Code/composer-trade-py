@@ -1,10 +1,21 @@
-# Composer Trade Python SDK
-
 <p align="center">
-  <img src="composer-trade-py.png" alt="Composer Trade Python SDK" width="200">
+  <img src="docs/images/composer-trade-py.svg" alt="Composer Trade Python SDK" width="200">
 </p>
 
-A Python SDK for the [Composer](https://www.composer.trade/) trading platform API. Build, backtest, and deploy automated trading strategies programmatically.
+<div class="title-block" style="text-align: center;" align="center">
+
+[![Twitter](https://img.shields.io/badge/Twitter-@ComposerTrade-000000.svg?style=for-the-badge&logo=x&labelColor=000)](https://x.com/composertrade)
+[![PyPI](https://img.shields.io/badge/PyPI-composer--py-000000.svg?style=for-the-badge&logo=pypi&labelColor=000)](https://pypi.org/project/composer-trade-py)
+[![Reddit Community](https://img.shields.io/badge/reddit-r/ComposerTrade-000000.svg?style=for-the-badge&logo=reddit&labelColor=000)](https://www.reddit.com/r/ComposerTrade)
+
+<p align="center">
+  <strong>Programmatic Strategy Python SDK</strong>
+</p>
+<p align="center">
+  An Unoffical Python SDK for the <a href="https://www.composer.trade">Composer</a> trading platform API. Build, backtest, and deploy automated trading strategies (called "symphonies") programmatically.
+</p>
+
+</div>
 
 ## Features
 
@@ -105,13 +116,12 @@ print(f"Cumulative Return: {result.stats.cumulative_return}")
 ```
 
 ## Documentation
+For SDK Documentation:, visit the the docs here:  
+ - [SDK Docs](https://solarwolf-code.github.io/composer-trade-py/)
 
-For complete documentation, visit the Composer API Docs:
+
+For direct API documentation, visit the various Composer API Docs:
 
 - [Trading API](https://trading-api.composer.trade/api/v1/api-docs/index.html#/)
 - [Backtest API](https://backtest-api.composer.trade/api/v1/api-docs/index.html#/)
 - [Stagehand API](https://stagehand-api.composer.trade/api/v1/api-docs/index.html)
-
-## License
-
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.

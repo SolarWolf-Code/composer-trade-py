@@ -1,7 +1,7 @@
 # Composer Trade SDK
 
 <p align="center">
-  <img src="images/composer-trade-py.png" alt="Composer Trade" width="200">
+  <img src="images/composer-trade-py.svg" alt="Composer Trade" width="200">
 </p>
 
 Unofficial Python SDK for [Composer.trade](https://composer.trade) API.
