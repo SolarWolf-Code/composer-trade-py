@@ -310,13 +310,13 @@ wheels = [
 
 [[package]]
 name = "composer-trade-py"
-version = "1.0.1"
+version = "1.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "httpx" },
     { name = "pandas" },
     { name = "pydantic" },
     { name = "python-dotenv" },
-    { name = "requests" },
     { name = "ruff" },
 ]
 
@@ -337,10 +337,10 @@ docs = [
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "pandas", specifier = ">=3.0.1" },
     { name = "pydantic", specifier = ">=2.0.0" },
     { name = "python-dotenv", specifier = ">=1.2.1" },
-    { name = "requests", specifier = ">=2.31.0" },
     { name = "ruff", specifier = ">=0.15.1" },
 ]
 

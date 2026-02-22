@@ -1,6 +1,6 @@
 [project]
 name = "composer-trade-py"
-version = "1.0.1"
+version = "1.1.0"
 authors = [
     {name = "SolarWolf", email = "git@solarwol.xyz"},
 ]
@@ -17,11 +17,11 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
 ]
 dependencies = [
-    "requests>=2.31.0",
     "pydantic>=2.0.0",
     "python-dotenv>=1.2.1",
     "ruff>=0.15.1",
     "pandas>=3.0.1",
+    "httpx>=0.28.1",
 ]
 
 [dependency-groups]
