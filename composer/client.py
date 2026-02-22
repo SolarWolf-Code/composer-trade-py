@@ -21,28 +21,29 @@ from .resources.watchlist import Watchlist
 
 
 class ComposerClient:
-    def __init__(self, api_key: str, api_secret: str):
+    def __init__(self, api_key: str, api_secret: str, timeout: float = 30.0):
         """
         Initialize the Composer Client.
 
         Args:
             api_key (str): The API Key ID
             api_secret (str): The API Secret Key
+            timeout (float): Request timeout in seconds (default: 30.0)
         """
-        self.http_client = HTTPClient(api_key, api_secret)
+        self.http_client = HTTPClient(api_key, api_secret, timeout=timeout)
         # Separate HTTP clients for backtest API (different base URL)
         # Public client (no auth headers) for public endpoints
         # Authenticated client for endpoints requiring auth
         self.backtest_auth_client = HTTPClient(
-            api_key, api_secret, base_url="https://backtest-api.composer.trade/"
+            api_key, api_secret, base_url="https://backtest-api.composer.trade/", timeout=timeout
         )
         # Stagehand API client for portfolio/account endpoints
         self.stagehand_auth_client = HTTPClient(
-            api_key, api_secret, base_url="https://stagehand-api.composer.trade/"
+            api_key, api_secret, base_url="https://stagehand-api.composer.trade/", timeout=timeout
         )
         # Trading API client for deploy and trading endpoints
         self.trading_auth_client = HTTPClient(
-            api_key, api_secret, base_url="https://trading-api.composer.trade/"
+            api_key, api_secret, base_url="https://trading-api.composer.trade/", timeout=timeout
         )
 
         # Initialize resources
