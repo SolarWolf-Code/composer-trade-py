@@ -3635,6 +3635,326 @@
                 ]
             }
         },
+        "/api/v1/symphonies/{symphony-id}/score-extended": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "score": {
+                                    "$ref": "#/definitions/composer.backtest-server.schemas.symphony-score-v1~1root",
+                                    "x-anyOf": [
+                                        {
+                                            "$ref": "#/definitions/composer.backtest-server.schemas.symphony-score-v1~1root"
+                                        },
+                                        {
+                                            "$ref": "#/definitions/composer.backtest-server.schemas.symphony-score-v1~1root"
+                                        },
+                                        {
+                                            "$ref": "#/definitions/node~1root"
+                                        }
+                                    ]
+                                },
+                                "modifications": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "op": {
+                                                "const": "FIND_AND_REPLACE"
+                                            },
+                                            "old_ticker": {
+                                                "type": "string",
+                                                "example": "SPY"
+                                            },
+                                            "new_ticker": {
+                                                "type": "string",
+                                                "example": "TQQQ"
+                                            }
+                                        },
+                                        "required": [
+                                            "op",
+                                            "old_ticker",
+                                            "new_ticker"
+                                        ],
+                                        "additionalProperties": false,
+                                        "x-anyOf": [
+                                            {
+                                                "type": "object",
+                                                "properties": {
+                                                    "op": {
+                                                        "const": "FIND_AND_REPLACE"
+                                                    },
+                                                    "old_ticker": {
+                                                        "type": "string",
+                                                        "example": "SPY"
+                                                    },
+                                                    "new_ticker": {
+                                                        "type": "string",
+                                                        "example": "TQQQ"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "op",
+                                                    "old_ticker",
+                                                    "new_ticker"
+                                                ],
+                                                "additionalProperties": false
+                                            },
+                                            {
+                                                "type": "object",
+                                                "properties": {
+                                                    "op": {
+                                                        "const": "COMPRESS_NESTED_IFS"
+                                                    },
+                                                    "node_id": {
+                                                        "description": "If provided, compress only the subtree rooted at this node. If omitted, compress the entire symphony.",
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "op"
+                                                ],
+                                                "additionalProperties": false
+                                            }
+                                        ]
+                                    }
+                                }
+                            },
+                            "required": [
+                                "score",
+                                "modifications"
+                            ],
+                            "additionalProperties": false
+                        },
+                        "description": ""
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/transit+msgpack",
+                    "application/transit+json",
+                    "application/edn"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/transit+msgpack",
+                    "application/transit+json",
+                    "application/edn"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "symphony-id",
+                        "description": "Unique identifier for the Symphony",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "summary": "Get a symphony's score along with suggested modifications",
+                "tags": [
+                    "Symphony"
+                ],
+                "security": [
+                    {
+                        "firebase": {}
+                    }
+                ]
+            }
+        },
+        "/api/v1/symphonies/{symphony-id}/benchmarks": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "benchmarks": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "color": {
+                                                "type": "string"
+                                            },
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "label": {
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "symphony",
+                                                    "ticker"
+                                                ]
+                                            }
+                                        },
+                                        "required": [
+                                            "color",
+                                            "id",
+                                            "label",
+                                            "type"
+                                        ],
+                                        "additionalProperties": false
+                                    }
+                                }
+                            },
+                            "required": [
+                                "benchmarks"
+                            ],
+                            "additionalProperties": false
+                        },
+                        "description": ""
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/transit+msgpack",
+                    "application/transit+json",
+                    "application/edn"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/transit+msgpack",
+                    "application/transit+json",
+                    "application/edn"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "symphony-id",
+                        "description": "Unique identifier for the Symphony",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "summary": "Get benchmarks for a symphony",
+                "tags": [
+                    "Symphony"
+                ],
+                "security": [
+                    {
+                        "firebase": {}
+                    }
+                ]
+            },
+            "post": {
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "benchmarks": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "color": {
+                                                "type": "string"
+                                            },
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "label": {
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "symphony",
+                                                    "ticker"
+                                                ]
+                                            }
+                                        },
+                                        "required": [
+                                            "color",
+                                            "id",
+                                            "label",
+                                            "type"
+                                        ],
+                                        "additionalProperties": false
+                                    }
+                                }
+                            },
+                            "required": [
+                                "benchmarks"
+                            ],
+                            "additionalProperties": false
+                        },
+                        "description": ""
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/transit+msgpack",
+                    "application/transit+json",
+                    "application/edn"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/transit+msgpack",
+                    "application/transit+json",
+                    "application/edn"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "symphony-id",
+                        "description": "Unique identifier for the Symphony",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "color": {
+                                        "type": "string"
+                                    },
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "label": {
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "symphony",
+                                            "ticker"
+                                        ]
+                                    }
+                                },
+                                "required": [
+                                    "color",
+                                    "id",
+                                    "type"
+                                ],
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                ],
+                "summary": "Update benchmarks for a symphony",
+                "tags": [
+                    "Symphony"
+                ],
+                "security": [
+                    {
+                        "firebase": {}
+                    }
+                ]
+            }
+        },
         "/api/v1/symphonies/{symphony-id}/copy": {
             "post": {
                 "description": "Create a copy of an existing Symphony. The new Symphony will have the same trading logic but will be undeployed and can be modified independently.",
@@ -3776,6 +4096,9 @@
                             "additionalProperties": false
                         },
                         "description": ""
+                    },
+                    "204": {
+                        "description": "No changes were necessary."
                     }
                 },
                 "produces": [
@@ -3844,6 +4167,22 @@
                                         "op",
                                         "old_ticker",
                                         "new_ticker"
+                                    ],
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "op": {
+                                            "const": "COMPRESS_NESTED_IFS"
+                                        },
+                                        "node_id": {
+                                            "description": "If provided, compress only the subtree rooted at this node. If omitted, compress the entire symphony.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "op"
                                     ],
                                     "additionalProperties": false
                                 }
@@ -7826,6 +8165,628 @@
                 ]
             }
         },
+        "/api/v1/configs": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "config_key": {
+                                        "const": "constants"
+                                    },
+                                    "config": {
+                                        "type": "object",
+                                        "properties": {
+                                            "discord-url": {
+                                                "type": "string"
+                                            },
+                                            "referral-bonus": {
+                                                "type": "integer",
+                                                "format": "int64"
+                                            },
+                                            "referral-bonus-percent": {
+                                                "type": "integer",
+                                                "format": "int64"
+                                            },
+                                            "suggested-deposits": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                }
+                                            }
+                                        },
+                                        "required": [
+                                            "discord-url",
+                                            "referral-bonus",
+                                            "referral-bonus-percent",
+                                            "suggested-deposits"
+                                        ],
+                                        "additionalProperties": false
+                                    },
+                                    "created_at": {
+                                        "type": "string"
+                                    },
+                                    "updated_at": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "config_key",
+                                    "config",
+                                    "created_at",
+                                    "updated_at"
+                                ],
+                                "additionalProperties": false,
+                                "x-anyOf": [
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "config_key": {
+                                                "const": "constants"
+                                            },
+                                            "config": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "discord-url": {
+                                                        "type": "string"
+                                                    },
+                                                    "referral-bonus": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "referral-bonus-percent": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "suggested-deposits": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "integer",
+                                                            "format": "int64"
+                                                        }
+                                                    }
+                                                },
+                                                "required": [
+                                                    "discord-url",
+                                                    "referral-bonus",
+                                                    "referral-bonus-percent",
+                                                    "suggested-deposits"
+                                                ],
+                                                "additionalProperties": false
+                                            },
+                                            "created_at": {
+                                                "type": "string"
+                                            },
+                                            "updated_at": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "config_key",
+                                            "config",
+                                            "created_at",
+                                            "updated_at"
+                                        ],
+                                        "additionalProperties": false
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "config_key": {
+                                                "const": "deposit_presets_config"
+                                            },
+                                            "config": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "first_individual": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "integer",
+                                                            "format": "int64"
+                                                        }
+                                                    },
+                                                    "first_ira": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "integer",
+                                                            "format": "int64"
+                                                        }
+                                                    }
+                                                },
+                                                "required": [
+                                                    "first_individual",
+                                                    "first_ira"
+                                                ],
+                                                "additionalProperties": false
+                                            },
+                                            "created_at": {
+                                                "type": "string"
+                                            },
+                                            "updated_at": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "config_key",
+                                            "config",
+                                            "created_at",
+                                            "updated_at"
+                                        ],
+                                        "additionalProperties": false
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "config_key": {
+                                                "const": "openai-prompt"
+                                            },
+                                            "config": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "data": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "data"
+                                                ],
+                                                "additionalProperties": false
+                                            },
+                                            "created_at": {
+                                                "type": "string"
+                                            },
+                                            "updated_at": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "config_key",
+                                            "config",
+                                            "created_at",
+                                            "updated_at"
+                                        ],
+                                        "additionalProperties": false
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "config_key": {
+                                                "const": "openai_config"
+                                            },
+                                            "config": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "system-prompt": {
+                                                        "type": "string"
+                                                    },
+                                                    "crypto-prompt": {
+                                                        "type": "string"
+                                                    },
+                                                    "hybrid-prompt": {
+                                                        "type": "string"
+                                                    },
+                                                    "crypto-unavailable-prompt": {
+                                                        "type": "string"
+                                                    },
+                                                    "temperature": {
+                                                        "type": "number",
+                                                        "format": "double"
+                                                    },
+                                                    "limit": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "max_free_create_with_ai_requests": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    },
+                                                    "suggestions": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "crypto-suggestions": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "hybrid-suggestions": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "required": [
+                                                    "system-prompt",
+                                                    "crypto-prompt",
+                                                    "hybrid-prompt",
+                                                    "crypto-unavailable-prompt",
+                                                    "temperature",
+                                                    "limit",
+                                                    "max_free_create_with_ai_requests",
+                                                    "suggestions",
+                                                    "crypto-suggestions",
+                                                    "hybrid-suggestions"
+                                                ],
+                                                "additionalProperties": false
+                                            },
+                                            "created_at": {
+                                                "type": "string"
+                                            },
+                                            "updated_at": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "config_key",
+                                            "config",
+                                            "created_at",
+                                            "updated_at"
+                                        ],
+                                        "additionalProperties": false
+                                    }
+                                ]
+                            }
+                        },
+                        "description": ""
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/transit+msgpack",
+                    "application/transit+json",
+                    "application/edn"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/transit+msgpack",
+                    "application/transit+json",
+                    "application/edn"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "keys",
+                        "description": "",
+                        "type": "array",
+                        "required": false,
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "constants",
+                                "deposit_presets_config",
+                                "openai-prompt",
+                                "openai_config"
+                            ]
+                        }
+                    }
+                ],
+                "summary": "List accessible config entries",
+                "tags": [
+                    "Config"
+                ],
+                "security": [
+                    {
+                        "firebase": {}
+                    }
+                ]
+            }
+        },
+        "/api/v1/configs/{config_key}": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "config_key": {
+                                    "const": "constants"
+                                },
+                                "config": {
+                                    "type": "object",
+                                    "properties": {
+                                        "discord-url": {
+                                            "type": "string"
+                                        },
+                                        "referral-bonus": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        "referral-bonus-percent": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        "suggested-deposits": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "integer",
+                                                "format": "int64"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "discord-url",
+                                        "referral-bonus",
+                                        "referral-bonus-percent",
+                                        "suggested-deposits"
+                                    ],
+                                    "additionalProperties": false
+                                },
+                                "created_at": {
+                                    "type": "string"
+                                },
+                                "updated_at": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "config_key",
+                                "config",
+                                "created_at",
+                                "updated_at"
+                            ],
+                            "additionalProperties": false,
+                            "x-anyOf": [
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "config_key": {
+                                            "const": "constants"
+                                        },
+                                        "config": {
+                                            "type": "object",
+                                            "properties": {
+                                                "discord-url": {
+                                                    "type": "string"
+                                                },
+                                                "referral-bonus": {
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                },
+                                                "referral-bonus-percent": {
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                },
+                                                "suggested-deposits": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "discord-url",
+                                                "referral-bonus",
+                                                "referral-bonus-percent",
+                                                "suggested-deposits"
+                                            ],
+                                            "additionalProperties": false
+                                        },
+                                        "created_at": {
+                                            "type": "string"
+                                        },
+                                        "updated_at": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "config_key",
+                                        "config",
+                                        "created_at",
+                                        "updated_at"
+                                    ],
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "config_key": {
+                                            "const": "deposit_presets_config"
+                                        },
+                                        "config": {
+                                            "type": "object",
+                                            "properties": {
+                                                "first_individual": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    }
+                                                },
+                                                "first_ira": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "integer",
+                                                        "format": "int64"
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "first_individual",
+                                                "first_ira"
+                                            ],
+                                            "additionalProperties": false
+                                        },
+                                        "created_at": {
+                                            "type": "string"
+                                        },
+                                        "updated_at": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "config_key",
+                                        "config",
+                                        "created_at",
+                                        "updated_at"
+                                    ],
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "config_key": {
+                                            "const": "openai-prompt"
+                                        },
+                                        "config": {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "data"
+                                            ],
+                                            "additionalProperties": false
+                                        },
+                                        "created_at": {
+                                            "type": "string"
+                                        },
+                                        "updated_at": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "config_key",
+                                        "config",
+                                        "created_at",
+                                        "updated_at"
+                                    ],
+                                    "additionalProperties": false
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "config_key": {
+                                            "const": "openai_config"
+                                        },
+                                        "config": {
+                                            "type": "object",
+                                            "properties": {
+                                                "system-prompt": {
+                                                    "type": "string"
+                                                },
+                                                "crypto-prompt": {
+                                                    "type": "string"
+                                                },
+                                                "hybrid-prompt": {
+                                                    "type": "string"
+                                                },
+                                                "crypto-unavailable-prompt": {
+                                                    "type": "string"
+                                                },
+                                                "temperature": {
+                                                    "type": "number",
+                                                    "format": "double"
+                                                },
+                                                "limit": {
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                },
+                                                "max_free_create_with_ai_requests": {
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                },
+                                                "suggestions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "crypto-suggestions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "hybrid-suggestions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "required": [
+                                                "system-prompt",
+                                                "crypto-prompt",
+                                                "hybrid-prompt",
+                                                "crypto-unavailable-prompt",
+                                                "temperature",
+                                                "limit",
+                                                "max_free_create_with_ai_requests",
+                                                "suggestions",
+                                                "crypto-suggestions",
+                                                "hybrid-suggestions"
+                                            ],
+                                            "additionalProperties": false
+                                        },
+                                        "created_at": {
+                                            "type": "string"
+                                        },
+                                        "updated_at": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "config_key",
+                                        "config",
+                                        "created_at",
+                                        "updated_at"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            ]
+                        },
+                        "description": ""
+                    }
+                },
+                "produces": [
+                    "application/json",
+                    "application/transit+msgpack",
+                    "application/transit+json",
+                    "application/edn"
+                ],
+                "consumes": [
+                    "application/json",
+                    "application/transit+msgpack",
+                    "application/transit+json",
+                    "application/edn"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "config_key",
+                        "description": "",
+                        "type": "string",
+                        "required": true,
+                        "enum": [
+                            "constants",
+                            "deposit_presets_config",
+                            "openai-prompt",
+                            "openai_config"
+                        ]
+                    }
+                ],
+                "summary": "Get a single config entry",
+                "tags": [
+                    "Config"
+                ],
+                "security": [
+                    {
+                        "firebase": {}
+                    }
+                ]
+            }
+        },
         "/api/v2/public/symphonies/{symphony-id}/backtest": {
             "post": {
                 "responses": {
@@ -11388,6 +12349,184 @@
             "required": [
                 "id",
                 "step"
+            ],
+            "x-allOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "suppress-incomplete-warnings?": {
+                            "type": "boolean"
+                        },
+                        "collapsed?": {
+                            "type": "boolean"
+                        },
+                        "collapsed-specified-weight?": {
+                            "type": "boolean"
+                        },
+                        "weight": {
+                            "type": "object",
+                            "properties": {
+                                "num": {
+                                    "type": "string",
+                                    "x-anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        {
+                                            "type": "number",
+                                            "format": "double"
+                                        }
+                                    ]
+                                },
+                                "den": {
+                                    "type": "string",
+                                    "x-anyOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        {
+                                            "type": "number",
+                                            "format": "double"
+                                        }
+                                    ]
+                                }
+                            },
+                            "required": [
+                                "num",
+                                "den"
+                            ],
+                            "additionalProperties": false
+                        },
+                        "step": {
+                            "type": "string",
+                            "enum": [
+                                "filter"
+                            ]
+                        },
+                        "sort-by-window-days": {
+                            "type": "integer",
+                            "format": "int64",
+                            "x-anyOf": [
+                                {
+                                    "type": "integer",
+                                    "format": "int64"
+                                },
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "sort-by-fn-params": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer",
+                                "format": "int64",
+                                "x-anyOf": [
+                                    {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    {
+                                        "type": "number",
+                                        "format": "double"
+                                    }
+                                ]
+                            }
+                        },
+                        "sort-by-fn": {
+                            "type": "string",
+                            "enum": [
+                                "cumulative-return",
+                                "current-price",
+                                "exponential-moving-average-price",
+                                "max-drawdown",
+                                "moving-average-price",
+                                "moving-average-return",
+                                "relative-strength-index",
+                                "standard-deviation-price",
+                                "standard-deviation-return",
+                                "percentage-price-oscillator",
+                                "percentage-price-oscillator-signal",
+                                "moving-average-convergence-divergence",
+                                "moving-average-convergence-divergence-signal",
+                                "lower-bollinger",
+                                "upper-bollinger"
+                            ]
+                        },
+                        "select-n": {
+                            "type": "integer",
+                            "format": "int64",
+                            "x-anyOf": [
+                                {
+                                    "type": "integer",
+                                    "format": "int64"
+                                },
+                                {
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "select-fn": {
+                            "type": "string",
+                            "enum": [
+                                "top",
+                                "bottom"
+                            ]
+                        },
+                        "children": {
+                            "default": [],
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/composer.backtest-server.schemas.symphony-score-v1~1if",
+                                "x-anyOf": [
+                                    {
+                                        "$ref": "#/definitions/composer.backtest-server.schemas.symphony-score-v1~1if"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/composer.backtest-server.schemas.symphony-score-v1~1group"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/composer.backtest-server.schemas.symphony-score-v1~1wt-cash-equal"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/composer.backtest-server.schemas.symphony-score-v1~1wt-cash-specified"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/composer.backtest-server.schemas.symphony-score-v1~1asset"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/composer.backtest-server.schemas.symphony-score-v1~1empty"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/composer.backtest-server.schemas.symphony-score-v1~1wt-inverse-vol"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/composer.backtest-server.schemas.symphony-score-v1~1wt-marketcap"
+                                    },
+                                    {
+                                        "$ref": "#/definitions/composer.backtest-server.schemas.symphony-score-v1~1filter"
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "required": [
+                        "id",
+                        "step"
+                    ]
+                },
+                {}
             ]
         },
         "composer.backtest-server.schemas.symphony-score-v1/group": {

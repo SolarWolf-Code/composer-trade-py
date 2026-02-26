@@ -1,10 +1,11 @@
 """Backtest response models (output models)."""
 
 from datetime import date, datetime
-from typing import Optional, Dict, Any, List
+from enum import Enum
+from typing import Optional, Dict, Any, List, Union
 
 import pandas as pd
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ..common.stats import Stats
 
@@ -225,3 +226,95 @@ class RebalanceResult(BaseModel):
     fractionability: Optional[Dict[str, bool]] = None
     adjusted_for_dtbp: bool = False
     run_results: Optional[Dict[str, SymphonyRunResult]] = None
+
+
+class ConfigKey(str, Enum):
+    """Valid config keys for the configs endpoints."""
+
+    CONSTANTS = "constants"
+    DEPOSIT_PRESETS_CONFIG = "deposit_presets_config"
+    OPENAI_PROMPT = "openai-prompt"
+    OPENAI_CONFIG = "openai_config"
+
+
+class ConstantsConfig(BaseModel):
+    """Config model for the 'constants' config key."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    discord_url: str = Field(alias="discord-url")
+    referral_bonus: int = Field(alias="referral-bonus")
+    referral_bonus_percent: int = Field(alias="referral-bonus-percent")
+    suggested_deposits: List[int]
+
+
+class DepositPresetsConfig(BaseModel):
+    """Config model for the 'deposit_presets_config' config key."""
+
+    first_individual: List[int]
+    first_ira: List[int]
+
+
+class OpenAIPromptConfig(BaseModel):
+    """Config model for the 'openai-prompt' config key."""
+
+    data: str
+
+
+class OpenAIConfig(BaseModel):
+    """Config model for the 'openai_config' config key."""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    system_prompt: str = Field(alias="system-prompt")
+    crypto_prompt: str = Field(alias="crypto-prompt")
+    hybrid_prompt: str = Field(alias="hybrid-prompt")
+    crypto_unavailable_prompt: str = Field(alias="crypto-unavailable-prompt")
+    temperature: float
+    limit: int
+    max_free_create_with_ai_requests: int
+    suggestions: List[str]
+    crypto_suggestions: List[str] = Field(alias="crypto-suggestions")
+    hybrid_suggestions: List[str] = Field(alias="hybrid-suggestions")
+
+
+ConfigType = Union[ConstantsConfig, DepositPresetsConfig, OpenAIPromptConfig, OpenAIConfig]
+
+
+class ConfigEntry(BaseModel):
+    """
+    Config entry returned from the configs endpoints.
+
+    Contains the config key, the config data (varies by key), and timestamps.
+    """
+
+    config_key: ConfigKey
+    config: ConfigType
+    created_at: str
+    updated_at: str
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "ConfigEntry":
+        """Create ConfigEntry from dictionary, using config_key to parse the correct config type."""
+        config_key_str = data.get("config_key")
+        config_data = data.get("config", {})
+
+        config_key = ConfigKey(config_key_str)
+
+        if config_key == ConfigKey.CONSTANTS:
+            config = ConstantsConfig.model_validate(config_data)
+        elif config_key == ConfigKey.DEPOSIT_PRESETS_CONFIG:
+            config = DepositPresetsConfig.model_validate(config_data)
+        elif config_key == ConfigKey.OPENAI_PROMPT:
+            config = OpenAIPromptConfig.model_validate(config_data)
+        elif config_key == ConfigKey.OPENAI_CONFIG:
+            config = OpenAIConfig.model_validate(config_data)
+        else:
+            config = config_data
+
+        return cls(
+            config_key=config_key,
+            config=config,
+            created_at=data.get("created_at", ""),
+            updated_at=data.get("updated_at", ""),
+        )

@@ -19,6 +19,12 @@ from .responses import (
     RecommendedTrade,
     SymphonyRunResult,
     RebalanceResult,
+    ConfigKey,
+    ConstantsConfig,
+    DepositPresetsConfig,
+    OpenAIPromptConfig,
+    OpenAIConfig,
+    ConfigEntry,
 )
 from .symphony import (
     # Enums
@@ -94,4 +100,11 @@ __all__ = [
     "RecommendedTrade",
     "SymphonyRunResult",
     "RebalanceResult",
+    # Config models
+    "ConfigKey",
+    "ConstantsConfig",
+    "DepositPresetsConfig",
+    "OpenAIPromptConfig",
+    "OpenAIConfig",
+    "ConfigEntry",
 ]
