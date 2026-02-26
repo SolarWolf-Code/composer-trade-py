@@ -60,12 +60,18 @@ class Function(str, Enum):
     CUMULATIVE_RETURN = "cumulative-return"
     CURRENT_PRICE = "current-price"
     EXPONENTIAL_MOVING_AVERAGE_PRICE = "exponential-moving-average-price"
+    LOWER_BOLLINGER = "lower-bollinger"
     MAX_DRAWDOWN = "max-drawdown"
     MOVING_AVERAGE_PRICE = "moving-average-price"
+    MOVING_AVERAGE_CONVERGENCE_DIVERGENCE = "moving-average-convergence-divergence"
+    MOVING_AVERAGE_CONVERGENCE_DIVERGENCE_SIGNAL = "moving-average-convergence-divergence-signal"
     MOVING_AVERAGE_RETURN = "moving-average-return"
+    PERCENTAGE_PRICE_OSCILLATOR = "percentage-price-oscillator"
+    PERCENTAGE_PRICE_OSCILLATOR_SIGNAL = "percentage-price-oscillator-signal"
     RELATIVE_STRENGTH_INDEX = "relative-strength-index"
     STANDARD_DEVIATION_PRICE = "standard-deviation-price"
     STANDARD_DEVIATION_RETURN = "standard-deviation-return"
+    UPPER_BOLLINGER = "upper-bollinger"
 
 
 class RebalanceFrequency(str, Enum):
