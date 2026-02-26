@@ -7,6 +7,8 @@ from ..models.backtest import (
     BacktestVersion,
     Broker,
     ApplySubscription,
+    ConfigEntry,
+    ConfigKey,
 )
 from ..models.common import SymphonyDefinition
 
@@ -209,3 +211,44 @@ class Backtest:
 
         raw_response = self.http_client.post("/api/v2/rebalance", json=payload)
         return RebalanceResult.model_validate(raw_response)
+
+    def list_configs(self, keys: Optional[List[str]] = None) -> List[ConfigEntry]:
+        """
+        List accessible config entries.
+
+        Args:
+            keys: Optional list of config keys to filter by.
+                  Valid keys: "constants", "deposit_presets_config", "openai-prompt", "openai_config"
+
+        Returns:
+            List of ConfigEntry objects
+
+        Example:
+            configs = client.backtest.list_configs()
+            for cfg in configs:
+                print(f"{cfg.config_key}: {cfg.config}")
+        """
+        params = {"keys": keys} if keys else None
+        raw_response = self.http_client.get("/api/v1/configs", params=params)
+        return [ConfigEntry.from_dict(c) for c in raw_response]
+
+    def get_config(self, config_key: Union[ConfigKey, str]) -> ConfigEntry:
+        """
+        Get a single config entry by key.
+
+        Args:
+            config_key: The config key to retrieve.
+                        Valid keys: "constants", "deposit_presets_config", "openai-prompt", "openai_config"
+                        Can pass ConfigKey enum or string.
+
+        Returns:
+            ConfigEntry object
+
+        Example:
+            config = client.backtest.get_config("openai_config")
+            print(config.config_key)
+            print(config.config.system_prompt)
+        """
+        key_value = config_key.value if isinstance(config_key, ConfigKey) else config_key
+        raw_response = self.http_client.get(f"/api/v1/configs/{key_value}")
+        return ConfigEntry.from_dict(raw_response)

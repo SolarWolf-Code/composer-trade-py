@@ -126,6 +126,12 @@
                                             "first_position_created_at": {
                                                 "x-nullable": true
                                             },
+                                            "first_direct_trade_at": {
+                                                "x-nullable": true
+                                            },
+                                            "is_legacy_crypto_only_account": {
+                                                "type": "boolean"
+                                            },
                                             "has_queued_deploy": {
                                                 "type": "boolean"
                                             },
@@ -148,6 +154,8 @@
                                             "first_incoming_acats_transfer_at",
                                             "first_deploy_at",
                                             "first_position_created_at",
+                                            "first_direct_trade_at",
+                                            "is_legacy_crypto_only_account",
                                             "has_queued_deploy",
                                             "has_active_position"
                                         ],
@@ -6942,6 +6950,7 @@
                                         "model": {
                                             "type": "string",
                                             "enum": [
+                                                "claude-sonnet-4-6",
                                                 "claude-sonnet-4-5",
                                                 "claude-opus-4-1",
                                                 "claude-opus-4",
