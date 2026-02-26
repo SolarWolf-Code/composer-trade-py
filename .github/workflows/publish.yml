@@ -1,4 +1,5 @@
 name: Publish to PyPI
+
 on:
   push:
     branches: [main]
@@ -12,6 +13,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
+
     steps:
       - uses: actions/checkout@v4
 
@@ -26,8 +28,43 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
-      - name: Build package
-        run: uv build
+      # Build once so we can extract the exact metadata uv generates
+      - name: Get project metadata
+        id: version
+        run: |
+          rm -rf dist
+          uv build --sdist --wheel --out-dir dist
+
+          FILENAME=$(ls dist/*.whl | head -n 1)
+          BASENAME=$(basename "$FILENAME")
+
+          NAME=$(echo "$BASENAME" | cut -d- -f1)
+          VERSION=$(echo "$BASENAME" | cut -d- -f2)
+
+          echo "Detected package: $NAME"
+          echo "Detected version: $VERSION"
+
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if version exists on PyPI
+        id: check
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            https://pypi.org/pypi/${{ steps.version.outputs.name }}/${{ steps.version.outputs.version }}/json)
+
+          if [ "$STATUS" = "200" ]; then
+            echo "Version already exists on PyPI."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Version does not exist on PyPI."
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Publish to PyPI
+        if: steps.check.outputs.exists == 'false'
         run: uv publish
+
+      - name: Skip publish (version already exists)
+        if: steps.check.outputs.exists == 'true'
+        run: echo "Skipping publish because version already exists."
