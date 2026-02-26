@@ -199,31 +199,60 @@ def _make_var_name(node, hash_str):
     return f"{prefix}_{hash_str}"
 
 
-def _collect_types(node, types_seen=None):
-    """Collect all model and enum types used in the tree."""
-    if types_seen is None:
-        types_seen = set()
+def _extract_dependencies(code, var_names):
+    """Extract variable dependencies from generated code.
 
-    if isinstance(node, BaseModel):
-        types_seen.add(node.__class__.__name__)
+    Args:
+        code: The generated Python code for a variable
+        var_names: Set of all deduplicated variable names
 
-        for key in type(node).model_fields:
-            value = getattr(node, key)
-            if value is None:
-                continue
+    Returns:
+        Set of variable names that this code depends on
+    """
+    dependencies = set()
+    for var_name in var_names:
+        if var_name in code and f"{var_name} =" not in code:
+            dependencies.add(var_name)
+    return dependencies
 
-            if isinstance(value, Enum):
-                types_seen.add(value.__class__.__name__)
-            elif isinstance(value, BaseModel):
-                _collect_types(value, types_seen)
-            elif isinstance(value, list):
-                for item in value:
-                    _collect_types(item, types_seen)
-            elif isinstance(value, dict):
-                for v in value.values():
-                    _collect_types(v, types_seen)
 
-    return types_seen
+def _topological_sort(emitted_vars):
+    """Sort variables by dependencies using topological sort.
+
+    Ensures that if variable A references variable B, then B is defined before A.
+
+    Args:
+        emitted_vars: Dict mapping variable name to generated code
+
+    Returns:
+        List of variable names in dependency order
+    """
+    var_names = set(emitted_vars.keys())
+    graph = {v: [] for v in var_names}
+    in_degree = {v: 0 for v in var_names}
+
+    for var_name, code in emitted_vars.items():
+        deps = _extract_dependencies(code, var_names)
+        for dep in deps:
+            if dep in var_names:
+                graph[dep].append(var_name)
+                in_degree[var_name] += 1
+
+    queue = [v for v in var_names if in_degree[v] == 0]
+    sorted_vars = []
+
+    while queue:
+        node = queue.pop(0)
+        sorted_vars.append(node)
+        for neighbor in graph[node]:
+            in_degree[neighbor] -= 1
+            if in_degree[neighbor] == 0:
+                queue.append(neighbor)
+
+    if len(sorted_vars) != len(var_names):
+        sorted_vars = list(var_names)
+
+    return sorted_vars
 
 
 def symphony_to_python(
@@ -254,9 +283,6 @@ def symphony_to_python(
     # Determine output file
     if output is None:
         output = f"{symphony_id}.py"
-
-    # Collect all types used (for imports)
-    types_used = _collect_types(score)
 
     if dedup:
         # Pass 1: Count all hashes
@@ -365,7 +391,8 @@ load_dotenv()
     variables_code = ""
     if emitted_vars:
         variables_code = "# Deduplicated components\n"
-        for var_name in sorted(emitted_vars.keys()):
+        sorted_var_names = _topological_sort(emitted_vars)
+        for var_name in sorted_var_names:
             code = emitted_vars[var_name]
             variables_code += f"{var_name} = {code}\n\n"
         variables_code += "\n"
