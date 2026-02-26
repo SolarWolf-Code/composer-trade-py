@@ -60,6 +60,9 @@ class Account(BaseModel):
     first_position_created_at: Optional[str] = Field(
         None, description="When the first position was created"
     )
+    is_legacy_crypto_only_account: Optional[bool] = Field(
+        None, description="Whether this is a legacy crypto-only account"
+    )
     has_queued_deploy: bool = Field(description="Whether there are any queued symphony deployments")
     has_active_position: bool = Field(description="Whether the account has any active positions")
 
