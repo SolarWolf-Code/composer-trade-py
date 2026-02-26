@@ -25,6 +25,8 @@ from .responses import (
     OpenAIPromptConfig,
     OpenAIConfig,
     ConfigEntry,
+    Modification,
+    ScoreExtendedResponse,
 )
 from .symphony import (
     # Enums
@@ -49,6 +51,7 @@ from .symphony import (
     SymphonyTickersResponse,
     ModifySymphonyResponse,
     FindAndReplaceOperation,
+    CompressNestedIfsModification,
     BulkModifySymphoniesRequest,
     UpdateSymphonyResponse,
     UpdateSymphonyNodesResponse,
@@ -81,9 +84,13 @@ __all__ = [
     "SymphonyTickersResponse",
     "ModifySymphonyResponse",
     "FindAndReplaceOperation",
+    "CompressNestedIfsModification",
     "BulkModifySymphoniesRequest",
     "UpdateSymphonyResponse",
     "UpdateSymphonyNodesResponse",
+    # Response models
+    "Modification",
+    "ScoreExtendedResponse",
     # Symphony models (old backtest)
     "SymphonyDefinition",
     # Request models
