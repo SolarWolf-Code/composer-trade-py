@@ -533,6 +533,16 @@ class FindAndReplaceOperation(BaseModel):
     new_ticker: str = Field(alias="new_ticker")
 
 
+class CompressNestedIfsModification(BaseModel):
+    """Compress nested ifs operation for modifying symphonies."""
+
+    op: str = Field(default="COMPRESS_NESTED_IFS")
+    node_id: Optional[str] = Field(
+        None,
+        description="If provided, compress only the subtree rooted at this node. If omitted, compress the entire symphony.",
+    )
+
+
 class BulkModifySymphoniesRequest(BaseModel):
     """Request for bulk modifying user symphonies."""
 

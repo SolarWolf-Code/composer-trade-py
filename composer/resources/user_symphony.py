@@ -8,12 +8,15 @@ from ..models.backtest import (
     SymphonyVersionInfo,
     ModifySymphonyResponse,
     FindAndReplaceOperation,
+    CompressNestedIfsModification,
     UpdateSymphonyResponse,
     UpdateSymphonyNodesResponse,
     BacktestResult,
     BacktestVersion,
     Broker,
     ApplySubscription,
+    ScoreExtendedResponse,
+    Modification,
 )
 from ..models.common import SymphonyDefinition
 from ..models.symphony import (
@@ -139,6 +142,39 @@ class UserSymphony:
         response = self._client.get(f"/api/v1/symphonies/{symphony_id}/score", params=params)
         print(response)
         return SymphonyDefinition.model_validate(response)
+
+    def get_score_extended(self, symphony_id: str) -> ScoreExtendedResponse:
+        """
+        Get a symphony's score along with suggested modifications.
+
+        Args:
+            symphony_id: Unique identifier for the symphony.
+
+        Returns:
+            ScoreExtendedResponse: Contains the symphony score and suggested modifications.
+
+        Example:
+              result = client.user_symphony.get_score_extended("sym-abc123")
+              print(result.score.name)
+              for mod in result.modifications:
+                  print(f"  Modification: {mod}")
+        """
+        response = self._client.get(f"/api/v1/symphonies/{symphony_id}/score-extended")
+
+        modifications = []
+        for mod in response.get("modifications", []):
+            op = mod.get("op")
+            if op == "FIND_AND_REPLACE":
+                modifications.append(FindAndReplaceOperation.model_validate(mod))
+            elif op == "COMPRESS_NESTED_IFS":
+                modifications.append(CompressNestedIfsModification.model_validate(mod))
+            else:
+                modifications.append(mod)
+
+        return ScoreExtendedResponse(
+            score=SymphonyDefinition.model_validate(response.get("score")),
+            modifications=modifications,
+        )
 
     def modify_symphony(
         self, symphony_id: str, old_ticker: str, new_ticker: str

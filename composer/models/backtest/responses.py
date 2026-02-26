@@ -8,6 +8,8 @@ import pandas as pd
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ..common.stats import Stats
+from ..common.symphony import SymphonyDefinition
+from .symphony import FindAndReplaceOperation, CompressNestedIfsModification
 
 
 def _epoch_day_to_date_string(epoch_day: int) -> str:
@@ -318,3 +320,17 @@ class ConfigEntry(BaseModel):
             created_at=data.get("created_at", ""),
             updated_at=data.get("updated_at", ""),
         )
+
+
+Modification = Union[FindAndReplaceOperation, CompressNestedIfsModification]
+
+
+class ScoreExtendedResponse(BaseModel):
+    """
+    Response from the score-extended endpoint.
+
+    Contains the symphony score along with suggested modifications.
+    """
+
+    score: SymphonyDefinition
+    modifications: List[Modification]
