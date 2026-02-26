@@ -152,3 +152,6 @@ $RECYCLE.BIN/
 
 # Ruff
 .ruff_cache/
+
+
+swagger-specs/
