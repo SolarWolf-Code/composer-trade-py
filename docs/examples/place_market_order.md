@@ -12,6 +12,8 @@ from composer import ComposerClient
 from dotenv import load_dotenv
 import os
 
+from composer.models.trading import OrderType, TimeInForce
+
 load_dotenv()
 
 client = ComposerClient(
@@ -39,9 +41,9 @@ print(f"\nPlacing order for {symbol}...")
 # Place the order (uncomment to execute)
 order = client.trading.create_order_request(
     account_id=account.account_uuid,
-    type="MARKET",
+    type=OrderType.MARKET,
     symbol=symbol,
-    time_in_force="DAY",
+    time_in_force=TimeInForce.DAY,
     notional=notional_value,
 )
 

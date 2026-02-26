@@ -5,7 +5,7 @@
 <div class="title-block" style="text-align: center;" align="center">
 
 [![Twitter](https://img.shields.io/badge/Twitter-@ComposerTrade-000000.svg?style=for-the-badge&logo=x&labelColor=000)](https://x.com/composertrade)
-[![PyPI](https://img.shields.io/badge/PyPI-composer--py-000000.svg?style=for-the-badge&logo=pypi&labelColor=000)](https://pypi.org/project/composer-trade-py)
+[![PyPI](https://img.shields.io/badge/PyPI-composer--trade--py-000000.svg?style=for-the-badge&logo=pypi&labelColor=000)](https://pypi.org/project/composer-trade-py)
 [![Reddit Community](https://img.shields.io/badge/reddit-r/ComposerTrade-000000.svg?style=for-the-badge&logo=reddit&labelColor=000)](https://www.reddit.com/r/ComposerTrade)
 
 <p align="center">
@@ -114,6 +114,11 @@ result = client.backtest.run(
 print(f"Sharpe Ratio: {result.stats.sharpe_ratio}")
 print(f"Cumulative Return: {result.stats.cumulative_return}")
 ```
+
+
+## Common Building Blocks
+You can also checkout the [composer-trade-common](https://github.com/SolarWolf-Code/composer-trade-common) package for how to import and use commonly used blocks in your symphonies.
+
 
 ## Documentation
 For SDK Documentation:, visit the the docs here:  
