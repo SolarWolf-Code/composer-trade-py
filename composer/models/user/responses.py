@@ -1,6 +1,6 @@
 """User response models."""
 
-from typing import List, Optional, Dict
+
 from pydantic import BaseModel, Field
 
 
@@ -17,7 +17,7 @@ class UserPreferencesOnboarding(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    slides_completed: Optional[bool] = None
+    slides_completed: bool | None = None
 
 
 class UserPreferencesPortfolioGraph(BaseModel):
@@ -25,9 +25,9 @@ class UserPreferencesPortfolioGraph(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    hide_total: Optional[bool] = None
-    mode: Optional[str] = None
-    symphonies: Optional[Dict[str, bool]] = None
+    hide_total: bool | None = None
+    mode: str | None = None
+    symphonies: dict[str, bool] | None = None
 
 
 class UserPreferencesSymphonyTable(BaseModel):
@@ -35,7 +35,7 @@ class UserPreferencesSymphonyTable(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    views: Optional[Dict[str, bool]] = None
+    views: dict[str, bool] | None = None
 
 
 class UserPreferencesBanners(BaseModel):
@@ -43,20 +43,38 @@ class UserPreferencesBanners(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    dismissed_recurring_deposits: Optional[bool] = Field(None, alias="dismissed-recurring-deposits")
-    dismissed_crypto_forty_nine: Optional[bool] = Field(None, alias="dismissed-crypto-forty-nine")
-    dismissed_crypto_2pct_bonus: Optional[bool] = Field(None, alias="dismissed-crypto-2pct-bonus")
-    dismissed_symphony_history: Optional[bool] = Field(None, alias="dismissed-symphony-history")
-    dismissed_options_level_1: Optional[bool] = Field(None, alias="dismissed-options-level-1")
-    dismissed_options_1000_contracts_promo: Optional[bool] = Field(
+    dismissed_recurring_deposits: bool | None = Field(
+        None, alias="dismissed-recurring-deposits"
+    )
+    dismissed_crypto_forty_nine: bool | None = Field(
+        None, alias="dismissed-crypto-forty-nine"
+    )
+    dismissed_crypto_2pct_bonus: bool | None = Field(
+        None, alias="dismissed-crypto-2pct-bonus"
+    )
+    dismissed_symphony_history: bool | None = Field(
+        None, alias="dismissed-symphony-history"
+    )
+    dismissed_options_level_1: bool | None = Field(
+        None, alias="dismissed-options-level-1"
+    )
+    dismissed_options_1000_contracts_promo: bool | None = Field(
         None, alias="dismissed-options-1000-contracts-promo"
     )
-    dismissed_crypto_deprecation: Optional[bool] = Field(None, alias="dismissed-crypto-deprecation")
-    dismissed_direct_trading: Optional[bool] = Field(None, alias="dismissed-direct-trading")
-    dismissed_trade_preview: Optional[bool] = Field(None, alias="dismissed-trade-preview")
-    dismissed_trade_with_ai: Optional[bool] = Field(None, alias="dismissed-trade-with-ai")
-    dismissed_options: Optional[bool] = None
-    dismissed_run_now: Optional[bool] = Field(None, alias="dismissed-run-now")
+    dismissed_crypto_deprecation: bool | None = Field(
+        None, alias="dismissed-crypto-deprecation"
+    )
+    dismissed_direct_trading: bool | None = Field(
+        None, alias="dismissed-direct-trading"
+    )
+    dismissed_trade_preview: bool | None = Field(
+        None, alias="dismissed-trade-preview"
+    )
+    dismissed_trade_with_ai: bool | None = Field(
+        None, alias="dismissed-trade-with-ai"
+    )
+    dismissed_options: bool | None = None
+    dismissed_run_now: bool | None = Field(None, alias="dismissed-run-now")
 
 
 class UserPreferences(BaseModel):
@@ -64,10 +82,14 @@ class UserPreferences(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    onboarding: Optional[UserPreferencesOnboarding] = None
-    portfolio_graph: Optional[UserPreferencesPortfolioGraph] = Field(None, alias="portfolio-graph")
-    symphony_table: Optional[UserPreferencesSymphonyTable] = Field(None, alias="symphony-table")
-    banners: Optional[UserPreferencesBanners] = None
+    onboarding: UserPreferencesOnboarding | None = None
+    portfolio_graph: UserPreferencesPortfolioGraph | None = Field(
+        None, alias="portfolio-graph"
+    )
+    symphony_table: UserPreferencesSymphonyTable | None = Field(
+        None, alias="symphony-table"
+    )
+    banners: UserPreferencesBanners | None = None
 
 
 class UserOnboardingStateAccount(BaseModel):
@@ -75,7 +97,7 @@ class UserOnboardingStateAccount(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    funding_source: Optional[str] = None
+    funding_source: str | None = None
 
 
 class UserOnboardingState(BaseModel):
@@ -83,7 +105,7 @@ class UserOnboardingState(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    accounts: Dict[str, UserOnboardingStateAccount] = {}
+    accounts: dict[str, UserOnboardingStateAccount] = {}
 
 
 class UserOnboardingExtraInfo(BaseModel):
@@ -91,7 +113,7 @@ class UserOnboardingExtraInfo(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    kraken_occupation: Optional[str] = None
+    kraken_occupation: str | None = None
 
 
 class UserProfile(BaseModel):
@@ -99,38 +121,38 @@ class UserProfile(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    country: Optional[str] = None
-    country_of_tax_residence: Optional[str] = None
-    state_of_tax_residence: Optional[str] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    phone_number: Optional[str] = None
-    onboarding_medium: Optional[str] = None
-    onboarding_source: Optional[str] = None
-    user_response: Optional[str] = None
-    alpaca_bd_accepted: Optional[bool] = None
-    referred_by: Optional[str] = None
-    referral_code: Optional[str] = None
-    investing_style: Optional[str] = None
-    investing_horizon: Optional[str] = None
-    dismissed_onboarding_banner: Optional[bool] = None
-    dismissed_ira_banner: Optional[bool] = None
-    dismissed_ios_banner: Optional[bool] = None
-    dismissed_crypto_banner: Optional[bool] = None
-    dismissed_ira_and_crypto_banner: Optional[bool] = None
-    dismissed_trading_pass_banner: Optional[bool] = None
-    seen_getting_started: Optional[bool] = None
-    has_saved_symphony: Optional[bool] = None
-    has_backtested: Optional[bool] = None
-    has_sound_on: Optional[bool] = None
-    ungated_create_with_ai_requests: Optional[int] = None
-    investor_goals: List[str] = []
-    tolt_referral: Optional[str] = None
-    preferences: Optional[UserPreferences] = None
-    onboarding_state: Optional[UserOnboardingState] = None
-    onboarding_extra_info: Optional[UserOnboardingExtraInfo] = None
-    onboarding_redirect_path: Optional[str] = None
-    ai_tos_accepted: Optional[bool] = None
+    country: str | None = None
+    country_of_tax_residence: str | None = None
+    state_of_tax_residence: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    phone_number: str | None = None
+    onboarding_medium: str | None = None
+    onboarding_source: str | None = None
+    user_response: str | None = None
+    alpaca_bd_accepted: bool | None = None
+    referred_by: str | None = None
+    referral_code: str | None = None
+    investing_style: str | None = None
+    investing_horizon: str | None = None
+    dismissed_onboarding_banner: bool | None = None
+    dismissed_ira_banner: bool | None = None
+    dismissed_ios_banner: bool | None = None
+    dismissed_crypto_banner: bool | None = None
+    dismissed_ira_and_crypto_banner: bool | None = None
+    dismissed_trading_pass_banner: bool | None = None
+    seen_getting_started: bool | None = None
+    has_saved_symphony: bool | None = None
+    has_backtested: bool | None = None
+    has_sound_on: bool | None = None
+    ungated_create_with_ai_requests: int | None = None
+    investor_goals: list[str] = []
+    tolt_referral: str | None = None
+    preferences: UserPreferences | None = None
+    onboarding_state: UserOnboardingState | None = None
+    onboarding_extra_info: UserOnboardingExtraInfo | None = None
+    onboarding_redirect_path: str | None = None
+    ai_tos_accepted: bool | None = None
 
 
 class AgreementStatusResponse(BaseModel):

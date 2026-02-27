@@ -1,11 +1,11 @@
 """Accounts response models."""
 
-from typing import List, Optional, Dict, Any
-from enum import Enum
+from enum import StrEnum
+
 from pydantic import BaseModel, Field
 
 
-class AssetClass(str, Enum):
+class AssetClass(StrEnum):
     """Asset class types."""
 
     CRYPTO = "CRYPTO"
@@ -18,10 +18,10 @@ class DirectTradableAssetClasses(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    buy: List[AssetClass] = Field(
+    buy: list[AssetClass] = Field(
         description="Asset classes available for buying via direct trading"
     )
-    sell: List[AssetClass] = Field(
+    sell: list[AssetClass] = Field(
         description="Asset classes available for selling via direct trading"
     )
 
@@ -37,34 +37,50 @@ class Account(BaseModel):
     model_config = {"populate_by_name": True}
 
     account_uuid: str = Field(description="Unique identifier (UUID) for the account")
-    account_foreign_id: Optional[str] = Field(
+    account_foreign_id: str | None = Field(
         None, description="Foreign ID from the broker (if applicable)"
     )
-    account_type: str = Field(description="Type of account (e.g., INDIVIDUAL, IRA, etc.)")
-    asset_classes: List[AssetClass] = Field(description="Asset classes supported by this account")
+    account_type: str = Field(
+        description="Type of account (e.g., INDIVIDUAL, IRA, etc.)"
+    )
+    asset_classes: list[AssetClass] = Field(
+        description="Asset classes supported by this account"
+    )
     direct_tradable_asset_classes: DirectTradableAssetClasses = Field(
         description="Asset classes available for direct buy/sell trading"
     )
-    symphony_tradable_asset_classes: List[AssetClass] = Field(
+    symphony_tradable_asset_classes: list[AssetClass] = Field(
         description="Asset classes available for Symphony automation"
     )
-    account_number: Optional[str] = Field(None, description="Account number (if available)")
+    account_number: str | None = Field(
+        None, description="Account number (if available)"
+    )
     status: str = Field(description="Account status (e.g., ACTIVE, PENDING, etc.)")
     broker: str = Field(description="Broker handling this account (e.g., ALPACA, APEX)")
-    created_at: str = Field(description="When the account was created (ISO 8601 format)")
-    first_deposit_at: Optional[str] = Field(None, description="When the first deposit was made")
-    first_incoming_acats_transfer_at: Optional[str] = Field(
+    created_at: str = Field(
+        description="When the account was created (ISO 8601 format)"
+    )
+    first_deposit_at: str | None = Field(
+        None, description="When the first deposit was made"
+    )
+    first_incoming_acats_transfer_at: str | None = Field(
         None, description="When the first incoming ACATS transfer occurred"
     )
-    first_deploy_at: Optional[str] = Field(None, description="When the first symphony was deployed")
-    first_position_created_at: Optional[str] = Field(
+    first_deploy_at: str | None = Field(
+        None, description="When the first symphony was deployed"
+    )
+    first_position_created_at: str | None = Field(
         None, description="When the first position was created"
     )
-    is_legacy_crypto_only_account: Optional[bool] = Field(
+    is_legacy_crypto_only_account: bool | None = Field(
         None, description="Whether this is a legacy crypto-only account"
     )
-    has_queued_deploy: bool = Field(description="Whether there are any queued symphony deployments")
-    has_active_position: bool = Field(description="Whether the account has any active positions")
+    has_queued_deploy: bool = Field(
+        description="Whether there are any queued symphony deployments"
+    )
+    has_active_position: bool = Field(
+        description="Whether the account has any active positions"
+    )
 
 
 class OptionsDetails(BaseModel):
@@ -72,7 +88,9 @@ class OptionsDetails(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    underlying_asset_symbol: str = Field(description="Underlying asset symbol (e.g., AAPL)")
+    underlying_asset_symbol: str = Field(
+        description="Underlying asset symbol (e.g., AAPL)"
+    )
     strike_price: float = Field(description="Strike price of the option contract")
     expiry: str = Field(description="Expiry date (YYYY-MM-DD format)")
     contract_type: str = Field(description="Type of option: CALL or PUT")
@@ -89,13 +107,15 @@ class Holding(BaseModel):
 
     ticker: str = Field(description="Ticker symbol (e.g., AAPL, CRYPTO::BTC//USD)")
     quantity: float = Field(description="Number of shares/contracts/units held")
-    asset_class: AssetClass = Field(description="Type of asset: CRYPTO, EQUITIES, or OPTIONS")
-    options_details: Optional[OptionsDetails] = Field(
+    asset_class: AssetClass = Field(
+        description="Type of asset: CRYPTO, EQUITIES, or OPTIONS"
+    )
+    options_details: OptionsDetails | None = Field(
         None, description="Details for options contracts (only for OPTIONS)"
     )
 
 
-class InvestorDocumentCategory(str, Enum):
+class InvestorDocumentCategory(StrEnum):
     """Categories of investor documents."""
 
     STATEMENT = "STATEMENT"
@@ -120,7 +140,9 @@ class InvestorDocument(BaseModel):
     type: str = Field(description="Type of document")
     url: str = Field(description="URL to download the document")
     file_name: str = Field(description="File name of the document")
-    tax_ids: Optional[List[str]] = Field(None, description="Tax IDs associated with the document")
+    tax_ids: list[str] | None = Field(
+        None, description="Tax IDs associated with the document"
+    )
 
 
 class AccountsListResponse(BaseModel):
@@ -128,10 +150,12 @@ class AccountsListResponse(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    accounts: List[Account] = Field(description="List of all accounts for the authenticated user")
+    accounts: list[Account] = Field(
+        description="List of all accounts for the authenticated user"
+    )
 
 
-class AccountType(str, Enum):
+class AccountType(StrEnum):
     """Account types available for creation."""
 
     INDIVIDUAL = "INDIVIDUAL"
@@ -156,12 +180,12 @@ class AvailableAccountType(BaseModel):
     model_config = {"populate_by_name": True}
 
     account_type: AccountType
-    asset_classes: List[AssetClass]
-    options_trading_levels: Optional[List[int]] = None
+    asset_classes: list[AssetClass]
+    options_trading_levels: list[int] | None = None
     footprint_kyc_completed: bool
-    footprint_token: Optional[str] = None
-    footprint_playbook_key: Optional[str] = None
-    footprint_playbooks: List[FootprintPlaybook] = []
+    footprint_token: str | None = None
+    footprint_playbook_key: str | None = None
+    footprint_playbooks: list[FootprintPlaybook] = []
 
 
 class SupportedRegionStates(BaseModel):
@@ -169,8 +193,8 @@ class SupportedRegionStates(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    countries: List[str] = []
-    states: Dict[str, List[str]] = {}
+    countries: list[str] = []
+    states: dict[str, list[str]] = {}
 
 
 class SupportedRegionsResponse(BaseModel):
@@ -188,14 +212,14 @@ class Trade(BaseModel):
     model_config = {"populate_by_name": True}
 
     order_id: str
-    order_request_id: Optional[str] = None
+    order_request_id: str | None = None
     status: str
-    side: Optional[str] = None
-    symbol: Optional[str] = None
-    asset_class: Optional[AssetClass] = None
-    filled_avg_price: Optional[float] = None
-    filled_qty: Optional[float] = None
-    filled_notional: Optional[float] = None
+    side: str | None = None
+    symbol: str | None = None
+    asset_class: AssetClass | None = None
+    filled_avg_price: float | None = None
+    filled_qty: float | None = None
+    filled_notional: float | None = None
     created_at: str
 
 
@@ -214,16 +238,16 @@ class TradeHistoryItem(BaseModel):
 
     id: str
     status: str
-    symbol: Optional[str] = None
-    asset_class: Optional[AssetClass] = None
-    unit_price: Optional[float] = None
-    qty: Optional[float] = None
-    net_amount: Optional[float] = None
+    symbol: str | None = None
+    asset_class: AssetClass | None = None
+    unit_price: float | None = None
+    qty: float | None = None
+    net_amount: float | None = None
     created_at: str
-    description: Optional[str] = None
+    description: str | None = None
     activity_type: str
-    side: Optional[str] = None
-    order_request_id: Optional[str] = None
+    side: str | None = None
+    order_request_id: str | None = None
 
 
 class Identity(BaseModel):
@@ -232,7 +256,7 @@ class Identity(BaseModel):
     model_config = {"populate_by_name": True}
 
     given_name: str
-    middle_name: Optional[str] = None
+    middle_name: str | None = None
     family_name: str
 
 
@@ -241,11 +265,11 @@ class Address(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    street_address: List[str]
+    street_address: list[str]
     city: str
-    state: Optional[str] = None
+    state: str | None = None
     postal_code: str
-    country: Optional[str] = None
+    country: str | None = None
 
 
 class Contact(BaseModel):
@@ -254,7 +278,7 @@ class Contact(BaseModel):
     model_config = {"populate_by_name": True}
 
     email_address: str
-    phone_number: Optional[str] = None
+    phone_number: str | None = None
     address: Address
 
 
@@ -272,7 +296,7 @@ class InvestorProfile(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    investment_objective: Optional[str] = None
+    investment_objective: str | None = None
     annual_income_usd: IncomeRange
     total_net_worth_usd: IncomeRange
 
@@ -284,9 +308,9 @@ class TrustedContact(BaseModel):
 
     given_name: str
     family_name: str
-    email_address: Optional[str] = None
-    phone_number: Optional[str] = None
-    mailing_address: Optional[Address] = None
+    email_address: str | None = None
+    phone_number: str | None = None
+    mailing_address: Address | None = None
 
 
 class AccountInfo(BaseModel):
@@ -294,16 +318,16 @@ class AccountInfo(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    account_number: Optional[str] = None
+    account_number: str | None = None
     account_type: str
     broker: str
-    status: Optional[str] = None
-    broker_status: Optional[str] = None
+    status: str | None = None
+    broker_status: str | None = None
     identity: Identity
     contact: Contact
-    investor_profile: Optional[InvestorProfile] = None
-    trusted_contact: Optional[TrustedContact] = None
-    pending_trusted_contact: Optional[bool] = None
+    investor_profile: InvestorProfile | None = None
+    trusted_contact: TrustedContact | None = None
+    pending_trusted_contact: bool | None = None
 
 
 class BuyingPower(BaseModel):
@@ -316,8 +340,8 @@ class BuyingPower(BaseModel):
     total_unallocated_cash: float
     cash_reserved_for_options_contracts: float
     pending_deploys_cash: float
-    pending_withdrawals: Optional[float] = None
-    pending_net_deposits: Optional[float] = None
+    pending_withdrawals: float | None = None
+    pending_net_deposits: float | None = None
     buying_power: float
     symphony_buying_power: float
     direct_trading_buying_power: float
@@ -327,7 +351,7 @@ class BuyingPower(BaseModel):
     daytrading_blocked: bool
     daytrade_margin_call_protection_on_entry: bool
     daytrade_margin_call_protection_on_exit: bool
-    daytrading_buying_power: Optional[float] = None
-    current_equity_for_dtbp: Optional[float] = None
-    sod_equity_for_dtbp: Optional[float] = None
+    daytrading_buying_power: float | None = None
+    current_equity_for_dtbp: float | None = None
+    sod_equity_for_dtbp: float | None = None
     buying_power_constrained_when_daytrading: bool

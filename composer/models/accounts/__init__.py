@@ -1,32 +1,32 @@
 """Accounts models - request and response models for accounts endpoints."""
 
-from typing import List
 from pydantic import BaseModel, Field
+
 from .responses import (
-    AssetClass,
-    DirectTradableAssetClasses,
     Account,
-    OptionsDetails,
-    Holding,
-    InvestorDocument,
-    InvestorDocumentCategory,
+    AccountInfo,
     AccountsListResponse,
     AccountType,
+    Address,
+    AssetClass,
     AvailableAccountType,
+    BuyingPower,
+    Contact,
+    DirectTradableAssetClasses,
+    FootprintPlaybook,
+    Holding,
+    Identity,
+    IncomeRange,
+    InvestorDocument,
+    InvestorDocumentCategory,
+    InvestorProfile,
+    OptionsDetails,
     SupportedRegionsResponse,
     SupportedRegionStates,
-    FootprintPlaybook,
     Trade,
-    TradeVolumeResponse,
     TradeHistoryItem,
-    Identity,
-    Address,
-    Contact,
-    IncomeRange,
-    InvestorProfile,
+    TradeVolumeResponse,
     TrustedContact,
-    AccountInfo,
-    BuyingPower,
 )
 
 
@@ -46,7 +46,7 @@ class ApiKeyWithSecret(BaseModel):
 class ApiKeysResponse(BaseModel):
     """Response containing list of API keys."""
 
-    api_keys: List[ApiKey] = Field(description="List of API keys")
+    api_keys: list[ApiKey] = Field(description="List of API keys")
 
 
 class CreateApiKeyResponse(BaseModel):

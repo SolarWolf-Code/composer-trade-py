@@ -1,6 +1,7 @@
 """Search resource for publicly shared symphonies."""
 
-from typing import List, Optional, Any, Dict
+from typing import Any
+
 from ..models.search import SearchSymphonyResult
 
 
@@ -12,10 +13,10 @@ class Search:
 
     def search_symphonies(
         self,
-        where: Optional[List[Any]] = [],
-        order_by: Optional[List[List[str]]] = None,
+        where: list[Any] | None = None,
+        order_by: list[list[str]] | None = None,
         offset: int = 0,
-    ) -> List[SearchSymphonyResult]:
+    ) -> list[SearchSymphonyResult]:
         """
         Search our database of publicly shared symphonies.
 
@@ -27,10 +28,13 @@ class Search:
                       For example: [["oos_sharpe_ratio", "desc"]]
             offset: Pagination offset for results
 
-        Returns:
+        Returns
+        -------
             List of matching symphonies with performance statistics
         """
-        request: Dict[str, Any] = {"offset": offset}
+        if where is None:
+            where = []
+        request: dict[str, Any] = {"offset": offset}
         if where is not None:
             request["where"] = where
         if order_by is not None:
@@ -45,10 +49,10 @@ class Search:
 
     def search_symphonies_v2(
         self,
-        filter: Optional[str] = None,
-        order_by: Optional[List[List[str]]] = None,
+        filter: str | None = None,
+        order_by: list[list[str]] | None = None,
         offset: int = 0,
-    ) -> List[SearchSymphonyResult]:
+    ) -> list[SearchSymphonyResult]:
         """
         Search publicly shared symphonies using CEL filters (V2).
 
@@ -59,10 +63,11 @@ class Search:
                       For example: [["oos_sharpe_ratio", "desc"]]
             offset: Pagination offset for results
 
-        Returns:
+        Returns
+        -------
             List of matching symphonies with performance statistics
         """
-        request: Dict[str, Any] = {"offset": offset}
+        request: dict[str, Any] = {"offset": offset}
         if filter is not None:
             request["filter"] = filter
         if order_by is not None:

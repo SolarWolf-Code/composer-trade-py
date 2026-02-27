@@ -1,9 +1,9 @@
 """AI Agents resource for AI agent endpoints."""
 
-from typing import Optional
+
 from ..models.ai_agents import (
-    AIAgentsResponse,
     AIAgent,
+    AIAgentsResponse,
     AIExecutionsResponse,
 )
 
@@ -17,8 +17,8 @@ class AIAgents:
     def list(
         self,
         broker_account_id: str,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
+        limit: int | None = None,
+        offset: int | None = None,
     ) -> AIAgentsResponse:
         """
         List AI agents for a broker account.
@@ -28,7 +28,8 @@ class AIAgents:
             limit: Maximum number of results
             offset: Pagination offset
 
-        Returns:
+        Returns
+        -------
             List of AI agents
         """
         params = {"broker_account_id": broker_account_id}
@@ -46,7 +47,8 @@ class AIAgents:
         Args:
             agent_id: The AI agent ID
 
-        Returns:
+        Returns
+        -------
             AI agent details
         """
         response = self._client.get(f"/api/v1/ai-agents/{agent_id}")
@@ -55,8 +57,8 @@ class AIAgents:
     def get_executions(
         self,
         agent_id: str,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
+        limit: int | None = None,
+        offset: int | None = None,
     ) -> AIExecutionsResponse:
         """
         List executions for an AI agent.
@@ -66,7 +68,8 @@ class AIAgents:
             limit: Maximum number of results
             offset: Pagination offset
 
-        Returns:
+        Returns
+        -------
             List of agent executions
         """
         params = {}

@@ -1,20 +1,19 @@
 """Market data models."""
 
-from typing import List, Optional, Dict
+from enum import StrEnum
 
 import pandas as pd
-from enum import Enum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
-class ContractType(str, Enum):
+class ContractType(StrEnum):
     """Option contract type."""
 
     PUT = "PUT"
     CALL = "CALL"
 
 
-class PayoffStatus(str, Enum):
+class PayoffStatus(StrEnum):
     """Option payoff status."""
 
     IN_THE_MONEY = "IN_THE_MONEY"
@@ -22,7 +21,7 @@ class PayoffStatus(str, Enum):
     AT_THE_MONEY = "AT_THE_MONEY"
 
 
-class OptionSortBy(str, Enum):
+class OptionSortBy(StrEnum):
     """Fields to sort options by."""
 
     SYMBOL = "symbol"
@@ -30,7 +29,7 @@ class OptionSortBy(str, Enum):
     STRIKE_PRICE = "strike_price"
 
 
-class SortOrder(str, Enum):
+class SortOrder(StrEnum):
     """Sort order."""
 
     ASC = "ASC"
@@ -46,7 +45,7 @@ class OptionGreeks(BaseModel):
     gamma: float
     theta: float
     vega: float
-    rho: Optional[float] = None
+    rho: float | None = None
 
 
 class QuotePrice(BaseModel):
@@ -54,8 +53,8 @@ class QuotePrice(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    price: Optional[float] = None
-    size: Optional[float] = None
+    price: float | None = None
+    size: float | None = None
 
 
 class OptionDayData(BaseModel):
@@ -63,11 +62,11 @@ class OptionDayData(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    close: Optional[float] = None
-    high: Optional[float] = None
-    low: Optional[float] = None
-    open: Optional[float] = None
-    volume: Optional[float] = None
+    close: float | None = None
+    high: float | None = None
+    low: float | None = None
+    open: float | None = None
+    volume: float | None = None
 
 
 class OptionContractDetails(BaseModel):
@@ -91,16 +90,16 @@ class OptionContract(BaseModel):
     underlying_asset_symbol: str
     contract_details: OptionContractDetails
     underlying_asset_price: float
-    change_to_break_even: Optional[float] = None
-    payoff_status: Optional[PayoffStatus] = None
+    change_to_break_even: float | None = None
+    payoff_status: PayoffStatus | None = None
     ask: QuotePrice
     bid: QuotePrice
     last_trade: QuotePrice
-    todays_change: Optional[float] = None
-    todays_change_percent: Optional[float] = None
+    todays_change: float | None = None
+    todays_change_percent: float | None = None
     open_interest: float
-    implied_volatility: Optional[float] = None
-    delta_dollars: Optional[float] = None
+    implied_volatility: float | None = None
+    delta_dollars: float | None = None
     notional_value: float
     greeks: OptionGreeks
     day: OptionDayData
@@ -111,8 +110,8 @@ class OptionsChainResponse(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    results: List[OptionContract]
-    next_cursor: Optional[str] = None
+    results: list[OptionContract]
+    next_cursor: str | None = None
 
 
 class OptionsContractResponse(BaseModel):
@@ -125,16 +124,16 @@ class OptionsContractResponse(BaseModel):
     underlying_asset_symbol: str
     contract_details: OptionContractDetails
     underlying_asset_price: float
-    change_to_break_even: Optional[float] = None
-    payoff_status: Optional[PayoffStatus] = None
+    change_to_break_even: float | None = None
+    payoff_status: PayoffStatus | None = None
     ask: QuotePrice
     bid: QuotePrice
     last_trade: QuotePrice
-    todays_change: Optional[float] = None
-    todays_change_percent: Optional[float] = None
+    todays_change: float | None = None
+    todays_change_percent: float | None = None
     open_interest: float
-    implied_volatility: Optional[float] = None
-    delta_dollars: Optional[float] = None
+    implied_volatility: float | None = None
+    delta_dollars: float | None = None
     notional_value: float
     greeks: OptionGreeks
     day: OptionDayData
@@ -146,7 +145,7 @@ class OptionsOverview(BaseModel):
     model_config = {"populate_by_name": True}
 
     symbol: str
-    calendar: List[str] = []
+    calendar: list[str] = []
 
 
 # New models for additional market data endpoints
@@ -157,8 +156,8 @@ class MarketSnapshotPrice(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    price: Optional[float] = None
-    size: Optional[float] = None
+    price: float | None = None
+    size: float | None = None
 
 
 class MarketSnapshot(BaseModel):
@@ -166,16 +165,16 @@ class MarketSnapshot(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    symbol: Optional[str] = None
-    ask: Optional[MarketSnapshotPrice] = None
-    bid: Optional[MarketSnapshotPrice] = None
-    last_trade: Optional[MarketSnapshotPrice] = None
-    last_trade_size: Optional[float] = None
-    last_trade_time: Optional[str] = None
-    todays_change: Optional[float] = None
-    todays_change_percent: Optional[float] = None
-    market_status: Optional[str] = None
-    asset_type: Optional[str] = None
+    symbol: str | None = None
+    ask: MarketSnapshotPrice | None = None
+    bid: MarketSnapshotPrice | None = None
+    last_trade: MarketSnapshotPrice | None = None
+    last_trade_size: float | None = None
+    last_trade_time: str | None = None
+    todays_change: float | None = None
+    todays_change_percent: float | None = None
+    market_status: str | None = None
+    asset_type: str | None = None
 
 
 class BarData(BaseModel):
@@ -197,11 +196,11 @@ class CustomBars(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    symbol: Optional[str] = None
-    data: List[BarData] = []
+    symbol: str | None = None
+    data: list[BarData] = []
 
 
-class AssetType(str, Enum):
+class AssetType(StrEnum):
     """Asset type for market overview."""
 
     CRYPTO = "CRYPTO"
@@ -214,11 +213,11 @@ class HQAddress(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    address1: Optional[str] = None
-    address2: Optional[str] = None
-    city: Optional[str] = None
-    postal_code: Optional[str] = None
-    state: Optional[str] = None
+    address1: str | None = None
+    address2: str | None = None
+    city: str | None = None
+    postal_code: str | None = None
+    state: str | None = None
 
 
 class MarketOverview(BaseModel):
@@ -226,16 +225,16 @@ class MarketOverview(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    symbol: Optional[str] = None
-    name: Optional[str] = None
-    asset_type: Optional[AssetType] = None
-    description: Optional[str] = None
-    hq: Optional[HQAddress] = None
-    sector: Optional[str] = None
-    industry: Optional[str] = None
-    website: Optional[str] = None
-    market_cap: Optional[float] = None
-    shares_outstanding: Optional[float] = None
+    symbol: str | None = None
+    name: str | None = None
+    asset_type: AssetType | None = None
+    description: str | None = None
+    hq: HQAddress | None = None
+    sector: str | None = None
+    industry: str | None = None
+    website: str | None = None
+    market_cap: float | None = None
+    shares_outstanding: float | None = None
 
 
 class TopMover(BaseModel):
@@ -244,7 +243,7 @@ class TopMover(BaseModel):
     model_config = {"populate_by_name": True}
 
     symbol: str
-    name: Optional[str] = None
+    name: str | None = None
     last_price: float
     todays_change: float
     todays_change_percent: float
@@ -256,7 +255,7 @@ class TopMoversResponse(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    top_movers: List[TopMover] = []
+    top_movers: list[TopMover] = []
 
 
 class QuoteResult(BaseModel):
@@ -299,16 +298,21 @@ class QuotesResponse(BaseModel):
     model_config = {"populate_by_name": True}
 
     def __getitem__(self, key: str) -> QuoteResult:
+        """Get quote result for a symbol."""
         return QuoteResult(**self.__dict__.get(key, {}))
 
     def __iter__(self):
+        """Iterate over available symbols."""
         return iter(self.__dict__.keys())
 
     def keys(self):
+        """Return available symbols."""
         return self.__dict__.keys()
 
     def values(self):
+        """Return quote values."""
         return self.__dict__.values()
 
     def items(self):
+        """Return quote items."""
         return self.__dict__.items()

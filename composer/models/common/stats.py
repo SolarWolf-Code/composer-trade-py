@@ -1,52 +1,53 @@
 """Common statistics models shared across all API sections."""
 
-from typing import Optional, Dict, Any
 from pydantic import BaseModel, Field
 
 
 class RegressionMetrics(BaseModel):
     """Regression metrics for benchmark comparison (alpha, beta, etc.)."""
 
-    alpha: Optional[float] = None
-    beta: Optional[float] = None
-    r_square: Optional[float] = Field(None, alias="r_square")
-    pearson_r: Optional[float] = None
+    alpha: float | None = None
+    beta: float | None = None
+    r_square: float | None = Field(None, alias="r_square")
+    pearson_r: float | None = None
 
 
 class BenchmarkStats(BaseModel):
     """Statistics for a benchmark comparison."""
 
-    calmar_ratio: Optional[float] = None
-    cumulative_return: Optional[float] = None
-    max_: Optional[float] = Field(None, alias="max")
-    max_drawdown: Optional[float] = None
-    mean: Optional[float] = None
-    median: Optional[float] = None
-    min_: Optional[float] = Field(None, alias="min")
-    skewness: Optional[float] = None
-    kurtosis: Optional[float] = None
-    sharpe_ratio: Optional[float] = None
-    sortino_ratio: Optional[float] = None
-    size: Optional[int] = None
-    standard_deviation: Optional[float] = None
-    annualized_rate_of_return: Optional[float] = None
-    annualized_turnover: Optional[float] = None
-    trailing_one_day_return: Optional[float] = None
-    trailing_one_week_return: Optional[float] = None
-    trailing_two_week_return: Optional[float] = None
-    trailing_one_month_return: Optional[float] = None
-    trailing_three_month_return: Optional[float] = None
-    trailing_one_year_return: Optional[float] = None
-    top_one_day_contribution: Optional[float] = None
-    top_five_percent_day_contribution: Optional[float] = None
-    top_ten_percent_day_contribution: Optional[float] = None
-    herfindahl_index: Optional[float] = None
-    win_rate: Optional[float] = None
-    tail_ratio: Optional[float] = None
-    percent: Optional[RegressionMetrics] = None
-    log: Optional[RegressionMetrics] = None
+    calmar_ratio: float | None = None
+    cumulative_return: float | None = None
+    max_: float | None = Field(None, alias="max")
+    max_drawdown: float | None = None
+    mean: float | None = None
+    median: float | None = None
+    min_: float | None = Field(None, alias="min")
+    skewness: float | None = None
+    kurtosis: float | None = None
+    sharpe_ratio: float | None = None
+    sortino_ratio: float | None = None
+    size: int | None = None
+    standard_deviation: float | None = None
+    annualized_rate_of_return: float | None = None
+    annualized_turnover: float | None = None
+    trailing_one_day_return: float | None = None
+    trailing_one_week_return: float | None = None
+    trailing_two_week_return: float | None = None
+    trailing_one_month_return: float | None = None
+    trailing_three_month_return: float | None = None
+    trailing_one_year_return: float | None = None
+    top_one_day_contribution: float | None = None
+    top_five_percent_day_contribution: float | None = None
+    top_ten_percent_day_contribution: float | None = None
+    herfindahl_index: float | None = None
+    win_rate: float | None = None
+    tail_ratio: float | None = None
+    percent: RegressionMetrics | None = None
+    log: RegressionMetrics | None = None
 
     class Config:
+        """Pydantic model configuration."""
+
         populate_by_name = True
 
 
@@ -58,39 +59,42 @@ class Stats(BaseModel):
     max drawdown, and various trailing returns.
     """
 
-    calmar_ratio: Optional[float] = None
-    cumulative_return: Optional[float] = None
-    max_: Optional[float] = Field(None, alias="max")
-    max_drawdown: Optional[float] = None
-    mean: Optional[float] = None
-    median: Optional[float] = None
-    min_: Optional[float] = Field(None, alias="min")
-    skewness: Optional[float] = None
-    kurtosis: Optional[float] = None
-    sharpe_ratio: Optional[float] = None
-    sortino_ratio: Optional[float] = None
-    size: Optional[int] = None
-    standard_deviation: Optional[float] = None
-    annualized_rate_of_return: Optional[float] = None
-    annualized_turnover: Optional[float] = None
-    trailing_one_day_return: Optional[float] = None
-    trailing_one_week_return: Optional[float] = None
-    trailing_two_week_return: Optional[float] = None
-    trailing_one_month_return: Optional[float] = None
-    trailing_three_month_return: Optional[float] = None
-    trailing_one_year_return: Optional[float] = None
-    top_one_day_contribution: Optional[float] = None
-    top_five_percent_day_contribution: Optional[float] = None
-    top_ten_percent_day_contribution: Optional[float] = None
-    herfindahl_index: Optional[float] = None
-    win_rate: Optional[float] = None
-    tail_ratio: Optional[float] = None
-    benchmarks: Optional[Dict[str, BenchmarkStats]] = None
+    calmar_ratio: float | None = None
+    cumulative_return: float | None = None
+    max_: float | None = Field(None, alias="max")
+    max_drawdown: float | None = None
+    mean: float | None = None
+    median: float | None = None
+    min_: float | None = Field(None, alias="min")
+    skewness: float | None = None
+    kurtosis: float | None = None
+    sharpe_ratio: float | None = None
+    sortino_ratio: float | None = None
+    size: int | None = None
+    standard_deviation: float | None = None
+    annualized_rate_of_return: float | None = None
+    annualized_turnover: float | None = None
+    trailing_one_day_return: float | None = None
+    trailing_one_week_return: float | None = None
+    trailing_two_week_return: float | None = None
+    trailing_one_month_return: float | None = None
+    trailing_three_month_return: float | None = None
+    trailing_one_year_return: float | None = None
+    top_one_day_contribution: float | None = None
+    top_five_percent_day_contribution: float | None = None
+    top_ten_percent_day_contribution: float | None = None
+    herfindahl_index: float | None = None
+    win_rate: float | None = None
+    tail_ratio: float | None = None
+    benchmarks: dict[str, BenchmarkStats] | None = None
 
     class Config:
+        """Pydantic model configuration."""
+
         populate_by_name = True
 
     def __repr__(self) -> str:
+        """Return string representation of Stats."""
         parts = []
         if self.sharpe_ratio is not None:
             parts.append(f"sharpe={self.sharpe_ratio:.2f}")
@@ -103,4 +107,6 @@ class Stats(BaseModel):
         return f"Stats({', '.join(parts)})"
 
     def __str__(self) -> str:
+        """Return string representation of Stats."""
+        return self.__repr__()
         return self.__repr__()

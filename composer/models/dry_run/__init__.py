@@ -1,11 +1,11 @@
 """Dry run models."""
 
-from typing import List, Optional
-from enum import Enum
+from enum import StrEnum
+
 from pydantic import BaseModel, Field
 
 
-class TradeSide(str, Enum):
+class TradeSide(StrEnum):
     """Trade side."""
 
     BUY = "BUY"
@@ -35,7 +35,7 @@ class PreviewRecommendedTrade(BaseModel):
     cash_change: float
     share_change: float
     symbol: str
-    name: Optional[str] = None
+    name: str | None = None
     side: TradeSide
     type: str
     prev_value: float
@@ -50,11 +50,11 @@ class DryRunResult(BaseModel):
 
     rebalanced: bool
     next_rebalance_after: str
-    recommended_trades: List[RecommendedTrade]
+    recommended_trades: list[RecommendedTrade]
     queued_cash_change: float
     symphony_value: float
     symphony_name: str
-    next_rebalance_date: Optional[str] = None
+    next_rebalance_date: str | None = None
 
 
 class TradePreviewResult(BaseModel):
@@ -64,10 +64,10 @@ class TradePreviewResult(BaseModel):
 
     rebalanced: bool
     next_rebalance_after: str
-    recommended_trades: List[PreviewRecommendedTrade]
+    recommended_trades: list[PreviewRecommendedTrade]
     queued_cash_change: float
     rebalance_frequency_override: bool
-    rebalance_request_uuid: Optional[str] = None
+    rebalance_request_uuid: str | None = None
     adjusted_for_dtbp: bool
     symphony_value: float
     symphony_name: str
@@ -83,7 +83,7 @@ class AccountDryRunResult(BaseModel):
     account_name: str
     broker: str
     dry_run_result: dict
-    dry_run_missing_symphonies: Optional[dict] = None
+    dry_run_missing_symphonies: dict | None = None
     dry_run_total_symphonies: int
 
 
@@ -92,7 +92,7 @@ class DryRunRequest(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    account_uuids: Optional[List[str]] = None
+    account_uuids: list[str] | None = None
     send_segment_event: bool = False
 
 
@@ -101,11 +101,11 @@ class TradePreviewRequest(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    amount: Optional[float] = None
-    broker_account_uuid: Optional[str] = None
+    amount: float | None = None
+    broker_account_uuid: str | None = None
 
 
-class AccountSource(str, Enum):
+class AccountSource(StrEnum):
     """Account source for dry run."""
 
     QUEUED = "queued"
@@ -119,9 +119,7 @@ class CreateDryRunRequest(BaseModel):
     account_source: AccountSource = Field(
         default=AccountSource.QUEUED, description="Account source to include in dry run"
     )
-    dry_run_time: Optional[str] = Field(
-        None, description="Time to run the dry run (ISO 8601 format)"
-    )
+    dry_run_time: str | None = Field(None, description="Time to run the dry run (ISO 8601 format)")
 
 
 class DryRunEnqueueResponse(BaseModel):

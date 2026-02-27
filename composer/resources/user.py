@@ -1,9 +1,9 @@
 """User resource for user-related endpoints."""
 
 from ..models.user import (
+    AgreementStatusResponse,
     JWTResponse,
     UserProfile,
-    AgreementStatusResponse,
 )
 
 
@@ -17,7 +17,8 @@ class User:
         """
         Get a user JWT.
 
-        Returns:
+        Returns
+        -------
             JWT token response
         """
         response = self._client.get("/api/v1/user/jwt")
@@ -27,7 +28,8 @@ class User:
         """
         Get a user profile.
 
-        Returns:
+        Returns
+        -------
             User profile information
         """
         response = self._client.get("/api/v1/user/profile")
@@ -40,7 +42,8 @@ class User:
         Args:
             agreement_id: The agreement ID to check
 
-        Returns:
+        Returns
+        -------
             Whether the user has agreed to the agreement
         """
         response = self._client.get(f"/api/v1/user/agreement-status/{agreement_id}")

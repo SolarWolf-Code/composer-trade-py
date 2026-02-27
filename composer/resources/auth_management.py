@@ -15,7 +15,8 @@ class AuthManagement:
         """
         List API keys for the authenticated user.
 
-        Returns:
+        Returns
+        -------
             List of API keys
         """
         response = self._client.get("/api/v1/auth-management/api-keys/")

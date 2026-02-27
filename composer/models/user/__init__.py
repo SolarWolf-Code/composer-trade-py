@@ -1,17 +1,17 @@
 """User models - request and response models for user endpoints."""
 
 from .responses import (
+    AgreementStatusResponse,
     JWTResponse,
+    UserOnboardingExtraInfo,
+    UserOnboardingState,
+    UserOnboardingStateAccount,
     UserPreferences,
+    UserPreferencesBanners,
     UserPreferencesOnboarding,
     UserPreferencesPortfolioGraph,
     UserPreferencesSymphonyTable,
-    UserPreferencesBanners,
-    UserOnboardingStateAccount,
-    UserOnboardingState,
-    UserOnboardingExtraInfo,
     UserProfile,
-    AgreementStatusResponse,
 )
 
 __all__ = [

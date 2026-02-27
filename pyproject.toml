@@ -1,6 +1,6 @@
 [project]
 name = "composer-trade-py"
-version = "0.2.0"
+version = "0.2.1"
 authors = [
     {name = "SolarWolf", email = "git@solarwol.xyz"},
 ]
@@ -54,8 +54,17 @@ packages = ["composer"]
 
 [tool.ruff]
 line-length = 100
+fix = true
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-sort-within-sections = true
+
+[tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "D", "UP", "B", "C4", "SIM"]
-ignore = ["D100", "D104", "D107"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
 
 [tool.mypy]
 python_version = "3.11"

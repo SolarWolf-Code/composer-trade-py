@@ -1,18 +1,18 @@
 """Trading resource for trading-related endpoints."""
 
-from typing import Optional, Union
+
 from ..models.trading import (
-    TradingPeriodResponse,
-    OrderRequestsResponse,
-    OrderRequest,
     CreateOrderRequest,
     CreateOrderResponse,
-    ModifyOrderRequest,
-    ExerciseResponse,
     ExercisePreviewResponse,
+    ExerciseResponse,
+    ModifyOrderRequest,
+    OrderRequest,
+    OrderRequestsResponse,
     OrderType,
-    TimeInForce,
     PositionIntent,
+    TimeInForce,
+    TradingPeriodResponse,
 )
 
 
@@ -26,7 +26,8 @@ class Trading:
         """
         Get the trading period for the authenticated user.
 
-        Returns:
+        Returns
+        -------
             Trading period information for CRYPTO, EQUITIES, and OPTIONS
         """
         response = self._client.get("/api/v1/trading-period")
@@ -35,8 +36,8 @@ class Trading:
     def get_order_requests(
         self,
         account_id: str,
-        limit: Optional[int] = None,
-        status: Optional[str] = None,
+        limit: int | None = None,
+        status: str | None = None,
     ) -> OrderRequestsResponse:
         """
         Get order requests for an account.
@@ -46,7 +47,8 @@ class Trading:
             limit: Maximum number of results
             status: Filter by status (e.g., 'QUEUED,OPEN,IN_PROGRESS')
 
-        Returns:
+        Returns
+        -------
             List of order requests
         """
         params = {}
@@ -72,7 +74,8 @@ class Trading:
             account_id: Unique identifier (UUID) of the account
             order_request_id: Unique identifier for the order request
 
-        Returns:
+        Returns
+        -------
             Details of the specified order request
         """
         response = self._client.get(
@@ -83,15 +86,15 @@ class Trading:
     def create_order_request(
         self,
         account_id: str,
-        type: Union[OrderType, str],
+        type: OrderType | str,
         symbol: str,
-        time_in_force: Union[TimeInForce, str],
-        notional: Optional[float] = None,
-        quantity: Optional[float] = None,
-        position_intent: Optional[Union[PositionIntent, str]] = None,
-        limit_price: Optional[float] = None,
-        stop_price: Optional[float] = None,
-        client_order_id: Optional[str] = None,
+        time_in_force: TimeInForce | str,
+        notional: float | None = None,
+        quantity: float | None = None,
+        position_intent: PositionIntent | str | None = None,
+        limit_price: float | None = None,
+        stop_price: float | None = None,
+        client_order_id: str | None = None,
     ) -> CreateOrderResponse:
         """
         Create a new order request.
@@ -108,7 +111,8 @@ class Trading:
             stop_price: Stop price for stop orders
             client_order_id: Optional client-generated order ID
 
-        Returns:
+        Returns
+        -------
             Created order details
         """
         request = CreateOrderRequest(
@@ -152,9 +156,9 @@ class Trading:
         self,
         account_id: str,
         order_request_id: str,
-        client_order_id: Optional[str] = None,
-        limit_price: Optional[float] = None,
-        quantity: Optional[float] = None,
+        client_order_id: str | None = None,
+        limit_price: float | None = None,
+        quantity: float | None = None,
     ) -> None:
         """
         Modify an existing order request that has not executed yet.
@@ -188,7 +192,8 @@ class Trading:
             account_id: Unique identifier (UUID) of the account
             symbol: Option symbol (e.g., OPTIONS::AAPL1234567890PC20240119//USD)
 
-        Returns:
+        Returns
+        -------
             Exercise result
         """
         response = self._client.post(
@@ -209,7 +214,8 @@ class Trading:
             account_id: Unique identifier (UUID) of the account
             symbol: Option symbol (e.g., OPTIONS::AAPL1234567890PC20240119//USD)
 
-        Returns:
+        Returns
+        -------
             Exercise preview
         """
         response = self._client.post(
@@ -224,11 +230,11 @@ class Trading:
         type: str,
         symbol: str,
         time_in_force: str,
-        notional: Optional[float] = None,
-        quantity: Optional[float] = None,
-        position_intent: Optional[str] = None,
-        limit_price: Optional[float] = None,
-        stop_price: Optional[float] = None,
+        notional: float | None = None,
+        quantity: float | None = None,
+        position_intent: str | None = None,
+        limit_price: float | None = None,
+        stop_price: float | None = None,
     ) -> ExercisePreviewResponse:
         """
         Preview an order request before placing it.
@@ -244,7 +250,8 @@ class Trading:
             limit_price: Limit price for limit orders
             stop_price: Stop price for stop orders
 
-        Returns:
+        Returns
+        -------
             Order preview
         """
         request = CreateOrderRequest(

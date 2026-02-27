@@ -1,12 +1,12 @@
 """Deploy resource for deployment-related endpoints."""
 
-from typing import Optional
+
 from ..models.deploy import (
-    MarketHoursResponse,
-    DeploySymphoniesResponse,
-    DeploysResponse,
     Deploy as DeployModel,
     DeployActionResponse,
+    DeploysResponse,
+    DeploySymphoniesResponse,
+    MarketHoursResponse,
 )
 
 
@@ -20,7 +20,8 @@ class DeployResource:
         """
         Get market hours schedule for the upcoming week.
 
-        Returns:
+        Returns
+        -------
             Market hours schedule including open/close times for each day
         """
         response = self._client.get("/api/v1/deploy/market-hours")
@@ -29,7 +30,7 @@ class DeployResource:
     def get_deploy_symphonies(
         self,
         account_id: str,
-        asset_class: Optional[str] = None,
+        asset_class: str | None = None,
     ) -> DeploySymphoniesResponse:
         """
         Get metadata for symphonies which have new invests pending.
@@ -38,7 +39,8 @@ class DeployResource:
             account_id: Unique identifier (UUID) of the account
             asset_class: Deprecated.
 
-        Returns:
+        Returns
+        -------
             List of symphonies with pending invests
         """
         params = {}
@@ -53,8 +55,8 @@ class DeployResource:
     def get_deploys(
         self,
         account_id: str,
-        status: Optional[str] = None,
-        limit: Optional[int] = None,
+        status: str | None = None,
+        limit: int | None = None,
     ) -> DeploysResponse:
         """
         Get all deploy details for an account.
@@ -64,7 +66,8 @@ class DeployResource:
             status: Filter by status (QUEUED, CANCELED, SUCCEEDED, FAILED, REJECTED, EXPIRED)
             limit: Maximum number of results
 
-        Returns:
+        Returns
+        -------
             List of deploys for the account
         """
         params = {}
@@ -90,10 +93,13 @@ class DeployResource:
             account_id: Unique identifier (UUID) of the account
             deploy_id: Unique identifier for the deployment operation
 
-        Returns:
+        Returns
+        -------
             Details of the specified deploy
         """
-        response = self._client.get(f"/api/v1/deploy/accounts/{account_id}/deploys/{deploy_id}")
+        response = self._client.get(
+            f"/api/v1/deploy/accounts/{account_id}/deploys/{deploy_id}"
+        )
         return DeployModel.model_validate(response)
 
     def delete_deploy(
@@ -122,7 +128,8 @@ class DeployResource:
             account_id: Unique identifier (UUID) of the account
             symphony_id: Unique identifier for the Symphony
 
-        Returns:
+        Returns
+        -------
             Information about the deploy
         """
         response = self._client.post(
@@ -144,7 +151,8 @@ class DeployResource:
             symphony_id: Unique identifier for the Symphony
             amount: Amount of cash to invest (in USD)
 
-        Returns:
+        Returns
+        -------
             Information about the deploy
         """
         response = self._client.post(
@@ -165,7 +173,8 @@ class DeployResource:
             account_id: Unique identifier (UUID) of the account
             symphony_id: Unique identifier for the Symphony
 
-        Returns:
+        Returns
+        -------
             Information about the deploy
         """
         response = self._client.post(
@@ -187,7 +196,8 @@ class DeployResource:
             symphony_id: Unique identifier for the Symphony
             rebalance_request_uuid: UUID for the rebalance request
 
-        Returns:
+        Returns
+        -------
             Information about the deploy
         """
         response = self._client.post(
@@ -229,7 +239,8 @@ class DeployResource:
             symphony_id: Unique identifier for the Symphony
             amount: Amount of cash to withdraw (in USD)
 
-        Returns:
+        Returns
+        -------
             Information about the deploy
         """
         response = self._client.post(

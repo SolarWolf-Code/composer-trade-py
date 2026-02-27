@@ -1,17 +1,19 @@
 """Accounts resource for account-related endpoints."""
 
-from typing import List, Optional, Dict, Any
+import builtins
+from typing import Any
+
 from ..models.accounts import (
+    AccountInfo,
     AccountsListResponse,
+    AvailableAccountType,
+    BuyingPower,
     Holding,
+    InvestorDocument,
     SupportedRegionsResponse,
     Trade,
-    TradeVolumeResponse,
     TradeHistoryItem,
-    AccountInfo,
-    BuyingPower,
-    InvestorDocument,
-    AvailableAccountType,
+    TradeVolumeResponse,
 )
 
 
@@ -25,7 +27,8 @@ class Accounts:
         """
         Get a list of all accounts associated with the authenticated user.
 
-        Returns:
+        Returns
+        -------
             List of accounts with status, asset classes, and key dates
         """
         response = self._client.get("/api/v1/accounts/list")
@@ -34,8 +37,8 @@ class Accounts:
     def get_holdings(
         self,
         account_id: str,
-        position_type: Optional[str] = None,
-    ) -> List[Holding]:
+        position_type: str | None = None,
+    ) -> builtins.list[Holding]:
         """
         Get all current positions held in the specified account.
 
@@ -43,7 +46,8 @@ class Accounts:
             account_id: The account UUID
             position_type: Optional filter - 'direct', 'symphony', or 'all'
 
-        Returns:
+        Returns
+        -------
             List of holdings in the account
         """
         params = {}
@@ -64,10 +68,10 @@ class Accounts:
 
     def get_available_types(
         self,
-        country: Optional[str] = None,
-        state: Optional[str] = None,
-        white_label_footprint: Optional[bool] = None,
-    ) -> Dict[str, List[AvailableAccountType]]:
+        country: str | None = None,
+        state: str | None = None,
+        white_label_footprint: bool | None = None,
+    ) -> dict[str, builtins.list[AvailableAccountType]]:
         """
         Get available account types for a user to create.
 
@@ -76,7 +80,8 @@ class Accounts:
             state: State code
             white_label_footprint: Whether to use white label footprint
 
-        Returns:
+        Returns
+        -------
             Map of region to available account types
         """
         params = {}
@@ -99,7 +104,8 @@ class Accounts:
         """
         Get a list of countries and states that support equity/crypto trading.
 
-        Returns:
+        Returns
+        -------
             Supported regions for EQUITIES and CRYPTO trading
         """
         response = self._client.get("/api/v1/accounts/supported-regions")
@@ -108,11 +114,11 @@ class Accounts:
     def get_activities_trades(
         self,
         account_id: str,
-        asset_class: Optional[str] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-        order_request_id: Optional[str] = None,
-    ) -> List[Trade]:
+        asset_class: str | None = None,
+        limit: int | None = None,
+        offset: int | None = None,
+        order_request_id: str | None = None,
+    ) -> builtins.list[Trade]:
         """
         Get record of historical trades.
 
@@ -123,7 +129,8 @@ class Accounts:
             offset: Pagination offset
             order_request_id: Filter by order request ID
 
-        Returns:
+        Returns
+        -------
             List of historical trades
         """
         params = {}
@@ -145,22 +152,24 @@ class Accounts:
         self,
         account_id: str,
         start_time: str,
-        asset_class: Optional[str] = None,
-        direct_trading_only: Optional[bool] = None,
+        asset_class: str | None = None,
+        direct_trading_only: bool | None = None,
     ) -> TradeVolumeResponse:
         """
         Get trade volume for the account.
 
         Args:
             account_id: The account UUID
-            start_time: Start time for the volume calculation (ISO format with timezone, e.g., "2025-12-10T09:00:00-05:00")
+            start_time: Start time for the volume calculation (ISO format with
+                timezone, e.g., "2025-12-10T09:00:00-05:00")
             asset_class: Filter by asset class (CRYPTO, EQUITIES, OPTIONS)
             direct_trading_only: Only include direct trading volume
 
-        Returns:
+        Returns
+        -------
             Trade volume information
         """
-        params: Dict[str, Any] = {"start_time": start_time}
+        params: dict[str, Any] = {"start_time": start_time}
         if asset_class:
             params["asset_class"] = asset_class
         if direct_trading_only is not None:
@@ -174,11 +183,11 @@ class Accounts:
     def get_activities_trade_history(
         self,
         account_id: str,
-        asset_class: Optional[str] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-        order_request_id: Optional[str] = None,
-    ) -> List[TradeHistoryItem]:
+        asset_class: str | None = None,
+        limit: int | None = None,
+        offset: int | None = None,
+        order_request_id: str | None = None,
+    ) -> builtins.list[TradeHistoryItem]:
         """
         Get record of historical trades and option events.
 
@@ -189,7 +198,8 @@ class Accounts:
             offset: Pagination offset
             order_request_id: Filter by order request ID
 
-        Returns:
+        Returns
+        -------
             List of trade history items including option events
         """
         params = {}
@@ -214,20 +224,22 @@ class Accounts:
         Args:
             account_id: The account UUID
 
-        Returns:
+        Returns
+        -------
             Account owner information including identity, contact, and profile
         """
         response = self._client.get(f"/api/v1/accounts/{account_id}/info")
         return AccountInfo.model_validate(response)
 
-    def get_buying_power(self, account_id: str) -> List[BuyingPower]:
+    def get_buying_power(self, account_id: str) -> builtins.list[BuyingPower]:
         """
         Get account buying power by asset class.
 
         Args:
             account_id: The account UUID
 
-        Returns:
+        Returns
+        -------
             List of buying power info for each asset class
         """
         response = self._client.get(f"/api/v1/accounts/{account_id}/info/buying-power")
@@ -238,7 +250,7 @@ class Accounts:
         account_id: str,
         category: str,
         year: int,
-    ) -> List[InvestorDocument]:
+    ) -> builtins.list[InvestorDocument]:
         """
         Get investor documents for Apex and Alpaca accounts.
 
@@ -247,7 +259,8 @@ class Accounts:
             category: Document category (STATEMENT, TAX_FORM, etc.)
             year: Year of documents to retrieve
 
-        Returns:
+        Returns
+        -------
             List of investor documents
         """
         params = {"category": category, "year": year}
@@ -264,7 +277,8 @@ class Accounts:
         Args:
             document_id: The document ID to download
 
-        Returns:
+        Returns
+        -------
             URL to download the document (redirect)
         """
         response = self._client.get(f"/api/v1/accounts/documents/{document_id}/download")

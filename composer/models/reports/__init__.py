@@ -1,9 +1,9 @@
 """Reports models."""
 
-from enum import Enum
+from enum import StrEnum
 
 
-class ReportType(str, Enum):
+class ReportType(StrEnum):
     """Type of activity report."""
 
     TRADE_ACTIVITY = "trade-activity"

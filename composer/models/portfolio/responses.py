@@ -1,32 +1,31 @@
 """Portfolio response models."""
 
-from datetime import date, datetime, timezone, timedelta
-from typing import Dict, List, Optional
-from enum import Enum
+from datetime import UTC, datetime, timedelta
+from enum import StrEnum
 
 import pandas as pd
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, model_validator
 
 EST_OFFSET = timedelta(hours=5)
 
 
 def _epoch_ms_to_date_string(epoch_ms: int) -> str:
     """Convert epoch milliseconds to ISO date string (assuming EST timestamp from API)."""
-    dt = datetime.fromtimestamp(epoch_ms / 1000, tz=timezone.utc) + EST_OFFSET
+    dt = datetime.fromtimestamp(epoch_ms / 1000, tz=UTC) + EST_OFFSET
     return dt.date().isoformat()
 
 
 def _transform_epoch_series_to_by_date(
-    epoch_ms: List[int],
-    series: List[float],
-    deposit_adjusted_series: Optional[List[float]] = None,
-) -> "Dict[str, TimeSeriesEntry]":
+    epoch_ms: list[int],
+    series: list[float],
+    deposit_adjusted_series: list[float] | None = None,
+) -> "dict[str, TimeSeriesEntry]":
     """Transform epoch_ms + series to {date: TimeSeriesEntry} format."""
-    result: "Dict[str, TimeSeriesEntry]" = {}
+    result: dict[str, TimeSeriesEntry] = {}
 
     for i, epoch in enumerate(epoch_ms):
         date_str = _epoch_ms_to_date_string(epoch)
-        entry: Dict[str, float] = {"series": series[i]}
+        entry: dict[str, float] = {"series": series[i]}
         if deposit_adjusted_series:
             entry["deposit_adjusted_series"] = deposit_adjusted_series[i]
         result[date_str] = TimeSeriesEntry(**entry)
@@ -34,7 +33,7 @@ def _transform_epoch_series_to_by_date(
     return dict(sorted(result.items()))
 
 
-class AssetClass(str, Enum):
+class AssetClass(StrEnum):
     """Asset class types."""
 
     CRYPTO = "CRYPTO"
@@ -42,7 +41,7 @@ class AssetClass(str, Enum):
     OPTIONS = "OPTIONS"
 
 
-class PositionDirection(str, Enum):
+class PositionDirection(StrEnum):
     """Position direction."""
 
     LONG = "LONG"
@@ -58,9 +57,9 @@ class OptionsDetails(BaseModel):
     strike_price: float
     expiry: str
     contract_type: str
-    underlying_price: Optional[float] = None
-    underlying_price_todays_change: Optional[float] = None
-    underlying_price_todays_change_percent: Optional[float] = None
+    underlying_price: float | None = None
+    underlying_price_todays_change: float | None = None
+    underlying_price_todays_change_percent: float | None = None
 
 
 class HoldingAllocation(BaseModel):
@@ -71,7 +70,7 @@ class HoldingAllocation(BaseModel):
     allocation: float
     amount: float
     value: float
-    direction: Optional[PositionDirection] = None
+    direction: PositionDirection | None = None
 
 
 class SymphonyAllocation(BaseModel):
@@ -92,8 +91,8 @@ class SymphonyHoldingAllocation(BaseModel):
     allocation: float
     amount: float
     value: float
-    direction: Optional[PositionDirection] = None
-    symphonies: List[SymphonyAllocation] = []
+    direction: PositionDirection | None = None
+    symphonies: list[SymphonyAllocation] = []
 
 
 class HoldingStats(BaseModel):
@@ -102,22 +101,22 @@ class HoldingStats(BaseModel):
     model_config = {"populate_by_name": True}
 
     symbol: str
-    name: Optional[str] = None
-    asset_class: Optional[AssetClass] = None
-    options_details: Optional[OptionsDetails] = None
+    name: str | None = None
+    asset_class: AssetClass | None = None
+    options_details: OptionsDetails | None = None
     price: float
     price_todays_change: float
     price_todays_change_percent: float
     direct: HoldingAllocation
     symphony: SymphonyHoldingAllocation
-    notional_value: Optional[float] = None
-    delta_dollars: Optional[float] = None
+    notional_value: float | None = None
+    delta_dollars: float | None = None
     todays_change_percent: float
     todays_change: float
-    total_change_percent: Optional[float] = None
-    total_change: Optional[float] = None
-    cost_basis: Optional[float] = None
-    average_cost_basis: Optional[float] = None
+    total_change_percent: float | None = None
+    total_change: float | None = None
+    cost_basis: float | None = None
+    average_cost_basis: float | None = None
 
 
 class HoldingStatsResponse(BaseModel):
@@ -125,7 +124,7 @@ class HoldingStatsResponse(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    holdings: List[HoldingStats] = []
+    holdings: list[HoldingStats] = []
 
 
 class TotalStats(BaseModel):
@@ -141,8 +140,8 @@ class TotalStats(BaseModel):
     todays_percent_change: float
     total_cash: float
     total_unallocated_cash: float
-    pending_withdrawals: Optional[float] = None
-    pending_net_deposits: Optional[float] = None
+    pending_withdrawals: float | None = None
+    pending_net_deposits: float | None = None
     pending_deploys_cash: float
 
 
@@ -156,7 +155,7 @@ class SymphonyHolding(BaseModel):
     allocation: float
     amount: float
     value: float
-    last_percent_change: Optional[float] = None
+    last_percent_change: float | None = None
 
 
 class SymphonyStatsMeta(BaseModel):
@@ -166,8 +165,8 @@ class SymphonyStatsMeta(BaseModel):
 
     id: str
     position_id: str
-    as_of: Optional[str] = None
-    holdings: List[SymphonyHolding] = []
+    as_of: str | None = None
+    holdings: list[SymphonyHolding] = []
     simple_return: float
     time_weighted_return: float
     net_deposits: float
@@ -180,21 +179,21 @@ class SymphonyStatsMeta(BaseModel):
     max_drawdown: float
     last_percent_change: float
     invested_since: str
-    last_rebalance_on: Optional[str] = None
-    last_rebalance_attempted_on: Optional[str] = None
+    last_rebalance_on: str | None = None
+    last_rebalance_attempted_on: str | None = None
     name: str
     asset_class: AssetClass
-    asset_classes: List[AssetClass]
+    asset_classes: list[AssetClass]
     color: str
-    community_review_status: Optional[str] = None
+    community_review_status: str | None = None
     description: str
     last_semantic_update_at: str
-    tags: List[str] = []
+    tags: list[str] = []
     rebalance_frequency: str
     is_shared: bool
-    tickers: List[dict] = []
-    rebalance_corridor_width: Optional[float] = None
-    next_rebalance_on: Optional[str] = None
+    tickers: list[dict] = []
+    rebalance_corridor_width: float | None = None
+    next_rebalance_on: str | None = None
     may_rebalance_today: bool
     skip_rebalance_today: bool
 
@@ -204,14 +203,14 @@ class SymphonyStatsMetaResponse(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    symphonies: List[SymphonyStatsMeta] = []
+    symphonies: list[SymphonyStatsMeta] = []
 
 
 class TimeSeriesEntry(BaseModel):
     """A single time series data point."""
 
     series: float
-    deposit_adjusted_series: Optional[float] = None
+    deposit_adjusted_series: float | None = None
 
 
 class TimeSeries(BaseModel):
@@ -219,11 +218,12 @@ class TimeSeries(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    dates: Dict[str, TimeSeriesEntry] = {}
+    dates: dict[str, TimeSeriesEntry] = {}
 
     @model_validator(mode="before")
     @classmethod
     def transform_epoch_to_dates(cls, v):
+        """Transform epoch_ms timestamps to date-indexed dict."""
         if isinstance(v, dict) and "epoch_ms" in v:
             epoch_ms = v.get("epoch_ms", [])
             series = v.get("series", [])
@@ -255,11 +255,12 @@ class PortfolioHistory(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    dates: Dict[str, TimeSeriesEntry] = {}
+    dates: dict[str, TimeSeriesEntry] = {}
 
     @model_validator(mode="before")
     @classmethod
     def transform_epoch_to_dates(cls, v):
+        """Transform epoch_ms timestamps to date-indexed dict."""
         if isinstance(v, dict) and "epoch_ms" in v:
             epoch_ms = v.get("epoch_ms", [])
             series = v.get("series", [])
@@ -298,10 +299,10 @@ class SymphonyHoldings(BaseModel):
     model_config = {"populate_by_name": True}
 
     cash: float
-    last_rebalance_on: Optional[str] = None
+    last_rebalance_on: str | None = None
     liquidated: bool
     net_deposits: float
-    shares: Optional[dict] = None
+    shares: dict | None = None
     symphony_id: str
 
 
@@ -312,8 +313,8 @@ class SymphonyStats(BaseModel):
 
     id: str
     position_id: str
-    as_of: Optional[str] = None
-    holdings: List[SymphonyHolding] = []
+    as_of: str | None = None
+    holdings: list[SymphonyHolding] = []
     simple_return: float
     time_weighted_return: float
     net_deposits: float
@@ -344,8 +345,8 @@ class ActivityHistoryItem(BaseModel):
     type: str
     symphony_id: str
     symphony_name: str
-    version_id: Optional[str] = None
-    at: Optional[str] = None
+    version_id: str | None = None
+    at: str | None = None
 
 
 class ActivityHistoryResponse(BaseModel):
@@ -353,7 +354,7 @@ class ActivityHistoryResponse(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    data: List[ActivityHistoryItem] = []
+    data: list[ActivityHistoryItem] = []
 
 
 class DeployHistoryItem(BaseModel):
@@ -365,7 +366,7 @@ class DeployHistoryItem(BaseModel):
     symphony_id: str
     symphony_name: str
     version_id: str
-    at: Optional[str] = None
+    at: str | None = None
 
 
 class DeployHistoryResponse(BaseModel):
@@ -373,4 +374,4 @@ class DeployHistoryResponse(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    deploy_history: List[DeployHistoryItem] = []
+    deploy_history: list[DeployHistoryItem] = []

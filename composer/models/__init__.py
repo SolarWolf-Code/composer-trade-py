@@ -1,112 +1,162 @@
 """Composer API models organized by endpoint sections."""
 
 # Common models (shared across all sections)
+# Accounts section
+from .accounts import (
+    Account,
+    AccountInfo,
+    AccountsListResponse,
+    AccountType,
+    Address,
+    AssetClass,
+    AvailableAccountType,
+    BuyingPower,
+    Contact,
+    DirectTradableAssetClasses,
+    FootprintPlaybook,
+    Holding,
+    Identity,
+    IncomeRange,
+    InvestorDocument,
+    InvestorDocumentCategory,
+    InvestorProfile,
+    OptionsDetails,
+    SupportedRegionsResponse,
+    SupportedRegionStates,
+    Trade,
+    TradeHistoryItem,
+    TradeVolumeResponse,
+    TrustedContact,
+)
+
+# Backtest section
+from .backtest import (
+    AISymphonyDescription,
+    ApplySubscription,
+    AssetClass as BacktestAssetClass,
+    BacktestExistingSymphonyRequest,
+    # Request models
+    BacktestRequest,
+    BacktestResult,
+    # Enums
+    BacktestVersion,
+    Broker,
+    # Response models
+    Costs,
+    DataWarning,
+    DraftSymphoniesResponse,
+    DraftSymphony,
+    Indicator,
+    IndicatorParameter,
+    LegendEntry,
+    ParameterType,
+    Quote,
+    RebalanceRequest,
+    RebalanceResult,
+    # Symphony models
+    SymphonyDetail,
+    SymphonyMeta,
+    SymphonyMetaResponse,
+    SymphonyRebalanceState,
+    SymphonyRunResult,
+    SymphonyTickersResponse,
+    SymphonyVersionInfo,
+    TickersResponse,
+    UserSymphoniesResponse,
+    UserSymphony,
+    WatchlistResponse,
+    WatchlistSymphony,
+)
+
+# Cash section
+from .cash import (
+    ACHLimits,
+    ACHRelationship,
+    ACHRelationshipsResponse,
+    ACHTransfer,
+    Frequency,
+    RecurringDeposit,
+    RecurringDepositMeta,
+    RecurringDepositProjection,
+    RecurringDepositProjectionReason,
+    RecurringDepositsMeta,
+    RecurringDepositsResponse,
+    RecurringDepositStatus,
+    TaxWithholding,
+    TransferConstraints,
+)
 from .common import (
-    Stats,
+    Asset,
+    BaseNode,
     BenchmarkStats,
-    RegressionMetrics,
+    Empty,
+    Filter,
     # Symphony types
     Function,
-    RebalanceFrequency,
-    WeightMap,
-    BaseNode,
-    Asset,
-    Empty,
-    If,
-    IfChildTrue,
-    IfChildFalse,
-    Filter,
-    WeightInverseVol,
     Group,
+    If,
+    IfChildFalse,
+    IfChildTrue,
+    RebalanceFrequency,
+    RegressionMetrics,
+    Stats,
+    SymphonyScore,
     WeightCashEqual,
     WeightCashSpecified,
-    SymphonyScore,
-    SymphonyDefinition,
+    WeightInverseVol,
+    WeightMap,
     validate_symphony_score,
 )
 
-# Accounts section
-from .accounts import (
-    AssetClass,
-    DirectTradableAssetClasses,
-    Account,
-    OptionsDetails,
-    Holding,
-    InvestorDocument,
-    InvestorDocumentCategory,
-    AccountsListResponse,
-    AccountType,
-    AvailableAccountType,
-    SupportedRegionsResponse,
-    SupportedRegionStates,
-    FootprintPlaybook,
-    Trade,
-    TradeVolumeResponse,
-    TradeHistoryItem,
-    Identity,
-    Address,
-    Contact,
-    IncomeRange,
-    InvestorProfile,
-    TrustedContact,
-    AccountInfo,
-    BuyingPower,
+# Dry Run section
+from .dry_run import (
+    AccountDryRunResult,
+    DryRunRequest,
+    DryRunResult,
+    PreviewRecommendedTrade,
+    RecommendedTrade,
+    TradePreviewRequest,
+    TradePreviewResult,
+    TradeSide,
+)
+
+# Market Data section
+from .market_data import (
+    ContractType,
+    OptionContract,
+    OptionContractDetails,
+    OptionDayData,
+    OptionGreeks,
+    OptionsChainResponse,
+    OptionsContractResponse,
+    OptionSortBy,
+    OptionsOverview,
+    PayoffStatus,
+    QuotePrice,
+    SortOrder,
 )
 
 # Portfolio section
 from .portfolio import (
-    PositionDirection,
+    ActivityHistoryItem,
+    ActivityHistoryResponse,
+    DeployHistoryItem,
+    DeployHistoryResponse,
     HoldingAllocation,
-    SymphonyAllocation,
-    SymphonyHoldingAllocation,
     HoldingStats,
     HoldingStatsResponse,
-    TotalStats,
+    PortfolioHistory,
+    PositionDirection,
+    SymphonyAllocation,
     SymphonyHolding,
+    SymphonyHoldingAllocation,
+    SymphonyHoldings,
     SymphonyStats,
     SymphonyStatsMeta,
     SymphonyStatsMetaResponse,
     SymphonyStatsResponse,
     TimeSeries,
-    PortfolioHistory,
-    SymphonyHoldings,
-    ActivityHistoryItem,
-    ActivityHistoryResponse,
-    DeployHistoryItem,
-    DeployHistoryResponse,
-)
-
-# Cash section
-from .cash import (
-    TransferConstraints,
-    ACHRelationship,
-    ACHRelationshipsResponse,
-    ACHLimits,
-    TaxWithholding,
-    ACHTransfer,
-    Frequency,
-    RecurringDepositStatus,
-    RecurringDeposit,
-    RecurringDepositsResponse,
-    RecurringDepositMeta,
-    RecurringDepositsMeta,
-    RecurringDepositProjectionReason,
-    RecurringDepositProjection,
-)
-
-# User section
-from .user import (
-    JWTResponse,
-    UserPreferences,
-    UserPreferencesOnboarding,
-    UserPreferencesPortfolioGraph,
-    UserPreferencesSymphonyTable,
-    UserPreferencesBanners,
-    UserOnboardingStateAccount,
-    UserOnboardingState,
-    UserOnboardingExtraInfo,
-    UserProfile,
-    AgreementStatusResponse,
+    TotalStats,
 )
 
 # Reports section
@@ -114,108 +164,52 @@ from .reports import ReportType
 
 # Search section
 from .search import (
-    AssetClass as SearchAssetClass,
-    SymphonyAIDescription,
-    SearchSymphonyResult,
     SearchSymphoniesRequest,
+    SearchSymphonyResult,
+    SymphonyAIDescription,
 )
 
 # Symphony section
 from .symphony import (
-    AssetClass,
-    BenchmarkType,
+    AssetClass as SymphonyAssetClass,
     Benchmark,
+    BenchmarkType,
+    CopySymphonyResponse,
     CreateSymphonyRequest,
     CreateSymphonyResponse,
-    CopySymphonyResponse,
-    UpdateSymphonyResponse,
-    UpdateSymphonyNodesResponse,
     SymphonyVersion,
+    UpdateSymphonyNodesResponse,
+    UpdateSymphonyResponse,
 )
 
 # Trading section
 from .trading import (
-    OrderStatus,
-    OrderSide,
-    OrderType,
-    TimeInForce,
-    PositionIntent,
     AssetClass as TradingAssetClass,
-    OrderSource,
-    OptionsDetails,
-    OrderRequest,
     CreateOrderRequest,
     CreateOrderResponse,
     ListOrdersResponse,
+    OrderRequest,
+    OrderSide,
+    OrderSource,
+    OrderStatus,
+    OrderType,
+    PositionIntent,
+    TimeInForce,
 )
 
-# Market Data section
-from .market_data import (
-    ContractType,
-    PayoffStatus,
-    OptionSortBy,
-    SortOrder,
-    OptionGreeks,
-    QuotePrice,
-    OptionDayData,
-    OptionContractDetails,
-    OptionContract,
-    OptionsChainResponse,
-    OptionsContractResponse,
-    OptionsOverview,
-)
-
-# Dry Run section
-from .dry_run import (
-    TradeSide,
-    RecommendedTrade,
-    PreviewRecommendedTrade,
-    DryRunResult,
-    TradePreviewResult,
-    AccountDryRunResult,
-    DryRunRequest,
-    TradePreviewRequest,
-)
-
-# Backtest section
-from .backtest import (
-    # Enums
-    BacktestVersion,
-    Broker,
-    ApplySubscription,
-    ParameterType,
-    AssetClass as BacktestAssetClass,
-    # Symphony models
-    SymphonyDefinition,
-    IndicatorParameter,
-    Indicator,
-    SymphonyMeta,
-    SymphonyMetaResponse,
-    SymphonyDetail,
-    SymphonyVersionInfo,
-    TickersResponse,
-    AISymphonyDescription,
-    UserSymphony,
-    DraftSymphony,
-    WatchlistSymphony,
-    UserSymphoniesResponse,
-    DraftSymphoniesResponse,
-    WatchlistResponse,
-    SymphonyTickersResponse,
-    # Request models
-    BacktestRequest,
-    BacktestExistingSymphonyRequest,
-    Quote,
-    SymphonyRebalanceState,
-    RebalanceRequest,
-    # Response models
-    Costs,
-    DataWarning,
-    LegendEntry,
-    BacktestResult,
-    RecommendedTrade,
-    SymphonyRunResult,
-    RebalanceResult,
+# User section
+from .user import (
+    AgreementStatusResponse,
+    JWTResponse,
+    UserOnboardingExtraInfo,
+    UserOnboardingState,
+    UserOnboardingStateAccount,
+    UserPreferences,
+    UserPreferencesBanners,
+    UserPreferencesOnboarding,
+    UserPreferencesPortfolioGraph,
+    UserPreferencesSymphonyTable,
+    UserProfile,
 )
 
 # For backward compatibility, also export old model names
@@ -249,7 +243,6 @@ __all__ = [
     "AssetClass",
     "DirectTradableAssetClasses",
     "Account",
-    "OptionsDetails",
     "Holding",
     "InvestorDocument",
     "InvestorDocumentCategory",
@@ -324,7 +317,7 @@ __all__ = [
     "SearchSymphonyResult",
     "SearchSymphoniesRequest",
     # Symphony
-    "AssetClass",
+    "SymphonyAssetClass",
     "BenchmarkType",
     "Benchmark",
     "CreateSymphonyRequest",
@@ -392,7 +385,6 @@ __all__ = [
     "WatchlistResponse",
     "SymphonyTickersResponse",
     # Backtest models
-    "SymphonyDefinition",
     "BacktestRequest",
     "BacktestExistingSymphonyRequest",
     "Quote",
@@ -402,7 +394,6 @@ __all__ = [
     "DataWarning",
     "LegendEntry",
     "BacktestResult",
-    "RecommendedTrade",
     "SymphonyRunResult",
     "RebalanceResult",
     # Backward compatibility

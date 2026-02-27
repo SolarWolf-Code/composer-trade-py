@@ -1,17 +1,18 @@
 """Conversation resource for AI conversation/chat endpoints."""
 
-from typing import Optional, Dict, Any, List
+from typing import Any
+
 from ..models.conversation import (
-    CreateConversationRequest,
-    SendMessageRequest,
-    FeedbackRequest,
-    FeedbackActionDetails,
-    UpdateStateRequest,
-    ConversationResponse,
-    StartingPointsResponse,
     Conversation as ConversationModel,
-    MessageContentItem,
+    ConversationResponse,
+    CreateConversationRequest,
+    FeedbackActionDetails,
+    FeedbackRequest,
     FileItem,
+    MessageContentItem,
+    SendMessageRequest,
+    StartingPointsResponse,
+    UpdateStateRequest,
 )
 
 
@@ -24,9 +25,9 @@ class Conversation:
     def create(
         self,
         account_id: str,
-        text: Optional[str] = None,
-        message_content: Optional[List[MessageContentItem]] = None,
-        files: Optional[List[FileItem]] = None,
+        text: str | None = None,
+        message_content: list[MessageContentItem] | None = None,
+        files: list[FileItem] | None = None,
     ) -> ConversationResponse:
         """
         Create a new conversation.
@@ -37,7 +38,8 @@ class Conversation:
             message_content: Message content items
             files: Files to attach
 
-        Returns:
+        Returns
+        -------
             Created conversation response with ID and location
         """
         request = CreateConversationRequest(
@@ -54,7 +56,7 @@ class Conversation:
 
     def get_starting_points(
         self,
-        tools_api_version: Optional[str] = None,
+        tools_api_version: str | None = None,
     ) -> StartingPointsResponse:
         """
         Get available starting points for new conversations.
@@ -62,7 +64,8 @@ class Conversation:
         Args:
             tools_api_version: Optional API version for tools
 
-        Returns:
+        Returns
+        -------
             Starting points and discover prompts
         """
         params = {}
@@ -81,7 +84,8 @@ class Conversation:
         Args:
             conversation_id: The conversation UUID
 
-        Returns:
+        Returns
+        -------
             Conversation details including messages and state
         """
         response = self._client.get(f"/api/v1/conversation/{conversation_id}")
@@ -90,9 +94,9 @@ class Conversation:
     def send_message(
         self,
         conversation_id: str,
-        text: Optional[str] = None,
-        message_content: Optional[List[MessageContentItem]] = None,
-        files: Optional[List[FileItem]] = None,
+        text: str | None = None,
+        message_content: list[MessageContentItem] | None = None,
+        files: list[FileItem] | None = None,
     ) -> ConversationResponse:
         """
         Send a message to an existing conversation.
@@ -103,7 +107,8 @@ class Conversation:
             message_content: Message content items
             files: Files to attach
 
-        Returns:
+        Returns
+        -------
             Updated conversation response
         """
         request = SendMessageRequest(
@@ -122,8 +127,8 @@ class Conversation:
         conversation_id: str,
         message_id: str,
         action_type: str,
-        details: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        details: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """
         Send feedback on a conversation message.
 
@@ -133,7 +138,8 @@ class Conversation:
             action_type: Type of feedback action
             details: Additional feedback details
 
-        Returns:
+        Returns
+        -------
             Feedback response
         """
         request = FeedbackRequest(
@@ -153,7 +159,7 @@ class Conversation:
         self,
         conversation_id: str,
         message_id: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Cancel a processing message in a conversation.
 
@@ -161,7 +167,8 @@ class Conversation:
             conversation_id: The conversation UUID
             message_id: The message ID to cancel
 
-        Returns:
+        Returns
+        -------
             Cancellation response
         """
         response = self._client.delete(
@@ -172,14 +179,15 @@ class Conversation:
     def upload_file(
         self,
         file_path: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Upload a file for use in conversations.
 
         Args:
             file_path: Path to the file to upload
 
-        Returns:
+        Returns
+        -------
             Upload response with file ID
         """
         with open(file_path, "rb") as f:
@@ -193,7 +201,7 @@ class Conversation:
         self,
         conversation_id: str,
         message_uuid: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Update the client state for a conversation.
 
@@ -201,7 +209,8 @@ class Conversation:
             conversation_id: The conversation UUID
             message_uuid: The message UUID to update state for
 
-        Returns:
+        Returns
+        -------
             State update response
         """
         request = UpdateStateRequest()

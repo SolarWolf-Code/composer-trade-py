@@ -1,18 +1,18 @@
 """Portfolio resource for portfolio and holdings endpoints."""
 
-from typing import List, Optional
+
+from ..models.accounts import Holding
 from ..models.portfolio import (
-    HoldingStatsResponse,
-    TotalStats,
-    SymphonyStatsMetaResponse,
-    SymphonyStatsResponse,
-    PortfolioHistory,
-    TimeSeries,
-    SymphonyHoldings,
     ActivityHistoryResponse,
     DeployHistoryResponse,
+    HoldingStatsResponse,
+    PortfolioHistory,
+    SymphonyHoldings,
+    SymphonyStatsMetaResponse,
+    SymphonyStatsResponse,
+    TimeSeries,
+    TotalStats,
 )
-from ..models.accounts import Holding
 
 
 class Portfolio:
@@ -24,8 +24,8 @@ class Portfolio:
     def get_account_holdings(
         self,
         account_id: str,
-        position_type: Optional[str] = None,
-    ) -> List[Holding]:
+        position_type: str | None = None,
+    ) -> list[Holding]:
         """
         Get all current positions held in the specified account.
 
@@ -33,7 +33,8 @@ class Portfolio:
             account_id: The account UUID
             position_type: Optional filter - 'direct', 'symphony', or 'all'
 
-        Returns:
+        Returns
+        -------
             List of holdings in the account
         """
         params = {}
@@ -59,7 +60,8 @@ class Portfolio:
         Args:
             account_id: The account UUID
 
-        Returns:
+        Returns
+        -------
             Total portfolio statistics including value, returns, cash, etc.
         """
         response = self._client.get(
@@ -74,7 +76,8 @@ class Portfolio:
         Args:
             account_id: The account UUID
 
-        Returns:
+        Returns
+        -------
             Stats for each symphony in the account
         """
         response = self._client.get(
@@ -89,7 +92,8 @@ class Portfolio:
         Args:
             account_id: The account UUID
 
-        Returns:
+        Returns
+        -------
             Stats with metadata for each symphony in the account
         """
         response = self._client.get(
@@ -104,7 +108,8 @@ class Portfolio:
         Args:
             account_id: The account UUID
 
-        Returns:
+        Returns
+        -------
             Portfolio value history with timestamps and values
         """
         response = self._client.get(
@@ -124,7 +129,8 @@ class Portfolio:
             account_id: The account UUID
             symphony_id: The symphony UUID
 
-        Returns:
+        Returns
+        -------
             Symphony value history including deposit-adjusted series
         """
         response = self._client.get(
@@ -144,7 +150,8 @@ class Portfolio:
             account_id: The account UUID
             symphony_id: The symphony UUID
 
-        Returns:
+        Returns
+        -------
             Current holdings including cash, shares, etc.
         """
         response = self._client.get(
@@ -160,7 +167,8 @@ class Portfolio:
         Args:
             position_id: The position UUID
 
-        Returns:
+        Returns
+        -------
             Current holdings including cash, shares, etc.
         """
         response = self._client.get(
@@ -174,8 +182,8 @@ class Portfolio:
         symphony_id: str,
         limit: int,
         offset: int,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
     ) -> ActivityHistoryResponse:
         """
         Get the activity history for a symphony.
@@ -190,7 +198,8 @@ class Portfolio:
             start_date: Optional start date filter (ISO format)
             end_date: Optional end date filter (ISO format)
 
-        Returns:
+        Returns
+        -------
             Activity history for the symphony
         """
         params = {
@@ -220,7 +229,8 @@ class Portfolio:
             symphony_id: The symphony UUID
             deploy_id: The deploy UUID
 
-        Returns:
+        Returns
+        -------
             Deploy history including parent deploys
         """
         response = self._client.get(
@@ -238,7 +248,8 @@ class Portfolio:
         Args:
             account_id: The account UUID
 
-        Returns:
+        Returns
+        -------
             Detailed holding statistics
         """
         response = self._client.get(
