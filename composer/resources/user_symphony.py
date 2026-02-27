@@ -1,5 +1,7 @@
 """User Symphony resource - authenticated endpoints for symphony management."""
 
+import random
+import colorsys
 from typing import List, Optional, Dict, Any, Union
 from ..http_client import HTTPClient
 from ..models.backtest import (
@@ -25,6 +27,37 @@ from ..models.symphony import (
     CopySymphonyRequest,
     CopySymphonyResponse,
 )
+
+
+def _generate_random_color() -> str:
+    """
+    Generate a random vibrant hex color that contrasts well against a black background.
+
+    The color is generated in HLS space (via colorsys) to better control
+    visual properties:
+
+    - Hue: fully random (0–1 range)
+    - Saturation: high (0.55–0.65)
+    - Lightness: medium-high (0.55–0.75)
+      against black without becoming too pale or washed out
+
+    Returns:
+        str: A hex color string in the format '#RRGGBB'.
+    """
+     # Random hue
+    h = random.random()
+    
+    s = random.uniform(0.4, 0.6)
+    
+    l = random.uniform(0.55, 0.65)
+    
+    r, g, b = colorsys.hls_to_rgb(h, l, s)
+    
+    return '#{:02X}{:02X}{:02X}'.format(
+        int(r * 255),
+        int(g * 255),
+        int(b * 255)
+    )
 
 
 class UserSymphony:
@@ -309,9 +342,9 @@ class UserSymphony:
         asset_class: str = "EQUITIES",
         description: Optional[str] = None,
         color: Optional[str] = None,
-        hashtag: Optional[str] = None,
+        hashtag: str = "",
         tags: Optional[List[str]] = None,
-        symphony: Optional[SymphonyDefinition] = None,
+        symphony: Optional[Union[SymphonyDefinition, Dict[str, Any]]] = None,
         benchmarks: Optional[List[Dict[str, Any]]] = None,
     ) -> CreateSymphonyResponse:
         """
@@ -321,10 +354,10 @@ class UserSymphony:
             name: Name of the symphony.
             asset_class: Asset class (EQUITIES or CRYPTO). Defaults to EQUITIES.
             description: Optional description.
-            color: Optional color (hex code).
-            hashtag: Optional hashtag.
+            color: Optional color (hex code). If not provided, a random color with good contrast for black text is generated.
+            hashtag: Hashtag for the symphony (defaults to empty string).
             tags: Optional list of tags.
-            symphony: Optional symphony definition (SymphonyDefinition model).
+            symphony: Optional symphony definition (SymphonyDefinition model or dict).
             benchmarks: Optional list of benchmark configurations.
 
         Returns:
@@ -338,20 +371,29 @@ class UserSymphony:
             ...     symphony=symphony
             ... )
              print(f"Created: {result.symphony_id}")
+
+        Example with dict:
+             score_data = {"step": "root", "name": "My Strategy", ...}
+             result = client.user_symphony.create_symphony(
+            ...     name="My Strategy",
+            ...     symphony=score_data
+            ... )
         """
         request_body: Dict[str, Any] = {"name": name, "asset_class": asset_class}
         if description is not None:
             request_body["description"] = description
-        if color is not None:
-            request_body["color"] = color
-        if hashtag is not None:
-            request_body["hashtag"] = hashtag
+        if color is None:
+            color = _generate_random_color()
+        request_body["color"] = color
+        request_body["hashtag"] = hashtag
         if tags is not None:
             request_body["tags"] = tags
         if symphony is not None:
-            request_body["symphony"] = {
-                "raw_value": symphony.model_dump(by_alias=True, mode="json", exclude_none=True)
-            }
+            if isinstance(symphony, dict):
+                raw_value = symphony
+            else:
+                raw_value = symphony.model_dump(by_alias=True, mode="json", exclude_none=True)
+            request_body["symphony"] = {"raw_value": raw_value}
         if benchmarks is not None:
             request_body["benchmarks"] = benchmarks
 

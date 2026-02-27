@@ -1,6 +1,6 @@
 [project]
 name = "composer-trade-py"
-version = "0.1.5"
+version = "0.2.0"
 authors = [
     {name = "SolarWolf", email = "git@solarwol.xyz"},
 ]
