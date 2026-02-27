@@ -1,6 +1,5 @@
 """AI Agents resource for AI agent endpoints."""
 
-
 from ..models.ai_agents import (
     AIAgent,
     AIAgentsResponse,
@@ -32,11 +31,11 @@ class AIAgents:
         -------
             List of AI agents
         """
-        params = {"broker_account_id": broker_account_id}
+        params: dict[str, str] = {"broker_account_id": broker_account_id}
         if limit is not None:
-            params["limit"] = limit
+            params["limit"] = str(limit)
         if offset is not None:
-            params["offset"] = offset
+            params["offset"] = str(offset)
         response = self._client.get("/api/v1/ai-agents", params=params)
         return AIAgentsResponse.model_validate(response)
 

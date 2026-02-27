@@ -1,5 +1,7 @@
 """Cash resource for cash-related endpoints."""
 
+from typing import Any
+
 from ..models.cash import (
     ACHLimits,
     ACHRelationshipsResponse,
@@ -128,7 +130,7 @@ class Cash:
         -------
             List of recurring deposits
         """
-        params = {"n": n}
+        params: dict[str, Any] = {"n": n}
         if status:
             params["status"] = status
         response = self._client.get(
@@ -194,7 +196,7 @@ class Cash:
         -------
             List of all recurring deposits across accounts
         """
-        params = {"n": n}
+        params: dict[str, Any] = {"n": n}
         if status:
             params["status"] = status
         response = self._client.get(

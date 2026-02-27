@@ -1,6 +1,5 @@
 """Trading resource for trading-related endpoints."""
 
-
 from ..models.trading import (
     CreateOrderRequest,
     CreateOrderResponse,
@@ -267,6 +266,7 @@ class Trading:
             else PositionIntent(position_intent),
             limit_price=limit_price,
             stop_price=stop_price,
+            client_order_id=None,
         )
         response = self._client.post(
             f"/api/v1/trading/accounts/{account_id}/order-requests/preview",

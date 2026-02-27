@@ -301,10 +301,6 @@ class QuotesResponse(BaseModel):
         """Get quote result for a symbol."""
         return QuoteResult(**self.__dict__.get(key, {}))
 
-    def __iter__(self):
-        """Iterate over available symbols."""
-        return iter(self.__dict__.keys())
-
     def keys(self):
         """Return available symbols."""
         return self.__dict__.keys()
