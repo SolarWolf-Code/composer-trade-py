@@ -50,7 +50,7 @@ class Backtest:
 
     def run_v2(
         self,
-        symphony: Optional[SymphonyDefinition] = None,
+        symphony: Optional[Union[SymphonyDefinition, Dict[str, Any]]] = None,
         capital: float = 10000.0,
         abbreviate_days: Optional[int] = None,
         apply_reg_fee: bool = True,
@@ -70,7 +70,7 @@ class Backtest:
         Run a generic backtest simulation (v2).
 
         Args:
-            symphony: Symphony definition to backtest (optional).
+            symphony: Symphony definition to backtest (SymphonyDefinition model or dict).
             capital: Initial capital for the backtest (default: 10000.0).
             abbreviate_days: Number of days to abbreviate the backtest (for testing).
             apply_reg_fee: Whether to apply regulatory fees (SEC fees).
@@ -92,11 +92,22 @@ class Backtest:
         Example:
              result = client.backtest.run_v2(symphony=SymphonyDefinition(...))
              print(f"Sharpe: {result.stats.sharpe_ratio}")
+
+        Example with dict:
+             score_data = {"step": "root", "name": "My Strategy", ...}
+             result = client.backtest.run_v2(symphony=score_data)
         """
+        if symphony is not None:
+            if isinstance(symphony, dict):
+                raw_value = symphony
+            else:
+                raw_value = symphony.model_dump(by_alias=True, exclude_none=True)
+            symphony_payload = {"raw_value": raw_value}
+        else:
+            symphony_payload = None
+
         payload = {
-            "symphony": {"raw_value": symphony.model_dump(by_alias=True, exclude_none=True)}
-            if symphony
-            else None,
+            "symphony": symphony_payload,
             "capital": capital,
             "abbreviate_days": abbreviate_days,
             "apply_reg_fee": apply_reg_fee,
@@ -119,7 +130,7 @@ class Backtest:
 
     def run_public_v2(
         self,
-        symphony: Optional[SymphonyDefinition] = None,
+        symphony: Optional[Union[SymphonyDefinition, Dict[str, Any]]] = None,
         capital: float = 10000.0,
         abbreviate_days: Optional[int] = None,
         apply_reg_fee: bool = True,
@@ -139,7 +150,7 @@ class Backtest:
         Run a public backtest simulation (v2).
 
         Args:
-            symphony: Symphony definition to backtest (optional).
+            symphony: Symphony definition to backtest (SymphonyDefinition model or dict).
             capital: Initial capital for the backtest (default: 10000.0).
             abbreviate_days: Number of days to abbreviate the backtest (for testing).
             apply_reg_fee: Whether to apply regulatory fees (SEC fees).
@@ -161,11 +172,22 @@ class Backtest:
         Example:
              result = client.backtest.run_public_v2(symphony=SymphonyDefinition(...))
              print(f"Sharpe: {result.stats.sharpe_ratio}")
+
+        Example with dict:
+             score_data = {"step": "root", "name": "My Strategy", ...}
+             result = client.backtest.run_public_v2(symphony=score_data)
         """
+        if symphony is not None:
+            if isinstance(symphony, dict):
+                raw_value = symphony
+            else:
+                raw_value = symphony.model_dump(by_alias=True, exclude_none=True)
+            symphony_payload = {"raw_value": raw_value}
+        else:
+            symphony_payload = None
+
         payload = {
-            "symphony": {"raw_value": symphony.model_dump(by_alias=True, exclude_none=True)}
-            if symphony
-            else None,
+            "symphony": symphony_payload,
             "capital": capital,
             "abbreviate_days": abbreviate_days,
             "apply_reg_fee": apply_reg_fee,
