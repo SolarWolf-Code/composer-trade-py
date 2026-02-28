@@ -1,23 +1,23 @@
 """Common models shared across all API sections."""
 
-from .stats import Stats, BenchmarkStats, RegressionMetrics
+from .stats import BenchmarkStats, RegressionMetrics, Stats
 from .symphony import (
-    Function,
-    RebalanceFrequency,
-    WeightMap,
-    BaseNode,
     Asset,
+    BaseNode,
     Empty,
-    If,
-    IfChildTrue,
-    IfChildFalse,
     Filter,
-    WeightInverseVol,
+    Function,
     Group,
+    If,
+    IfChildFalse,
+    IfChildTrue,
+    RebalanceFrequency,
+    SymphonyDefinition,
+    SymphonyScore,
     WeightCashEqual,
     WeightCashSpecified,
-    SymphonyScore,
-    SymphonyDefinition,
+    WeightInverseVol,
+    WeightMap,
     validate_symphony_score,
 )
 

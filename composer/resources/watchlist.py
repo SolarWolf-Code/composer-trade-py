@@ -1,11 +1,11 @@
 """Watchlist resource - endpoints for managing user's watchlist."""
 
-from typing import List
+
 from ..http_client import HTTPClient
 from ..models.backtest import (
+    WatchlistResponse,
     WatchlistSymphony,
     WatchlistSymphonyItem,
-    WatchlistResponse,
 )
 
 
@@ -20,14 +20,15 @@ class Watchlist:
     def __init__(self, http_client: HTTPClient):
         self._client = http_client
 
-    def get_watchlist(self) -> List[WatchlistSymphony]:
+    def get_watchlist(self) -> list[WatchlistSymphony]:
         """
         Get all symphonies on the user's watchlist.
 
         Returns a list of symphonies the user has added to their watchlist
         for tracking purposes.
 
-        Returns:
+        Returns
+        -------
             List[WatchlistSymphony]: List of watchlist symphonies with statistics.
 
         Example:
@@ -47,7 +48,8 @@ class Watchlist:
         Args:
             symphony_id: The unique identifier of the symphony to add.
 
-        Returns:
+        Returns
+        -------
             WatchlistSymphonyItem: The added symphony with its details.
 
         Example:

@@ -1,6 +1,6 @@
 """Quotes resource for quote endpoints."""
 
-from typing import List
+
 from ..models.market_data import QuoteResult, _QuoteDict
 
 
@@ -10,7 +10,7 @@ class Quotes:
     def __init__(self, http_client):
         self._client = http_client
 
-    def get_quotes(self, tickers: List[str]) -> _QuoteDict:
+    def get_quotes(self, tickers: list[str]) -> _QuoteDict:
         """
         Get realtime crypto and (15-minute delayed) equity quotes.
 
@@ -19,11 +19,14 @@ class Quotes:
         Args:
             tickers: List of tickers to get quotes for (e.g., ["AAPL", "CRYPTO::BTC//USD"])
 
-        Returns:
+        Returns
+        -------
             Dict mapping ticker to QuoteResult
         """
         response = self._client.post(
             "/api/v1/public/quotes",
             json={"tickers": tickers},
         )
-        return _QuoteDict({ticker: QuoteResult(**data) for ticker, data in response.items()})
+        return _QuoteDict(
+            {ticker: QuoteResult(**data) for ticker, data in response.items()}
+        )

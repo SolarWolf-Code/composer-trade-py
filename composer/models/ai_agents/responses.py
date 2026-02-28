@@ -1,11 +1,11 @@
 """AI Agents response models."""
 
 import enum
-from typing import List, Optional
+
 from pydantic import BaseModel
 
 
-class AIAgentStatus(str, enum.Enum):
+class AIAgentStatus(enum.StrEnum):
     """AI Agent status."""
 
     ACTIVE = "ACTIVE"
@@ -19,19 +19,19 @@ class AIAgent(BaseModel):
 
     ai_agent_sid: str
     name: str
-    description: Optional[str] = None
-    prompt_text: Optional[str] = None
-    langfuse_starting_point_id: Optional[str] = None
-    langfuse_label: Optional[str] = None
+    description: str | None = None
+    prompt_text: str | None = None
+    langfuse_starting_point_id: str | None = None
+    langfuse_label: str | None = None
     broker_account_id: str
     schedule_cron: str
     schedule_timezone: str
     status: AIAgentStatus
-    last_execution_at: Optional[str] = None
-    last_execution_status: Optional[str] = None
-    next_execution_at: Optional[str] = None
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
+    last_execution_at: str | None = None
+    last_execution_status: str | None = None
+    next_execution_at: str | None = None
+    created_at: str | None = None
+    updated_at: str | None = None
 
 
 class AIAgentsResponse(BaseModel):
@@ -39,10 +39,10 @@ class AIAgentsResponse(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    agents: List[AIAgent] = []
+    agents: list[AIAgent] = []
 
 
-class AIExecutionStatus(str, enum.Enum):
+class AIExecutionStatus(enum.StrEnum):
     """AI Execution status."""
 
     PENDING = "PENDING"
@@ -50,7 +50,7 @@ class AIExecutionStatus(str, enum.Enum):
     FAILED = "FAILED"
 
 
-class AIExecutionType(str, enum.Enum):
+class AIExecutionType(enum.StrEnum):
     """AI Execution type."""
 
     AUTO = "AUTO"
@@ -64,16 +64,16 @@ class AIExecution(BaseModel):
 
     execution_sid: str
     ai_agent_sid: str
-    conversation_sid: Optional[str] = None
-    prompt_text_snapshot: Optional[str] = None
-    langfuse_starting_point_id: Optional[str] = None
-    langfuse_label: Optional[str] = None
-    langfuse_prompt_version: Optional[int] = None
+    conversation_sid: str | None = None
+    prompt_text_snapshot: str | None = None
+    langfuse_starting_point_id: str | None = None
+    langfuse_label: str | None = None
+    langfuse_prompt_version: int | None = None
     status: AIExecutionStatus
-    execution_type: Optional[AIExecutionType] = None
-    error_message: Optional[str] = None
+    execution_type: AIExecutionType | None = None
+    error_message: str | None = None
     started_at: str
-    completed_at: Optional[str] = None
+    completed_at: str | None = None
 
 
 class AIExecutionsResponse(BaseModel):
@@ -81,4 +81,4 @@ class AIExecutionsResponse(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    executions: List[AIExecution] = []
+    executions: list[AIExecution] = []

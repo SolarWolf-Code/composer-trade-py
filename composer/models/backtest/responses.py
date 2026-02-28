@@ -1,15 +1,15 @@
 """Backtest response models (output models)."""
 
 from datetime import date, datetime
-from enum import Enum
-from typing import Optional, Dict, Any, List, Union
+from enum import StrEnum
+from typing import Any
 
 import pandas as pd
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ..common.stats import Stats
 from ..common.symphony import SymphonyDefinition
-from .symphony import FindAndReplaceOperation, CompressNestedIfsModification
+from .symphony import CompressNestedIfsModification, FindAndReplaceOperation
 
 
 def _epoch_day_to_date_string(epoch_day: int) -> str:
@@ -19,13 +19,13 @@ def _epoch_day_to_date_string(epoch_day: int) -> str:
 
 
 def _transform_dvm_to_by_date(
-    dvm: Optional[Dict[str, Dict[str, float]]],
-) -> Optional[Dict[str, Dict[str, float]]]:
+    dvm: dict[str, dict[str, float]] | None,
+) -> dict[str, dict[str, float]] | None:
     """Transform DVM from {series: {epoch_day: value}} to {date: {series: value}}."""
     if dvm is None:
         return None
 
-    result: Dict[str, Dict[str, float]] = {}
+    result: dict[str, dict[str, float]] = {}
 
     for series, values in dvm.items():
         for epoch_day_str, value in values.items():
@@ -87,8 +87,8 @@ class DataWarning(BaseModel):
     """Data quality warning for a specific ticker."""
 
     message: str
-    recommended_start_date: Optional[str] = None
-    recommended_end_date: Optional[str] = None
+    recommended_start_date: str | None = None
+    recommended_end_date: str | None = None
 
 
 class LegendEntry(BaseModel):
@@ -111,20 +111,21 @@ class BacktestResult(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     # Timing and metadata
-    last_semantic_update_at: Optional[str] = None
-    sparkgraph_url: Optional[str] = None
-    first_day: Optional[str] = None
-    last_market_day: Optional[str] = None
+    last_semantic_update_at: str | None = None
+    sparkgraph_url: str | None = None
+    first_day: str | None = None
+    last_market_day: str | None = None
 
     # Daily Value Metrics (DVM)
-    dvm_capital: Optional[_DateSeriesDict] = None
+    dvm_capital: _DateSeriesDict | None = None
 
     # Time-Dependent Value Metrics (TDVM) weights
-    tdvm_weights: Optional[_DateSeriesDict] = None
+    tdvm_weights: _DateSeriesDict | None = None
 
     @field_validator("dvm_capital", mode="before")
     @classmethod
     def transform_dvm_capital(cls, v):
+        """Transform dvm_capital field to date-indexed dict."""
         transformed = _transform_dvm_to_by_date(v)
         if transformed is None:
             return None
@@ -133,18 +134,20 @@ class BacktestResult(BaseModel):
     @field_validator("tdvm_weights", mode="before")
     @classmethod
     def transform_tdvm_weights(cls, v):
+        """Transform tdvm_weights field to date-indexed dict."""
         transformed = _transform_dvm_to_by_date(v)
         if transformed is None:
             return None
         result = _DateSeriesDict(transformed, fill_value=False)
-        for date in result:
-            for ticker in result[date]:
-                result[date][ticker] = bool(result[date][ticker])
+        for d in result:
+            for ticker in result[d]:
+                result[d][ticker] = bool(result[d][ticker])
         return result
 
     @field_validator("first_day", mode="before")
     @classmethod
     def transform_first_day(cls, v):
+        """Transform first_day from epoch to date string."""
         if v is None:
             return None
         return _epoch_day_to_date_string(v)
@@ -152,6 +155,7 @@ class BacktestResult(BaseModel):
     @field_validator("last_market_day", mode="before")
     @classmethod
     def transform_last_market_day(cls, v):
+        """Transform last_market_day from epoch to date string."""
         if v is None:
             return None
         return _epoch_day_to_date_string(v)
@@ -159,30 +163,32 @@ class BacktestResult(BaseModel):
     @field_validator("rebalance_days", mode="before")
     @classmethod
     def transform_rebalance_days(cls, v):
+        """Transform rebalance_days from epochs to date strings."""
         if v is None:
             return None
         return [_epoch_day_to_date_string(d) for d in v]
 
     # Rebalancing information
-    rebalance_days: Optional[List[str]] = None
-    active_asset_nodes: Optional[Dict[str, float]] = None
+    rebalance_days: list[str] | None = None
+    active_asset_nodes: dict[str, float] | None = None
 
     # Costs breakdown
-    costs: Optional[Costs] = None
+    costs: Costs | None = None
 
     # Final state
-    last_market_days_value: Optional[float] = None
-    last_market_days_holdings: Optional[Dict[str, float]] = None
+    last_market_days_value: float | None = None
+    last_market_days_holdings: dict[str, float] | None = None
 
     # Legend and warnings
-    legend: Optional[Dict[str, LegendEntry]] = None
-    data_warnings: Optional[Dict[str, List[DataWarning]]] = None
-    benchmark_errors: Optional[List[str]] = None
+    legend: dict[str, LegendEntry] | None = None
+    data_warnings: dict[str, list[DataWarning]] | None = None
+    benchmark_errors: list[str] | None = None
 
     # Performance statistics
-    stats: Optional[Stats] = None
+    stats: Stats | None = None
 
     def __repr__(self) -> str:
+        """Return string representation of BacktestResult."""
         parts = []
         if self.stats:
             parts.append(f"stats={self.stats}")
@@ -195,6 +201,7 @@ class BacktestResult(BaseModel):
         return f"BacktestResult({', '.join(parts)})"
 
     def __str__(self) -> str:
+        """Return string representation of BacktestResult."""
         return self.__repr__()
 
 
@@ -204,17 +211,17 @@ class RecommendedTrade(BaseModel):
     ticker: str
     action: str
     quantity: float
-    estimated_price: Optional[float] = None
-    estimated_value: Optional[float] = None
+    estimated_price: float | None = None
+    estimated_value: float | None = None
 
 
 class SymphonyRunResult(BaseModel):
     """Result of running a single symphony during rebalance."""
 
-    next_rebalanced_after: Optional[str] = None
+    next_rebalanced_after: str | None = None
     rebalanced: bool = False
-    active_asset_nodes: Optional[Dict[str, float]] = None
-    recommended_trades: Optional[List[RecommendedTrade]] = None
+    active_asset_nodes: dict[str, float] | None = None
+    recommended_trades: list[RecommendedTrade] | None = None
 
 
 class RebalanceResult(BaseModel):
@@ -224,13 +231,13 @@ class RebalanceResult(BaseModel):
     Contains quotes, fractionability info, and run results for each symphony.
     """
 
-    quotes: Optional[Dict[str, Any]] = None
-    fractionability: Optional[Dict[str, bool]] = None
+    quotes: dict[str, Any] | None = None
+    fractionability: dict[str, bool] | None = None
     adjusted_for_dtbp: bool = False
-    run_results: Optional[Dict[str, SymphonyRunResult]] = None
+    run_results: dict[str, SymphonyRunResult] | None = None
 
 
-class ConfigKey(str, Enum):
+class ConfigKey(StrEnum):
     """Valid config keys for the configs endpoints."""
 
     CONSTANTS = "constants"
@@ -247,14 +254,14 @@ class ConstantsConfig(BaseModel):
     discord_url: str = Field(alias="discord-url")
     referral_bonus: int = Field(alias="referral-bonus")
     referral_bonus_percent: int = Field(alias="referral-bonus-percent")
-    suggested_deposits: List[int]
+    suggested_deposits: list[int]
 
 
 class DepositPresetsConfig(BaseModel):
     """Config model for the 'deposit_presets_config' config key."""
 
-    first_individual: List[int]
-    first_ira: List[int]
+    first_individual: list[int]
+    first_ira: list[int]
 
 
 class OpenAIPromptConfig(BaseModel):
@@ -275,12 +282,12 @@ class OpenAIConfig(BaseModel):
     temperature: float
     limit: int
     max_free_create_with_ai_requests: int
-    suggestions: List[str]
-    crypto_suggestions: List[str] = Field(alias="crypto-suggestions")
-    hybrid_suggestions: List[str] = Field(alias="hybrid-suggestions")
+    suggestions: list[str]
+    crypto_suggestions: list[str] = Field(alias="crypto-suggestions")
+    hybrid_suggestions: list[str] = Field(alias="hybrid-suggestions")
 
 
-ConfigType = Union[ConstantsConfig, DepositPresetsConfig, OpenAIPromptConfig, OpenAIConfig]
+ConfigType = ConstantsConfig | DepositPresetsConfig | OpenAIPromptConfig | OpenAIConfig
 
 
 class ConfigEntry(BaseModel):
@@ -296,7 +303,7 @@ class ConfigEntry(BaseModel):
     updated_at: str
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "ConfigEntry":
+    def from_dict(cls, data: dict[str, Any]) -> "ConfigEntry":
         """Create ConfigEntry from dictionary, using config_key to parse the correct config type."""
         config_key_str = data.get("config_key")
         config_data = data.get("config", {})
@@ -322,7 +329,7 @@ class ConfigEntry(BaseModel):
         )
 
 
-Modification = Union[FindAndReplaceOperation, CompressNestedIfsModification]
+Modification = FindAndReplaceOperation | CompressNestedIfsModification
 
 
 class ScoreExtendedResponse(BaseModel):
@@ -333,4 +340,4 @@ class ScoreExtendedResponse(BaseModel):
     """
 
     score: SymphonyDefinition
-    modifications: List[Modification]
+    modifications: list[Modification]

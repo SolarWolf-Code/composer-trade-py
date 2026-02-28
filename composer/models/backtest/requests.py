@@ -1,20 +1,21 @@
 """Backtest request models (input models)."""
 
-from enum import Enum
-from typing import List, Optional, Dict, Any, Literal
-from pydantic import BaseModel, Field, model_validator
+from enum import StrEnum
+from typing import Any
+
+from pydantic import BaseModel, Field
 
 from ..common.symphony import SymphonyDefinition
 
 
-class BacktestVersion(str, Enum):
+class BacktestVersion(StrEnum):
     """Backtest version enum."""
 
     V1 = "v1"
     V2 = "v2"
 
 
-class Broker(str, Enum):
+class Broker(StrEnum):
     """Broker enum."""
 
     ALPACA_OAUTH = "ALPACA_OAUTH"
@@ -24,7 +25,7 @@ class Broker(str, Enum):
     APEX = "apex"
 
 
-class ApplySubscription(str, Enum):
+class ApplySubscription(StrEnum):
     """Subscription type enum."""
 
     NONE = "none"
@@ -45,8 +46,10 @@ class BacktestParams(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    capital: float = Field(default=10000.0, description="Initial capital for the backtest")
-    abbreviate_days: Optional[int] = Field(
+    capital: float = Field(
+        default=10000.0, description="Initial capital for the backtest"
+    )
+    abbreviate_days: int | None = Field(
         None, description="Number of days to abbreviate the backtest (for testing)"
     )
     apply_reg_fee: bool = Field(
@@ -68,11 +71,11 @@ class BacktestParams(BaseModel):
     spread_markup: float = Field(
         default=0.0, description="Bid-ask spread markup as decimal (0.001 = 0.1%)"
     )
-    start_date: Optional[str] = Field(
+    start_date: str | None = Field(
         None,
         description="Backtest start date (YYYY-MM-DD). Defaults to earliest available data.",
     )
-    end_date: Optional[str] = Field(
+    end_date: str | None = Field(
         None,
         description="Backtest end date (YYYY-MM-DD). Defaults to latest available data.",
     )
@@ -80,14 +83,16 @@ class BacktestParams(BaseModel):
         default=Broker.ALPACA_WHITE_LABEL,
         description="Broker to simulate for fee calculations",
     )
-    benchmark_symphonies: Optional[List[str]] = Field(
+    benchmark_symphonies: list[str] | None = Field(
         None, description="List of symphony IDs to use as benchmarks"
     )
-    benchmark_tickers: Optional[List[str]] = Field(
+    benchmark_tickers: list[str] | None = Field(
         None,
         description="List of ticker symbols to use as benchmarks (e.g., ['SPY', 'QQQ'])",
     )
-    sparkgraph_color: Optional[str] = Field(None, description="Custom color for performance chart")
+    sparkgraph_color: str | None = Field(
+        None, description="Custom color for performance chart"
+    )
 
 
 class BacktestRequest(BacktestParams):
@@ -118,24 +123,24 @@ class Quote(BaseModel):
     ticker: str
     trading_halted: bool = False
     open: float
-    close: Optional[float] = None
+    close: float | None = None
     low: float
     high: float
     volume: int
-    bid: Optional[Dict[str, Any]] = None
-    ask: Optional[Dict[str, Any]] = None
-    last: Optional[Dict[str, Any]] = None
-    source: Optional[str] = None
-    timestamp: Optional[str] = None
+    bid: dict[str, Any] | None = None
+    ask: dict[str, Any] | None = None
+    last: dict[str, Any] | None = None
+    source: str | None = None
+    timestamp: str | None = None
 
 
 class SymphonyRebalanceState(BaseModel):
     """State of a single symphony for rebalance."""
 
-    last_rebalanced_on: Optional[str] = None
+    last_rebalanced_on: str | None = None
     cash: float
     unsettled_cash: float = 0.0
-    shares: Dict[str, float]
+    shares: dict[str, float]
 
 
 class RebalanceRequest(BaseModel):
@@ -149,7 +154,7 @@ class RebalanceRequest(BaseModel):
     broker: Broker = Broker.ALPACA_WHITE_LABEL
     adjust_for_dtbp: bool = False
     disable_fractional_trading: bool = False
-    fractionability: Optional[Dict[str, bool]] = None
-    end_date: Optional[str] = None
-    quotes: Optional[Dict[str, Quote]] = None
-    symphonies: Dict[str, SymphonyRebalanceState]
+    fractionability: dict[str, bool] | None = None
+    end_date: str | None = None
+    quotes: dict[str, Quote] | None = None
+    symphonies: dict[str, SymphonyRebalanceState]

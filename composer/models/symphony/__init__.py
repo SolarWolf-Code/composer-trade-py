@@ -1,18 +1,19 @@
 """Symphony models - request and response models for symphony endpoints."""
 
-from typing import List, Optional, Any
-from enum import Enum
+from enum import StrEnum
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
-class AssetClass(str, Enum):
+class AssetClass(StrEnum):
     """Asset class for a symphony."""
 
     EQUITIES = "EQUITIES"
     CRYPTO = "CRYPTO"
 
 
-class BenchmarkType(str, Enum):
+class BenchmarkType(StrEnum):
     """Type of benchmark."""
 
     SYMPHONY = "symphony"
@@ -39,18 +40,18 @@ class CreateSymphonyRequest(BaseModel):
     asset_class: AssetClass = Field(
         default=AssetClass.EQUITIES, description="Asset class for the symphony"
     )
-    description: Optional[str] = Field(None, description="Description of the symphony")
+    description: str | None = Field(None, description="Description of the symphony")
     color: str = Field(description="Color for the symphony (hex format, e.g., #FFBB38)")
     hashtag: str = Field(description="Hashtag for the symphony (e.g., #BTD)")
-    tags: Optional[List[str]] = Field(None, description="Tags for categorizing the symphony")
+    tags: list[str] | None = Field(None, description="Tags for categorizing the symphony")
     # Symphony trading logic - will be wrapped in {"raw_value": ...} when serialized
-    symphony: Optional[Any] = Field(
+    symphony: Any | None = Field(
         None, description="The trading logic (SymphonyDefinition node or dict)"
     )
-    benchmarks: Optional[List[Benchmark]] = Field(
+    benchmarks: list[Benchmark] | None = Field(
         None, description="Benchmarks for performance comparison"
     )
-    share_with_everyone: Optional[bool] = Field(
+    share_with_everyone: bool | None = Field(
         None, description="Whether to share the symphony publicly"
     )
 
@@ -69,18 +70,16 @@ class CopySymphonyRequest(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    name: Optional[str] = Field(None, description="Name for the copied symphony")
-    color: Optional[str] = Field(None, description="Color for the symphony (hex format)")
-    hashtag: Optional[str] = Field(None, description="Hashtag for the symphony")
-    benchmarks: Optional[List[Benchmark]] = Field(
+    name: str | None = Field(None, description="Name for the copied symphony")
+    color: str | None = Field(None, description="Color for the symphony (hex format)")
+    hashtag: str | None = Field(None, description="Hashtag for the symphony")
+    benchmarks: list[Benchmark] | None = Field(
         None, description="Benchmarks for performance comparison"
     )
-    share_with_everyone: Optional[bool] = Field(
+    share_with_everyone: bool | None = Field(
         None, description="Whether to share the symphony publicly"
     )
-    is_public: Optional[bool] = Field(
-        None, description="DEPRECATED - use share_with_everyone instead"
-    )
+    is_public: bool | None = Field(None, description="DEPRECATED - use share_with_everyone instead")
 
 
 class CopySymphonyResponse(BaseModel):
@@ -98,7 +97,7 @@ class UpdateSymphonyResponse(BaseModel):
     model_config = {"populate_by_name": True}
 
     existing_version_id: str = Field(description="ID of the previous version")
-    version_id: Optional[str] = Field(None, description="ID of the new version")
+    version_id: str | None = Field(None, description="ID of the new version")
 
 
 class UpdateSymphonyNodesResponse(BaseModel):

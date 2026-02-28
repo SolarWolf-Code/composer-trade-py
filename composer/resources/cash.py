@@ -1,16 +1,16 @@
 """Cash resource for cash-related endpoints."""
 
-from typing import List, Optional, Dict, Any
+from typing import Any
+
 from ..models.cash import (
-    TransferConstraints,
-    ACHRelationshipsResponse,
     ACHLimits,
-    TaxWithholding,
+    ACHRelationshipsResponse,
     ACHTransfer,
-    RecurringDepositsResponse,
-    RecurringDepositsMeta,
     RecurringDepositProjection,
-    Frequency,
+    RecurringDepositsMeta,
+    RecurringDepositsResponse,
+    TaxWithholding,
+    TransferConstraints,
 )
 
 
@@ -20,11 +20,12 @@ class Cash:
     def __init__(self, http_client):
         self._client = http_client
 
-    def get_transfer_constraints(self) -> Dict[str, TransferConstraints]:
+    def get_transfer_constraints(self) -> dict[str, TransferConstraints]:
         """
         Get all transfer constraints for a user's active accounts.
 
-        Returns:
+        Returns
+        -------
             Map of account UUID to transfer constraints
         """
         response = self._client.get("/api/v1/cash/transfer-constraints")
@@ -43,7 +44,8 @@ class Cash:
         Args:
             include_plaid_account_details: Whether to include Plaid account details
 
-        Returns:
+        Returns
+        -------
             ACH relationships including bank accounts
         """
         params = {"include_plaid_account_details": include_plaid_account_details}
@@ -60,7 +62,8 @@ class Cash:
         Args:
             account_id: The account UUID
 
-        Returns:
+        Returns
+        -------
             ACH transfer limits
         """
         response = self._client.get(
@@ -75,7 +78,8 @@ class Cash:
         Args:
             account_id: The account UUID
 
-        Returns:
+        Returns
+        -------
             Tax withholding information
         """
         response = self._client.get(
@@ -86,8 +90,8 @@ class Cash:
     def get_ach_transfers(
         self,
         account_id: str,
-        year: Optional[int] = None,
-    ) -> List[ACHTransfer]:
+        year: int | None = None,
+    ) -> list[ACHTransfer]:
         """
         Get an account's ACH transfers.
 
@@ -95,7 +99,8 @@ class Cash:
             account_id: The account UUID
             year: Optional year to filter transfers
 
-        Returns:
+        Returns
+        -------
             List of ACH transfers
         """
         params = {}
@@ -110,7 +115,7 @@ class Cash:
     def get_recurring_deposits(
         self,
         account_id: str,
-        status: Optional[str] = None,
+        status: str | None = None,
         n: int = 10,
     ) -> RecurringDepositsResponse:
         """
@@ -121,10 +126,11 @@ class Cash:
             status: Optional status filter (ACTIVE, CANCELED, etc.)
             n: Number of results to return
 
-        Returns:
+        Returns
+        -------
             List of recurring deposits
         """
-        params = {"n": n}
+        params: dict[str, Any] = {"n": n}
         if status:
             params["status"] = status
         response = self._client.get(
@@ -140,7 +146,8 @@ class Cash:
         Args:
             account_id: The account UUID
 
-        Returns:
+        Returns
+        -------
             Max deposit amounts by frequency
         """
         response = self._client.get(
@@ -162,7 +169,8 @@ class Cash:
             amount: Deposit amount
             frequency: Deposit frequency (WEEKLY, SEMIMONTHLY, MONTHLY, QUARTERLY)
 
-        Returns:
+        Returns
+        -------
             Projection of when limit will be hit
         """
         params = {"amount": amount, "frequency": frequency}
@@ -175,7 +183,7 @@ class Cash:
     def get_all_recurring_deposits(
         self,
         n: int = 10,
-        status: Optional[str] = None,
+        status: str | None = None,
     ) -> RecurringDepositsResponse:
         """
         Get all recurring deposits for a user.
@@ -184,10 +192,11 @@ class Cash:
             n: Number of results to return
             status: Optional status filter (ACTIVE, CANCELED, etc.)
 
-        Returns:
+        Returns
+        -------
             List of all recurring deposits across accounts
         """
-        params = {"n": n}
+        params: dict[str, Any] = {"n": n}
         if status:
             params["status"] = status
         response = self._client.get(

@@ -1,8 +1,8 @@
 """Cash response models."""
 
-from typing import List, Optional, Dict
-from enum import Enum
-from pydantic import BaseModel, Field
+from enum import StrEnum
+
+from pydantic import BaseModel
 
 
 class TransferConstraints(BaseModel):
@@ -10,10 +10,10 @@ class TransferConstraints(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    cash_withdrawable: Optional[float] = None
-    cash_depositable_today: Optional[float] = None
-    cash_withdrawable_today: Optional[float] = None
-    cash_withdrawable_unallocated: Optional[float] = None
+    cash_withdrawable: float | None = None
+    cash_depositable_today: float | None = None
+    cash_withdrawable_today: float | None = None
+    cash_withdrawable_unallocated: float | None = None
 
 
 class ACHRelationship(BaseModel):
@@ -27,12 +27,12 @@ class ACHRelationship(BaseModel):
     updated_at: str
     status: str
     broker: str
-    nickname: Optional[str] = None
-    bank_account_number_last_4: Optional[str] = None
-    bank_account_type: Optional[str] = None
-    bank_name: Optional[str] = None
-    plaid_account_id: Optional[str] = None
-    plaid_institution_id: Optional[str] = None
+    nickname: str | None = None
+    bank_account_number_last_4: str | None = None
+    bank_account_type: str | None = None
+    bank_name: str | None = None
+    plaid_account_id: str | None = None
+    plaid_institution_id: str | None = None
 
 
 class ACHRelationshipsResponse(BaseModel):
@@ -42,7 +42,7 @@ class ACHRelationshipsResponse(BaseModel):
 
     stripe_customer_missing: bool
     plaid_link_required: bool
-    ach_relationships: List[ACHRelationship] = []
+    ach_relationships: list[ACHRelationship] = []
 
 
 class ACHLimits(BaseModel):
@@ -50,10 +50,10 @@ class ACHLimits(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    cash_withdrawable: Optional[float] = None
-    cash_depositable_today: Optional[float] = None
-    cash_withdrawable_today: Optional[float] = None
-    cash_withdrawable_unallocated: Optional[float] = None
+    cash_withdrawable: float | None = None
+    cash_depositable_today: float | None = None
+    cash_withdrawable_today: float | None = None
+    cash_withdrawable_unallocated: float | None = None
 
 
 class TaxWithholding(BaseModel):
@@ -71,18 +71,18 @@ class ACHTransfer(BaseModel):
 
     ach_transfer_id: int
     ach_transfer_uuid: str
-    ach_transfer_foreign_id: Optional[str] = None
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
+    ach_transfer_foreign_id: str | None = None
+    created_at: str | None = None
+    updated_at: str | None = None
     amount: float
     status: str
     direction: str
-    recurring_deposit_uuid: Optional[str] = None
+    recurring_deposit_uuid: str | None = None
     ach_relationship_uuid: str
     broker_account_uuid: str
 
 
-class Frequency(str, Enum):
+class Frequency(StrEnum):
     """Recurring deposit frequency."""
 
     WEEKLY = "WEEKLY"
@@ -91,7 +91,7 @@ class Frequency(str, Enum):
     QUARTERLY = "QUARTERLY"
 
 
-class RecurringDepositStatus(str, Enum):
+class RecurringDepositStatus(StrEnum):
     """Recurring deposit status."""
 
     ACTIVE = "ACTIVE"
@@ -110,7 +110,7 @@ class RecurringDeposit(BaseModel):
     amount: float
     frequency: Frequency
     status: RecurringDepositStatus
-    next_deposit_date: Optional[str] = None
+    next_deposit_date: str | None = None
     created_at: str
 
 
@@ -119,7 +119,7 @@ class RecurringDepositsResponse(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    recurring_deposits: List[RecurringDeposit] = []
+    recurring_deposits: list[RecurringDeposit] = []
 
 
 class RecurringDepositMeta(BaseModel):
@@ -127,7 +127,7 @@ class RecurringDepositMeta(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    amount: Optional[float] = None
+    amount: float | None = None
     next_deposit_date: str
 
 
@@ -136,13 +136,13 @@ class RecurringDepositsMeta(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    WEEKLY: Optional[RecurringDepositMeta] = None
-    SEMIMONTHLY: Optional[RecurringDepositMeta] = None
-    MONTHLY: Optional[RecurringDepositMeta] = None
-    QUARTERLY: Optional[RecurringDepositMeta] = None
+    WEEKLY: RecurringDepositMeta | None = None
+    SEMIMONTHLY: RecurringDepositMeta | None = None
+    MONTHLY: RecurringDepositMeta | None = None
+    QUARTERLY: RecurringDepositMeta | None = None
 
 
-class RecurringDepositProjectionReason(str, Enum):
+class RecurringDepositProjectionReason(StrEnum):
     """Reason for contribution limit projection."""
 
     NOT_RETIREMENT_ACCOUNT = "not-retirement-account"
@@ -158,5 +158,5 @@ class RecurringDepositProjection(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    limit_date: Optional[str] = None
+    limit_date: str | None = None
     reason: RecurringDepositProjectionReason

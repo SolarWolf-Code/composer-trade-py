@@ -6,14 +6,17 @@ Each symphony is a tree structure with a SymphonyDefinition containing nested we
 if/else, and asset nodes.
 """
 
-from enum import Enum
-from typing import Dict, List, Optional, Union, Literal, Any, TYPE_CHECKING, get_args, get_origin
-from pydantic import BaseModel, Field, field_validator, model_validator
+from enum import StrEnum
+from typing import (
+    Any,
+    Literal,
+)
 import uuid
 
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 # Mapping of step values to model classes
-NODE_TYPE_MAP: Dict[str, type[BaseModel]] = {}
+NODE_TYPE_MAP: dict[str, type[BaseModel]] = {}
 
 
 def _register_node_type(step: str, model_class: type[BaseModel]):
@@ -52,10 +55,8 @@ def _parse_node(data: Any, depth: int = 0) -> Any:
     return data
 
 
-class Function(str, Enum):
-    """
-    Mathematical and technical analysis functions available for conditions and filters.
-    """
+class Function(StrEnum):
+    """Mathematical and technical analysis functions available for conditions and filters."""
 
     CUMULATIVE_RETURN = "cumulative-return"
     CURRENT_PRICE = "current-price"
@@ -74,7 +75,7 @@ class Function(str, Enum):
     UPPER_BOLLINGER = "upper-bollinger"
 
 
-class RebalanceFrequency(str, Enum):
+class RebalanceFrequency(StrEnum):
     """How often the symphony should rebalance its holdings."""
 
     NONE = "none"
@@ -89,17 +90,16 @@ class WeightMap(BaseModel):
     """
     Weight fraction represented as numerator/denominator.
 
-    Examples:
+    Examples
+    --------
         - 50% = num: 50, den: 100
         - 33.3% = num: 33.3, den: 100
     """
 
     model_config = {"populate_by_name": True}
 
-    num: Union[str, int, float] = Field(description="Numerator of the weight fraction")
-    den: Union[str, int, float] = Field(
-        description="Denominator of the weight fraction (typically 100)"
-    )
+    num: str | int | float = Field(description="Numerator of the weight fraction")
+    den: str | int | float = Field(description="Denominator of the weight fraction (typically 100)")
 
     @field_validator("num", "den")
     @classmethod
@@ -116,9 +116,7 @@ ChildType = Any
 
 
 class BaseNode(BaseModel):
-    """
-    Base class for all symphony nodes.
-    """
+    """Base class for all symphony nodes."""
 
     model_config = {"populate_by_name": True, "extra": "ignore"}
 
@@ -126,7 +124,7 @@ class BaseNode(BaseModel):
         default_factory=lambda: str(uuid.uuid4()),
         description="Unique identifier for this node (auto-generated UUID or custom ID)",
     )
-    weight: Optional[WeightMap] = Field(None, description="Weight fraction for this node")
+    weight: WeightMap | None = Field(None, description="Weight fraction for this node")
 
     @field_validator("id")
     @classmethod
@@ -139,7 +137,7 @@ class BaseNode(BaseModel):
             # Not a valid UUID, generate a new one
             return str(uuid.uuid4())
 
-    def model_dump(self, **kwargs) -> Dict[str, Any]:
+    def model_dump(self, **kwargs) -> dict[str, Any]:
         """Override model_dump to exclude None values by default."""
         kwargs.setdefault("exclude_none", True)
         return super().model_dump(**kwargs)
@@ -161,13 +159,13 @@ class Asset(BaseNode):
     model_config = {"populate_by_name": True}
 
     step: Literal["asset"] = Field(default="asset")
-    name: Optional[str] = Field(None, description="Display name of the asset")
+    name: str | None = Field(None, description="Display name of the asset")
     ticker: str = Field(description="Ticker symbol (e.g., AAPL, CRYPTO::BTC//USD)")
-    exchange: Optional[str] = Field(None, description="Exchange code (e.g., XNAS)")
-    price: Optional[float] = Field(None, description="Current price (API-populated)")
-    dollar_volume: Optional[float] = Field(None, alias="dollar_volume")
-    has_marketcap: Optional[bool] = Field(None, alias="has_marketcap")
-    children_count: Optional[int] = Field(None, alias="children-count")
+    exchange: str | None = Field(None, description="Exchange code (e.g., XNAS)")
+    price: float | None = Field(None, description="Current price (API-populated)")
+    dollar_volume: float | None = Field(None, alias="dollar_volume")
+    has_marketcap: bool | None = Field(None, alias="has_marketcap")
+    children_count: int | None = Field(None, alias="children-count")
 
 
 _register_node_type("asset", Asset)
@@ -190,20 +188,20 @@ class IfChildTrue(BaseNode):
     model_config = {"populate_by_name": True}
 
     step: Literal["if-child"] = Field(default="if-child")
-    is_else_condition: Optional[Literal[False]] = Field(False, alias="is-else-condition?")
-    comparator: Optional[Literal["gt", "gte", "eq", "lt", "lte"]] = Field(
+    is_else_condition: Literal[False] | None = Field(False, alias="is-else-condition?")
+    comparator: Literal["gt", "gte", "eq", "lt", "lte"] | None = Field(
         None, description="Comparison operator"
     )
-    lhs_fn: Optional[Function] = Field(None, alias="lhs-fn")
-    lhs_window_days: Optional[int] = Field(None, alias="lhs-window-days")
-    lhs_val: Optional[str] = Field(None, alias="lhs-val")
-    lhs_fn_params: Optional[Dict[str, Any]] = Field(None, alias="lhs-fn-params")
-    rhs_val: Optional[Union[str, float]] = Field(None, alias="rhs-val")
-    rhs_fixed_value: Optional[bool] = Field(None, alias="rhs-fixed-value?")
-    rhs_fn: Optional[Function] = Field(None, alias="rhs-fn")
-    rhs_window_days: Optional[int] = Field(None, alias="rhs-window-days")
-    rhs_fn_params: Optional[Dict[str, Any]] = Field(None, alias="rhs-fn-params")
-    children: List[Any] = Field(default_factory=list)
+    lhs_fn: Function | None = Field(None, alias="lhs-fn")
+    lhs_window_days: int | None = Field(None, alias="lhs-window-days")
+    lhs_val: str | None = Field(None, alias="lhs-val")
+    lhs_fn_params: dict[str, Any] | None = Field(None, alias="lhs-fn-params")
+    rhs_val: str | float | None = Field(None, alias="rhs-val")
+    rhs_fixed_value: bool | None = Field(None, alias="rhs-fixed-value?")
+    rhs_fn: Function | None = Field(None, alias="rhs-fn")
+    rhs_window_days: int | None = Field(None, alias="rhs-window-days")
+    rhs_fn_params: dict[str, Any] | None = Field(None, alias="rhs-fn-params")
+    children: list[Any] = Field(default_factory=list)
 
 
 class IfChildFalse(BaseNode):
@@ -212,8 +210,8 @@ class IfChildFalse(BaseNode):
     model_config = {"populate_by_name": True}
 
     step: Literal["if-child"] = Field(default="if-child")
-    is_else_condition: Optional[Literal[True]] = Field(True, alias="is-else-condition?")
-    children: List[Any] = Field(default_factory=list)
+    is_else_condition: Literal[True] | None = Field(True, alias="is-else-condition?")
+    children: list[Any] = Field(default_factory=list)
 
 
 _register_node_type("if-child", IfChildTrue)
@@ -225,7 +223,7 @@ class If(BaseNode):
     model_config = {"populate_by_name": True}
 
     step: Literal["if"] = Field(default="if")
-    children: List[Union[IfChildTrue, IfChildFalse]] = Field(default_factory=list)
+    children: list[IfChildTrue | IfChildFalse] = Field(default_factory=list)
 
     @field_validator("children")
     @classmethod
@@ -252,14 +250,14 @@ class Filter(BaseNode):
     model_config = {"populate_by_name": True}
 
     step: Literal["filter"] = Field(default="filter")
-    select_: Optional[bool] = Field(None, alias="select?")
-    select_fn: Optional[Literal["top", "bottom"]] = Field(None, alias="select-fn")
-    select_n: Optional[int] = Field(None, alias="select-n")
-    sort_by_: Optional[bool] = Field(None, alias="sort-by?")
-    sort_by_fn: Optional[Function] = Field(None, alias="sort-by-fn")
-    sort_by_fn_params: Optional[Dict[str, Any]] = Field(None, alias="sort-by-fn-params")
-    sort_by_window_days: Optional[int] = Field(None, alias="sort-by-window-days")
-    children: List[Any] = Field(default_factory=list)
+    select_: bool | None = Field(None, alias="select?")
+    select_fn: Literal["top", "bottom"] | None = Field(None, alias="select-fn")
+    select_n: int | None = Field(None, alias="select-n")
+    sort_by_: bool | None = Field(None, alias="sort-by?")
+    sort_by_fn: Function | None = Field(None, alias="sort-by-fn")
+    sort_by_fn_params: dict[str, Any] | None = Field(None, alias="sort-by-fn-params")
+    sort_by_window_days: int | None = Field(None, alias="sort-by-window-days")
+    children: list[Any] = Field(default_factory=list)
 
 
 _register_node_type("filter", Filter)
@@ -270,9 +268,9 @@ class WeightInverseVol(BaseNode):
 
     model_config = {"populate_by_name": True}
 
-    step: Optional[Literal["wt-inverse-vol"]] = Field("wt-inverse-vol")
-    window_days: Optional[int] = Field(None, alias="window-days")
-    children: List[Any] = Field(default_factory=list)
+    step: Literal["wt-inverse-vol"] | None = Field("wt-inverse-vol")
+    window_days: int | None = Field(None, alias="window-days")
+    children: list[Any] = Field(default_factory=list)
 
 
 _register_node_type("wt-inverse-vol", WeightInverseVol)
@@ -284,13 +282,14 @@ class Group(BaseNode):
     model_config = {"populate_by_name": True}
 
     step: Literal["group"] = Field(default="group")
-    name: Optional[str] = Field(None)
-    collapsed: Optional[bool] = Field(None, alias="collapsed?")
-    children: List[Any] = Field(default_factory=list)
+    name: str | None = Field(None)
+    collapsed: bool | None = Field(None, alias="collapsed?")
+    children: list[Any] = Field(default_factory=list)
 
     @field_validator("children")
     @classmethod
     def validate_single_child(cls, v):
+        """Validate that group has exactly one child."""
         if len(v) != 1:
             raise ValueError("Group must have exactly one child")
         return v
@@ -304,8 +303,8 @@ class WeightCashEqual(BaseNode):
 
     model_config = {"populate_by_name": True}
 
-    step: Optional[Literal["wt-cash-equal"]] = Field("wt-cash-equal")
-    children: List[Any] = Field(default_factory=list)
+    step: Literal["wt-cash-equal"] | None = Field("wt-cash-equal")
+    children: list[Any] = Field(default_factory=list)
 
 
 _register_node_type("wt-cash-equal", WeightCashEqual)
@@ -316,8 +315,8 @@ class WeightCashSpecified(BaseNode):
 
     model_config = {"populate_by_name": True}
 
-    step: Optional[Literal["wt-cash-specified"]] = Field("wt-cash-specified")
-    children: List[Any] = Field(default_factory=list)
+    step: Literal["wt-cash-specified"] | None = Field("wt-cash-specified")
+    children: list[Any] = Field(default_factory=list)
 
 
 _register_node_type("wt-cash-specified", WeightCashSpecified)
@@ -332,8 +331,8 @@ class SymphonyDefinition(BaseNode):
     name: str = Field(description="Display name of the symphony")
     description: str = Field(default="", description="Description of the strategy")
     rebalance: RebalanceFrequency = Field(description="Rebalancing frequency")
-    rebalance_corridor_width: Optional[float] = Field(None, alias="rebalance-corridor-width")
-    children: List[Union[WeightCashEqual, WeightCashSpecified, WeightInverseVol]] = Field(
+    rebalance_corridor_width: float | None = Field(None, alias="rebalance-corridor-width")
+    children: list[WeightCashEqual | WeightCashSpecified | WeightInverseVol] = Field(
         default_factory=list
     )
 
@@ -375,7 +374,8 @@ def validate_symphony_score(score):
     Args:
         score: Symphony score as SymphonyDefinition model or dict
 
-    Returns:
+    Returns
+    -------
         Validated SymphonyDefinition model
     """
     if isinstance(score, dict):

@@ -1,6 +1,7 @@
 """Reports resource for account reports endpoints."""
 
-from typing import Optional, Dict, Any
+from typing import Any
+
 from ..models.reports import ReportType
 
 
@@ -15,8 +16,8 @@ class Reports:
         account_id: str,
         since: str,
         until: str,
-        report_type: Optional[ReportType] = None,
-    ) -> Dict[str, Any]:
+        report_type: ReportType | None = None,
+    ) -> dict[str, Any]:
         """
         Get a report for the given account.
 
@@ -26,7 +27,8 @@ class Reports:
             until: End date for the report (ISO format)
             report_type: Type of report (trade-activity or non-trade-activity)
 
-        Returns:
+        Returns
+        -------
             Report data for the account
         """
         params = {

@@ -1,18 +1,11 @@
 """Symphony conversion utilities."""
 
-import json
-import hashlib
 from collections import OrderedDict
 from enum import Enum
-from pathlib import Path
+import hashlib
+import json
+
 from pydantic import BaseModel
-
-try:
-    import ruff
-
-    HAS_RUFF = True
-except ImportError:
-    HAS_RUFF = False
 
 
 def to_source(obj, indent=0, dedup_map=None, emitted_vars=None):
@@ -27,7 +20,8 @@ def to_source(obj, indent=0, dedup_map=None, emitted_vars=None):
         dedup_map: Dict mapping node id to variable name for deduplication
         emitted_vars: Dict to store emitted variable definitions
 
-    Returns:
+    Returns
+    -------
         Python source code as string
     """
     spacing = " " * indent
@@ -107,7 +101,8 @@ def _node_to_dict(node, exclude_ids=True):
         node: The node to convert
         exclude_ids: If True, exclude 'id' fields from hash (for deduplication)
 
-    Returns:
+    Returns
+    -------
         OrderedDict representation of the node
     """
     if isinstance(node, BaseModel):
@@ -206,7 +201,8 @@ def _extract_dependencies(code, var_names):
         code: The generated Python code for a variable
         var_names: Set of all deduplicated variable names
 
-    Returns:
+    Returns
+    -------
         Set of variable names that this code depends on
     """
     dependencies = set()
@@ -224,12 +220,13 @@ def _topological_sort(emitted_vars):
     Args:
         emitted_vars: Dict mapping variable name to generated code
 
-    Returns:
+    Returns
+    -------
         List of variable names in dependency order
     """
     var_names = set(emitted_vars.keys())
     graph = {v: [] for v in var_names}
-    in_degree = {v: 0 for v in var_names}
+    in_degree = dict.fromkeys(var_names, 0)
 
     for var_name, code in emitted_vars.items():
         deps = _extract_dependencies(code, var_names)
@@ -273,7 +270,8 @@ def symphony_to_python(
         show_stats: Print deduplication statistics (default: False)
         symphony_id: Optional symphony ID to use in the output (defaults to score.id)
 
-    Returns:
+    Returns
+    -------
         The output filename that was written
     """
     # Use provided symphony_id or fall back to score.id
@@ -296,7 +294,8 @@ def symphony_to_python(
             print(f"\n=== Hash Cache Statistics for {symphony_id} ===")
             print(f"Total unique hashes: {len(hash_counts)}")
             print(
-                f"\nTop 20 most frequent blocks (only Groups with ≥{min_hits} hits will be deduplicated):"
+                "\nTop 20 most frequent blocks "
+                "(only Groups with ≥{min_hits} hits will be deduplicated):"
             )
             print("-" * 60)
             print(f"{'Hash':<12} {'Count':<8} {'Type':<15} {'Status'}")
@@ -324,10 +323,7 @@ def symphony_to_python(
                 is_group = node_type == "group"
                 is_eligible = count >= min_hits and is_group
 
-                if is_eligible:
-                    status = "WILL DEDUP"
-                else:
-                    status = "inline"
+                status = "WILL DEDUP" if is_eligible else "inline"
                 print(f"_{h:<11} {count:<8} {node_type:<15} {status}")
             print("-" * 60)
 
@@ -398,7 +394,7 @@ load_dotenv()
         variables_code += "\n"
 
     # Generate footer with backtest code
-    footer = f"""
+    footer = """
 # Backtest
 client = ComposerClient(
     api_key=os.getenv("COMPOSER_API_KEY"),
@@ -417,7 +413,7 @@ print(res)
         f.write(full_code)
 
     # Format with ruff if available
-    if HAS_RUFF:
+    try:
         import subprocess
 
         subprocess.run(
@@ -426,6 +422,8 @@ print(res)
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
+    except Exception:
+        print("Skipping formatting because ruff formatter is not installed")
 
     print(f"Saved to {output}")
 

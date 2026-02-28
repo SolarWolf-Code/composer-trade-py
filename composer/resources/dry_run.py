@@ -1,9 +1,9 @@
 """Dry run resource for dry-run endpoints."""
 
-from typing import List, Optional
+
 from ..models.dry_run import (
-    DryRunRequest,
     AccountDryRunResult,
+    DryRunRequest,
     TradePreviewRequest,
     TradePreviewResult,
 )
@@ -18,8 +18,8 @@ class DryRun:
     def create_dry_run(
         self,
         send_segment_event: bool = False,
-        account_uuids: Optional[List[str]] = None,
-    ) -> List[AccountDryRunResult]:
+        account_uuids: list[str] | None = None,
+    ) -> list[AccountDryRunResult]:
         """
         Dry run rebalances for a specific user.
 
@@ -27,7 +27,8 @@ class DryRun:
             send_segment_event: Whether to send segment events
             account_uuids: Optional list of specific account UUIDs
 
-        Returns:
+        Returns
+        -------
             List of dry run results for each account
         """
         request = DryRunRequest(
@@ -43,8 +44,8 @@ class DryRun:
     def create_trade_preview(
         self,
         symphony_id: str,
-        amount: Optional[float] = None,
-        broker_account_uuid: Optional[str] = None,
+        amount: float | None = None,
+        broker_account_uuid: str | None = None,
     ) -> TradePreviewResult:
         """
         Generate trade preview for a single symphony.
@@ -54,7 +55,8 @@ class DryRun:
             amount: Optional amount to preview
             broker_account_uuid: Optional specific account UUID
 
-        Returns:
+        Returns
+        -------
             Trade preview result
         """
         request = TradePreviewRequest(

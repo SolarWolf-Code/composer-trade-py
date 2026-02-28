@@ -1,7 +1,8 @@
 """Conversation response models."""
 
-from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, Field
+from typing import Any
+
+from pydantic import BaseModel
 
 
 class ConversationResponse(BaseModel):
@@ -10,7 +11,7 @@ class ConversationResponse(BaseModel):
     model_config = {"populate_by_name": True}
 
     id: str
-    message_id: Optional[str] = None
+    message_id: str | None = None
     location: str
 
 
@@ -22,7 +23,7 @@ class StartingPoint(BaseModel):
     starting_point_id: str
     title: str
     text: str
-    icon_id: Optional[str] = None
+    icon_id: str | None = None
     index: int
 
 
@@ -33,7 +34,7 @@ class DiscoverPrompt(BaseModel):
 
     text: str
     index: int
-    category: Optional[str] = None
+    category: str | None = None
 
 
 class StartingPointsResponse(BaseModel):
@@ -41,8 +42,8 @@ class StartingPointsResponse(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    starting_points: List[StartingPoint] = []
-    discover_prompts: List[DiscoverPrompt] = []
+    starting_points: list[StartingPoint] = []
+    discover_prompts: list[DiscoverPrompt] = []
 
 
 class ConversationState(BaseModel):
@@ -50,8 +51,8 @@ class ConversationState(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    processing_message_id: Optional[str] = None
-    processing_message_since: Optional[Any] = None
+    processing_message_id: str | None = None
+    processing_message_since: Any | None = None
 
 
 class ConversationMessage(BaseModel):
@@ -59,12 +60,12 @@ class ConversationMessage(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    role: Optional[str] = None
-    type: Optional[str] = None
-    content: Optional[Any] = None
-    stop_reason: Optional[str] = None
-    message_uuid: Optional[str] = None
-    content_index: Optional[float] = None
+    role: str | None = None
+    type: str | None = None
+    content: Any | None = None
+    stop_reason: str | None = None
+    message_uuid: str | None = None
+    content_index: float | None = None
 
 
 class Conversation(BaseModel):
@@ -74,6 +75,6 @@ class Conversation(BaseModel):
 
     id: str
     account_id: str
-    starting_point_id: Optional[str] = None
-    current_state: Optional[ConversationState] = None
-    messages: List[ConversationMessage] = []
+    starting_point_id: str | None = None
+    current_state: ConversationState | None = None
+    messages: list[ConversationMessage] = []

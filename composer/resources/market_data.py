@@ -1,16 +1,15 @@
 """Market data resource for options and other market data."""
 
-from typing import Optional, List
 from ..models.market_data import (
-    OptionsChainResponse,
-    OptionsContractResponse,
-    OptionsOverview,
     ContractType,
-    OptionSortBy,
-    SortOrder,
-    MarketSnapshot,
     CustomBars,
     MarketOverview,
+    MarketSnapshot,
+    OptionsChainResponse,
+    OptionsContractResponse,
+    OptionSortBy,
+    OptionsOverview,
+    SortOrder,
     TopMoversResponse,
 )
 
@@ -24,12 +23,12 @@ class MarketData:
     def get_options_chain(
         self,
         underlying: str,
-        next_cursor: Optional[str] = None,
-        strike_price: Optional[float] = None,
-        expiry: Optional[str] = None,
-        contract_type: Optional[ContractType] = None,
+        next_cursor: str | None = None,
+        strike_price: float | None = None,
+        expiry: str | None = None,
+        contract_type: ContractType | None = None,
         order: SortOrder = SortOrder.ASC,
-        limit: Optional[int] = None,
+        limit: int | None = None,
         sort_by: OptionSortBy = OptionSortBy.SYMBOL,
     ) -> OptionsChainResponse:
         """
@@ -45,7 +44,8 @@ class MarketData:
             limit: Maximum number of results to return (max 250)
             sort_by: Field to sort results by
 
-        Returns:
+        Returns
+        -------
             OptionsChainResponse with list of options contracts
         """
         params: dict = {
@@ -74,7 +74,8 @@ class MarketData:
         Args:
             symbol: The options contract symbol (e.g., "OPTIONS::AAPL250718C00210000//USD")
 
-        Returns:
+        Returns
+        -------
             OptionsContractResponse with contract market data
         """
         response = self._client.get(
@@ -90,7 +91,8 @@ class MarketData:
         Args:
             symbol: The underlying asset symbol (e.g., "AAPL")
 
-        Returns:
+        Returns
+        -------
             OptionsOverview with available expiration dates
         """
         response = self._client.get(
@@ -105,18 +107,21 @@ class MarketData:
         Args:
             symbol: The symbol to get snapshot for (e.g., "AAPL", "BTC-USD")
 
-        Returns:
+        Returns
+        -------
             MarketSnapshot with bid, ask, last trade, and change data
         """
-        response = self._client.get("/api/v1/market-data/snapshot", params={"symbol": symbol})
+        response = self._client.get(
+            "/api/v1/market-data/snapshot", params={"symbol": symbol}
+        )
         return MarketSnapshot.model_validate(response)
 
     def get_custom_bars(
         self,
         symbol: str,
-        range_date_from: Optional[str] = None,
-        range_date_to: Optional[str] = None,
-        range_preset: Optional[str] = None,
+        range_date_from: str | None = None,
+        range_date_to: str | None = None,
+        range_preset: str | None = None,
     ) -> CustomBars:
         """
         Get custom bars market data.
@@ -127,7 +132,8 @@ class MarketData:
             range_date_to: End date (YYYY-MM-DD format)
             range_preset: Preset range (e.g., "1M", "3M", "1Y", "5Y")
 
-        Returns:
+        Returns
+        -------
             CustomBars with OHLCV data
         """
         params = {"symbol": symbol}
@@ -148,17 +154,21 @@ class MarketData:
         Args:
             symbol: The symbol to get overview for (e.g., "AAPL", "BTC-USD")
 
-        Returns:
+        Returns
+        -------
             MarketOverview with company info, market cap, etc.
         """
-        response = self._client.get("/api/v1/market-data/overview", params={"symbol": symbol})
+        response = self._client.get(
+            "/api/v1/market-data/overview", params={"symbol": symbol}
+        )
         return MarketOverview.model_validate(response)
 
     def get_top_movers(self) -> TopMoversResponse:
         """
         Get top movers market data.
 
-        Returns:
+        Returns
+        -------
             TopMoversResponse with list of top gaining/losing symbols
         """
         response = self._client.get("/api/v1/market-data/top-movers")

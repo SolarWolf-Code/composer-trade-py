@@ -1,18 +1,19 @@
 """Public Symphony resource - public endpoints for accessing symphony data."""
 
-from typing import List, Optional, Dict, Any, Union
+from typing import Any
+
 from ..http_client import HTTPClient
 from ..models.backtest import (
-    Indicator,
-    SymphonyMeta,
-    SymphonyMetaResponse,
-    SymphonyDetail,
-    SymphonyVersionInfo,
-    TickersResponse,
+    ApplySubscription,
     BacktestResult,
     BacktestVersion,
     Broker,
-    ApplySubscription,
+    Indicator,
+    SymphonyDetail,
+    SymphonyMeta,
+    SymphonyMetaResponse,
+    SymphonyVersionInfo,
+    TickersResponse,
 )
 from ..models.common import SymphonyDefinition
 
@@ -28,14 +29,15 @@ class PublicSymphony:
     def __init__(self, http_client: HTTPClient):
         self._client = http_client
 
-    def get_indicators(self) -> List[Indicator]:
+    def get_indicators(self) -> list[Indicator]:
         """
         Get a list of all available technical indicators.
 
         Returns a list of indicators that can be used in symphony conditions,
         including moving averages, RSI, standard deviation, etc.
 
-        Returns:
+        Returns
+        -------
             List[Indicator]: List of available technical indicators with their
                 parameters and metadata.
 
@@ -47,14 +49,15 @@ class PublicSymphony:
         response = self._client.get("/api/v1/public/symphony-scores/indicators")
         return [Indicator.model_validate(item) for item in response]
 
-    def get_symphony_meta(self, symphony_ids: List[str]) -> List[SymphonyMeta]:
+    def get_symphony_meta(self, symphony_ids: list[str]) -> list[SymphonyMeta]:
         """
         Get metadata for symphonies by their IDs.
 
         Args:
             symphony_ids: List of symphony IDs to look up.
 
-        Returns:
+        Returns
+        -------
             List[SymphonyMeta]: List of symphony metadata objects.
 
         Example:
@@ -75,7 +78,8 @@ class PublicSymphony:
         Args:
             symphony_id: Unique identifier for the symphony.
 
-        Returns:
+        Returns
+        -------
             SymphonyDetail: Detailed symphony information including stats,
                 backtest data, and metadata.
 
@@ -87,14 +91,15 @@ class PublicSymphony:
         response = self._client.get(f"/api/v1/public/symphonies/{symphony_id}")
         return SymphonyDetail.model_validate(response)
 
-    def get_versions(self, symphony_id: str) -> List[SymphonyVersionInfo]:
+    def get_versions(self, symphony_id: str) -> list[SymphonyVersionInfo]:
         """
         Get all versions for a symphony.
 
         Args:
             symphony_id: Unique identifier for the symphony.
 
-        Returns:
+        Returns
+        -------
             List[SymphonyVersionInfo]: List of version information.
 
         Example:
@@ -116,7 +121,8 @@ class PublicSymphony:
             version_id: Unique identifier for the symphony version.
             score_version: Score version to retrieve ("v1" or "v2"). Defaults to "v1".
 
-        Returns:
+        Returns
+        -------
             SymphonyDefinition: The symphony score/parsed EDN structure.
 
         Example:
@@ -129,11 +135,14 @@ class PublicSymphony:
         """
         params = {"score_version": score_version}
         response = self._client.get(
-            f"/api/v1/public/symphonies/{symphony_id}/versions/{version_id}/score", params=params
+            f"/api/v1/public/symphonies/{symphony_id}/versions/{version_id}/score",
+            params=params,
         )
         return SymphonyDefinition.model_validate(response)
 
-    def get_score(self, symphony_id: str, score_version: str = "v1") -> SymphonyDefinition:
+    def get_score(
+        self, symphony_id: str, score_version: str = "v1"
+    ) -> SymphonyDefinition:
         """
         Get an existing symphony's EDN (score).
 
@@ -141,7 +150,8 @@ class PublicSymphony:
             symphony_id: Unique identifier for the symphony.
             score_version: Score version to retrieve ("v1" or "v2"). Defaults to "v1".
 
-        Returns:
+        Returns
+        -------
             SymphonyDefinition: The symphony score/parsed EDN structure.
 
         Example:
@@ -150,17 +160,20 @@ class PublicSymphony:
              print(score.rebalance)
         """
         params = {"score_version": score_version}
-        response = self._client.get(f"/api/v1/public/symphonies/{symphony_id}/score", params=params)
+        response = self._client.get(
+            f"/api/v1/public/symphonies/{symphony_id}/score", params=params
+        )
         return SymphonyDefinition.model_validate(response)
 
-    def get_tickers(self, symphony_id: str) -> List[str]:
+    def get_tickers(self, symphony_id: str) -> list[str]:
         """
         Get all tickers used in a symphony.
 
         Args:
             symphony_id: Unique identifier for the symphony.
 
-        Returns:
+        Returns
+        -------
             List[str]: List of ticker symbols used in the symphony.
 
         Example:
@@ -175,19 +188,19 @@ class PublicSymphony:
         self,
         symphony_id: str,
         capital: float = 10000.0,
-        abbreviate_days: Optional[int] = None,
+        abbreviate_days: int | None = None,
         apply_reg_fee: bool = True,
         apply_taf_fee: bool = True,
         apply_subscription: ApplySubscription = ApplySubscription.NONE,
         backtest_version: BacktestVersion = BacktestVersion.V2,
         slippage_percent: float = 0.0001,
         spread_markup: float = 0.0,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
         broker: Broker = Broker.ALPACA_WHITE_LABEL,
-        benchmark_symphonies: Optional[List[str]] = None,
-        benchmark_tickers: Optional[List[str]] = None,
-        sparkgraph_color: Optional[str] = None,
+        benchmark_symphonies: list[str] | None = None,
+        benchmark_tickers: list[str] | None = None,
+        sparkgraph_color: str | None = None,
     ) -> BacktestResult:
         """
         Run a backtest for a public symphony by its ID.
@@ -209,7 +222,8 @@ class PublicSymphony:
             benchmark_tickers: List of ticker symbols to use as benchmarks (e.g., ['SPY', 'QQQ']).
             sparkgraph_color: Custom color for performance chart.
 
-        Returns:
+        Returns
+        -------
             BacktestResult: Parsed backtest result with all statistics.
 
         Example:
@@ -221,7 +235,9 @@ class PublicSymphony:
             "abbreviate_days": abbreviate_days,
             "apply_reg_fee": apply_reg_fee,
             "apply_taf_fee": apply_taf_fee,
-            "apply_subscription": apply_subscription.value if apply_subscription else None,
+            "apply_subscription": apply_subscription.value
+            if apply_subscription
+            else None,
             "backtest_version": backtest_version.value if backtest_version else None,
             "slippage_percent": slippage_percent,
             "spread_markup": spread_markup,
@@ -242,21 +258,21 @@ class PublicSymphony:
 
     def backtest(
         self,
-        symphony: Union[SymphonyDefinition, Dict[str, Any]],
+        symphony: SymphonyDefinition | dict[str, Any],
         capital: float = 10000.0,
-        abbreviate_days: Optional[int] = None,
+        abbreviate_days: int | None = None,
         apply_reg_fee: bool = True,
         apply_taf_fee: bool = True,
         apply_subscription: ApplySubscription = ApplySubscription.NONE,
         backtest_version: BacktestVersion = BacktestVersion.V2,
         slippage_percent: float = 0.0001,
         spread_markup: float = 0.0,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
         broker: Broker = Broker.ALPACA_WHITE_LABEL,
-        benchmark_symphonies: Optional[List[str]] = None,
-        benchmark_tickers: Optional[List[str]] = None,
-        sparkgraph_color: Optional[str] = None,
+        benchmark_symphonies: list[str] | None = None,
+        benchmark_tickers: list[str] | None = None,
+        sparkgraph_color: str | None = None,
     ) -> BacktestResult:
         """
         Run a standalone backtest with a custom symphony definition.
@@ -278,7 +294,8 @@ class PublicSymphony:
             benchmark_tickers: List of ticker symbols to use as benchmarks (e.g., ['SPY', 'QQQ']).
             sparkgraph_color: Custom color for performance chart.
 
-        Returns:
+        Returns
+        -------
             BacktestResult: Parsed backtest result with all statistics.
 
         Example:
@@ -300,7 +317,9 @@ class PublicSymphony:
             "abbreviate_days": abbreviate_days,
             "apply_reg_fee": apply_reg_fee,
             "apply_taf_fee": apply_taf_fee,
-            "apply_subscription": apply_subscription.value if apply_subscription else None,
+            "apply_subscription": apply_subscription.value
+            if apply_subscription
+            else None,
             "backtest_version": backtest_version.value if backtest_version else None,
             "slippage_percent": slippage_percent,
             "spread_markup": spread_markup,
@@ -323,19 +342,19 @@ class PublicSymphony:
         self,
         symphony_id: str,
         capital: float = 10000.0,
-        abbreviate_days: Optional[int] = None,
+        abbreviate_days: int | None = None,
         apply_reg_fee: bool = True,
         apply_taf_fee: bool = True,
         apply_subscription: ApplySubscription = ApplySubscription.NONE,
         backtest_version: BacktestVersion = BacktestVersion.V2,
         slippage_percent: float = 0.0001,
         spread_markup: float = 0.0,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
         broker: Broker = Broker.ALPACA_WHITE_LABEL,
-        benchmark_symphonies: Optional[List[str]] = None,
-        benchmark_tickers: Optional[List[str]] = None,
-        sparkgraph_color: Optional[str] = None,
+        benchmark_symphonies: list[str] | None = None,
+        benchmark_tickers: list[str] | None = None,
+        sparkgraph_color: str | None = None,
     ) -> BacktestResult:
         """
         Run a backtest for a public symphony by its ID (v2).
@@ -357,7 +376,8 @@ class PublicSymphony:
             benchmark_tickers: List of ticker symbols to use as benchmarks (e.g., ['SPY', 'QQQ']).
             sparkgraph_color: Custom color for performance chart.
 
-        Returns:
+        Returns
+        -------
             BacktestResult: Parsed backtest result with all statistics.
 
         Example:
@@ -369,7 +389,9 @@ class PublicSymphony:
             "abbreviate_days": abbreviate_days,
             "apply_reg_fee": apply_reg_fee,
             "apply_taf_fee": apply_taf_fee,
-            "apply_subscription": apply_subscription.value if apply_subscription else None,
+            "apply_subscription": apply_subscription.value
+            if apply_subscription
+            else None,
             "backtest_version": backtest_version.value if backtest_version else None,
             "slippage_percent": slippage_percent,
             "spread_markup": spread_markup,

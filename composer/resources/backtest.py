@@ -1,30 +1,40 @@
-from typing import Dict, Any, Union, Optional, List
+"""Backtest resource for running backtest simulations."""
+
+from typing import Any
+
 from ..models.backtest import (
+    ApplySubscription,
     BacktestRequest,
     BacktestResult,
-    RebalanceRequest,
-    RebalanceResult,
     BacktestVersion,
     Broker,
-    ApplySubscription,
     ConfigEntry,
     ConfigKey,
+    RebalanceRequest,
+    RebalanceResult,
 )
 from ..models.common import SymphonyDefinition
 
 
 class Backtest:
+    """Backtest resource for running backtest simulations.
+
+    This resource provides methods for running backtests, rebalances,
+    and managing backtest configurations.
+    """
+
     def __init__(self, http_client):
         self.http_client = http_client
 
-    def run(self, request: Union[BacktestRequest, Dict[str, Any]]) -> BacktestResult:
+    def run(self, request: BacktestRequest | dict[str, Any]) -> BacktestResult:
         """
         Run a generic backtest simulation (v1).
 
         Args:
             request: BacktestRequest model or dictionary matching the schema.
 
-        Returns:
+        Returns
+        -------
             BacktestResult: Parsed backtest result with all statistics
 
         Example:
@@ -50,21 +60,21 @@ class Backtest:
 
     def run_v2(
         self,
-        symphony: Optional[Union[SymphonyDefinition, Dict[str, Any]]] = None,
+        symphony: SymphonyDefinition | dict[str, Any] | None = None,
         capital: float = 10000.0,
-        abbreviate_days: Optional[int] = None,
+        abbreviate_days: int | None = None,
         apply_reg_fee: bool = True,
         apply_taf_fee: bool = True,
         apply_subscription: ApplySubscription = ApplySubscription.NONE,
         backtest_version: BacktestVersion = BacktestVersion.V2,
         slippage_percent: float = 0.0001,
         spread_markup: float = 0.0,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
         broker: Broker = Broker.ALPACA_WHITE_LABEL,
-        benchmark_symphonies: Optional[List[str]] = None,
-        benchmark_tickers: Optional[List[str]] = None,
-        sparkgraph_color: Optional[str] = None,
+        benchmark_symphonies: list[str] | None = None,
+        benchmark_tickers: list[str] | None = None,
+        sparkgraph_color: str | None = None,
     ) -> BacktestResult:
         """
         Run a generic backtest simulation (v2).
@@ -86,7 +96,8 @@ class Backtest:
             benchmark_tickers: List of ticker symbols to use as benchmarks (e.g., ['SPY', 'QQQ']).
             sparkgraph_color: Custom color for performance chart.
 
-        Returns:
+        Returns
+        -------
             BacktestResult: Parsed backtest result with all statistics
 
         Example:
@@ -130,21 +141,21 @@ class Backtest:
 
     def run_public_v2(
         self,
-        symphony: Optional[Union[SymphonyDefinition, Dict[str, Any]]] = None,
+        symphony: SymphonyDefinition | dict[str, Any] | None = None,
         capital: float = 10000.0,
-        abbreviate_days: Optional[int] = None,
+        abbreviate_days: int | None = None,
         apply_reg_fee: bool = True,
         apply_taf_fee: bool = True,
         apply_subscription: ApplySubscription = ApplySubscription.NONE,
         backtest_version: BacktestVersion = BacktestVersion.V2,
         slippage_percent: float = 0.0001,
         spread_markup: float = 0.0,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
         broker: Broker = Broker.ALPACA_WHITE_LABEL,
-        benchmark_symphonies: Optional[List[str]] = None,
-        benchmark_tickers: Optional[List[str]] = None,
-        sparkgraph_color: Optional[str] = None,
+        benchmark_symphonies: list[str] | None = None,
+        benchmark_tickers: list[str] | None = None,
+        sparkgraph_color: str | None = None,
     ) -> BacktestResult:
         """
         Run a public backtest simulation (v2).
@@ -166,7 +177,8 @@ class Backtest:
             benchmark_tickers: List of ticker symbols to use as benchmarks (e.g., ['SPY', 'QQQ']).
             sparkgraph_color: Custom color for performance chart.
 
-        Returns:
+        Returns
+        -------
             BacktestResult: Parsed backtest result with all statistics
 
         Example:
@@ -208,14 +220,15 @@ class Backtest:
         raw_response = self.http_client.post("/api/v2/public/backtest", json=payload)
         return BacktestResult.model_validate(raw_response)
 
-    def rebalance(self, request: Union[RebalanceRequest, Dict[str, Any]]) -> RebalanceResult:
+    def rebalance(self, request: RebalanceRequest | dict[str, Any]) -> RebalanceResult:
         """
         Run a rebalance for specified symphonies.
 
         Args:
             request: RebalanceRequest model or dictionary matching the schema.
 
-        Returns:
+        Returns
+        -------
             RebalanceResult: Rebalance result with quotes and run results.
 
         Example:
@@ -234,15 +247,17 @@ class Backtest:
         raw_response = self.http_client.post("/api/v2/rebalance", json=payload)
         return RebalanceResult.model_validate(raw_response)
 
-    def list_configs(self, keys: Optional[List[str]] = None) -> List[ConfigEntry]:
+    def list_configs(self, keys: list[str] | None = None) -> list[ConfigEntry]:
         """
         List accessible config entries.
 
         Args:
             keys: Optional list of config keys to filter by.
-                  Valid keys: "constants", "deposit_presets_config", "openai-prompt", "openai_config"
+                Valid keys: "constants", "deposit_presets_config", "openai-prompt",
+                "openai_config"
 
-        Returns:
+        Returns
+        -------
             List of ConfigEntry objects
 
         Example:
@@ -254,16 +269,18 @@ class Backtest:
         raw_response = self.http_client.get("/api/v1/configs", params=params)
         return [ConfigEntry.from_dict(c) for c in raw_response]
 
-    def get_config(self, config_key: Union[ConfigKey, str]) -> ConfigEntry:
+    def get_config(self, config_key: ConfigKey | str) -> ConfigEntry:
         """
         Get a single config entry by key.
 
         Args:
             config_key: The config key to retrieve.
-                        Valid keys: "constants", "deposit_presets_config", "openai-prompt", "openai_config"
-                        Can pass ConfigKey enum or string.
+                Valid keys: "constants", "deposit_presets_config", "openai-prompt",
+                "openai_config"
+                Can pass ConfigKey enum or string.
 
-        Returns:
+        Returns
+        -------
             ConfigEntry object
 
         Example:

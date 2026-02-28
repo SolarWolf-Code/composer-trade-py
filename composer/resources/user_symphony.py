@@ -1,37 +1,34 @@
 """User Symphony resource - authenticated endpoints for symphony management."""
 
-import random
 import colorsys
-from typing import List, Optional, Dict, Any, Union
+import random
+from typing import Any
+
 from ..http_client import HTTPClient
 from ..models.backtest import (
-    Indicator,
-    SymphonyDetail,
-    SymphonyVersionInfo,
-    ModifySymphonyResponse,
-    FindAndReplaceOperation,
-    CompressNestedIfsModification,
-    UpdateSymphonyResponse,
-    UpdateSymphonyNodesResponse,
+    ApplySubscription,
     BacktestResult,
     BacktestVersion,
     Broker,
-    ApplySubscription,
+    CompressNestedIfsModification,
+    FindAndReplaceOperation,
+    Indicator,
+    ModifySymphonyResponse,
     ScoreExtendedResponse,
-    Modification,
+    SymphonyDetail,
+    SymphonyVersionInfo,
+    UpdateSymphonyNodesResponse,
+    UpdateSymphonyResponse,
 )
 from ..models.common import SymphonyDefinition
 from ..models.symphony import (
-    CreateSymphonyRequest,
-    CreateSymphonyResponse,
-    CopySymphonyRequest,
     CopySymphonyResponse,
+    CreateSymphonyResponse,
 )
 
 
 def _generate_random_color() -> str:
-    """
-    Generate a random vibrant hex color that contrasts well against a black background.
+    """Generate a random vibrant hex color that contrasts well against a black background.
 
     The color is generated in HLS space (via colorsys) to better control
     visual properties:
@@ -41,28 +38,24 @@ def _generate_random_color() -> str:
     - Lightness: medium-high (0.55–0.75)
       against black without becoming too pale or washed out
 
-    Returns:
+    Returns
+    -------
         str: A hex color string in the format '#RRGGBB'.
+
     """
-     # Random hue
-    h = random.random()
-    
-    s = random.uniform(0.4, 0.6)
-    
-    l = random.uniform(0.55, 0.65)
-    
-    r, g, b = colorsys.hls_to_rgb(h, l, s)
-    
-    return '#{:02X}{:02X}{:02X}'.format(
-        int(r * 255),
-        int(g * 255),
-        int(b * 255)
-    )
+    hue = random.random()
+
+    saturation = random.uniform(0.4, 0.6)
+
+    lightness = random.uniform(0.55, 0.65)
+
+    r, g, b = colorsys.hls_to_rgb(hue, lightness, saturation)
+
+    return f"#{int(r * 255):02X}{int(g * 255):02X}{int(b * 255):02X}"
 
 
 class UserSymphony:
-    """
-    Authenticated symphony endpoints.
+    """Authenticated symphony endpoints.
 
     These endpoints require authentication and provide access to the user's
     own symphonies as well as public symphonies with additional data.
@@ -71,14 +64,14 @@ class UserSymphony:
     def __init__(self, http_client: HTTPClient):
         self._client = http_client
 
-    def get_indicators(self) -> List[Indicator]:
-        """
-        Get a list of all available technical indicators (authenticated).
+    def get_indicators(self) -> list[Indicator]:
+        """Get a list of all available technical indicators (authenticated).
 
         Same as the public endpoint but may include additional indicators
         or data for authenticated users.
 
-        Returns:
+        Returns
+        -------
             List[Indicator]: List of available technical indicators with their
                 parameters and metadata.
 
@@ -86,18 +79,19 @@ class UserSymphony:
              indicators = client.user_symphony.get_indicators()
              for indicator in indicators:
             ...     print(f"{indicator.name}: {indicator.description}")
+
         """
         response = self._client.get("/api/v1/symphony-scores/indicators")
         return [Indicator.model_validate(item) for item in response]
 
     def get_symphony(self, symphony_id: str) -> SymphonyDetail:
-        """
-        Get detailed information about a symphony (authenticated).
+        """Get detailed information about a symphony (authenticated).
 
         Args:
             symphony_id: Unique identifier for the symphony.
 
-        Returns:
+        Returns
+        -------
             SymphonyDetail: Detailed symphony information including stats,
                 backtest data, and metadata.
 
@@ -105,24 +99,26 @@ class UserSymphony:
              symphony = client.user_symphony.get_symphony("sym-abc123")
              print(f"Name: {symphony.name}")
              print(f"Sharpe: {symphony.stats_oos_sharpe_ratio}")
+
         """
         response = self._client.get(f"/api/v1/symphonies/{symphony_id}")
         return SymphonyDetail.model_validate(response)
 
-    def get_versions(self, symphony_id: str) -> List[SymphonyVersionInfo]:
-        """
-        Get all versions for a symphony (authenticated).
+    def get_versions(self, symphony_id: str) -> list[SymphonyVersionInfo]:
+        """Get all versions for a symphony (authenticated).
 
         Args:
             symphony_id: Unique identifier for the symphony.
 
-        Returns:
+        Returns
+        -------
             List[SymphonyVersionInfo]: List of version information.
 
         Example:
              versions = client.user_symphony.get_versions("sym-abc123")
              for version in versions:
             ...     print(f"Version {version.version_id}: {version.created_at}")
+
         """
         response = self._client.get(f"/api/v1/symphonies/{symphony_id}/versions")
         return [SymphonyVersionInfo.model_validate(item) for item in response]
@@ -130,15 +126,15 @@ class UserSymphony:
     def get_version_score(
         self, symphony_id: str, version_id: str, score_version: str = "v1"
     ) -> SymphonyDefinition:
-        """
-        Get an existing symphony version's EDN (score) - authenticated.
+        """Get an existing symphony version's EDN (score) - authenticated.
 
         Args:
             symphony_id: Unique identifier for the symphony.
             version_id: Unique identifier for the symphony version.
             score_version: Score version to retrieve ("v1" or "v2"). Defaults to "v1".
 
-        Returns:
+        Returns
+        -------
             SymphonyDefinition: The symphony score/parsed EDN structure.
 
         Example:
@@ -148,28 +144,31 @@ class UserSymphony:
             ... )
              print(score.name)
              print(score.rebalance)
+
         """
         params = {"score_version": score_version}
         response = self._client.get(
-            f"/api/v1/symphonies/{symphony_id}/versions/{version_id}/score", params=params
+            f"/api/v1/symphonies/{symphony_id}/versions/{version_id}/score",
+            params=params,
         )
         return SymphonyDefinition.model_validate(response)
 
     def get_score(self, symphony_id: str, score_version: str = "v1") -> SymphonyDefinition:
-        """
-        Get an existing symphony's EDN (score) - authenticated.
+        """Get an existing symphony's EDN (score) - authenticated.
 
         Args:
             symphony_id: Unique identifier for the symphony.
             score_version: Score version to retrieve ("v1" or "v2"). Defaults to "v1".
 
-        Returns:
+        Returns
+        -------
             SymphonyDefinition: The symphony score/parsed EDN structure.
 
         Example:
              score = client.user_symphony.get_score("sym-abc123")
              print(score.name)
              print(score.rebalance)
+
         """
         params = {"score_version": score_version}
         response = self._client.get(f"/api/v1/symphonies/{symphony_id}/score", params=params)
@@ -177,13 +176,13 @@ class UserSymphony:
         return SymphonyDefinition.model_validate(response)
 
     def get_score_extended(self, symphony_id: str) -> ScoreExtendedResponse:
-        """
-        Get a symphony's score along with suggested modifications.
+        """Get a symphony's score along with suggested modifications.
 
         Args:
             symphony_id: Unique identifier for the symphony.
 
-        Returns:
+        Returns
+        -------
             ScoreExtendedResponse: Contains the symphony score and suggested modifications.
 
         Example:
@@ -191,6 +190,7 @@ class UserSymphony:
               print(result.score.name)
               for mod in result.modifications:
                   print(f"  Modification: {mod}")
+
         """
         response = self._client.get(f"/api/v1/symphonies/{symphony_id}/score-extended")
 
@@ -212,15 +212,15 @@ class UserSymphony:
     def modify_symphony(
         self, symphony_id: str, old_ticker: str, new_ticker: str
     ) -> ModifySymphonyResponse:
-        """
-        Programmatically modify a symphony by finding and replacing a ticker.
+        """Programmatically modify a symphony by finding and replacing a ticker.
 
         Args:
             symphony_id: Unique identifier for the symphony to modify.
             old_ticker: The ticker symbol to find (e.g., "SPY").
             new_ticker: The ticker symbol to replace with (e.g., "TQQQ").
 
-        Returns:
+        Returns
+        -------
             ModifySymphonyResponse: Contains the symphony_id and version_id of
                 the modified symphony.
 
@@ -231,6 +231,7 @@ class UserSymphony:
             ...     "TQQQ"
             ... )
              print(f"Modified symphony: {result.symphony_id}, version: {result.version_id}")
+
         """
         request_body = {
             "op": "FIND_AND_REPLACE",
@@ -246,17 +247,16 @@ class UserSymphony:
     def update_symphony(
         self,
         symphony_id: str,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        color: Optional[str] = None,
-        hashtag: Optional[str] = None,
-        tags: Optional[List[str]] = None,
-        symphony: Optional[Dict[str, Any]] = None,
-        benchmarks: Optional[List[Dict[str, Any]]] = None,
-        share_with_everyone: Optional[bool] = None,
+        name: str | None = None,
+        description: str | None = None,
+        color: str | None = None,
+        hashtag: str | None = None,
+        tags: list[str] | None = None,
+        symphony: dict[str, Any] | None = None,
+        benchmarks: list[dict[str, Any]] | None = None,
+        share_with_everyone: bool | None = None,
     ) -> UpdateSymphonyResponse:
-        """
-        Update an existing symphony.
+        """Update an existing symphony.
 
         Args:
             symphony_id: Unique identifier for the symphony to update.
@@ -269,7 +269,8 @@ class UserSymphony:
             benchmarks: Optional list of benchmark configurations.
             share_with_everyone: Optional whether to share with everyone.
 
-        Returns:
+        Returns
+        -------
             UpdateSymphonyResponse: Contains existing_version_id and version_id.
 
         Example:
@@ -279,8 +280,9 @@ class UserSymphony:
             ...     description="New description"
             ... )
              print(f"New version: {result.version_id}")
+
         """
-        request_body: Dict[str, Any] = {}
+        request_body: dict[str, Any] = {}
         if name is not None:
             request_body["name"] = name
         if description is not None:
@@ -305,20 +307,19 @@ class UserSymphony:
         return UpdateSymphonyResponse.model_validate(response)
 
     def delete_symphony(self, symphony_id: str) -> None:
-        """
-        Delete an existing symphony.
+        """Delete an existing symphony.
 
         Args:
             symphony_id: Unique identifier for the symphony to delete.
 
         Example:
              client.user_symphony.delete_symphony("fk6VGRDAAgiH120TfUPS")
+
         """
         self._client.delete(f"/api/v1/symphonies/{symphony_id}")
 
-    def submit_to_community(self, symphony_id: str) -> Dict[str, Any]:
-        """
-        Submit a symphony to the Composer Community.
+    def submit_to_community(self, symphony_id: str) -> dict[str, Any]:
+        """Submit a symphony to the Composer Community.
 
         Submitted symphonies will first be reviewed by an internal panel
         before being added to the Community search on Discover.
@@ -326,12 +327,14 @@ class UserSymphony:
         Args:
             symphony_id: Unique identifier for the symphony to submit.
 
-        Returns:
+        Returns
+        -------
             Dict[str, Any]: Response from the API.
 
         Example:
              result = client.user_symphony.submit_to_community("fk6VGRDAAgiH120TfUPS")
              print(result)
+
         """
         response = self._client.put(f"/api/v1/symphonies/{symphony_id}/submit-to-community")
         return response
@@ -340,27 +343,28 @@ class UserSymphony:
         self,
         name: str,
         asset_class: str = "EQUITIES",
-        description: Optional[str] = None,
-        color: Optional[str] = None,
+        description: str | None = None,
+        color: str | None = None,
         hashtag: str = "",
-        tags: Optional[List[str]] = None,
-        symphony: Optional[Union[SymphonyDefinition, Dict[str, Any]]] = None,
-        benchmarks: Optional[List[Dict[str, Any]]] = None,
+        tags: list[str] | None = None,
+        symphony: SymphonyDefinition | dict[str, Any] | None = None,
+        benchmarks: list[dict[str, Any]] | None = None,
     ) -> CreateSymphonyResponse:
-        """
-        Create a new symphony.
+        """Create a new symphony.
 
         Args:
             name: Name of the symphony.
             asset_class: Asset class (EQUITIES or CRYPTO). Defaults to EQUITIES.
             description: Optional description.
-            color: Optional color (hex code). If not provided, a random color with good contrast for black text is generated.
+            color: Optional color (hex code). If not provided, a random color with
+                good contrast for black text is generated.
             hashtag: Hashtag for the symphony (defaults to empty string).
             tags: Optional list of tags.
             symphony: Optional symphony definition (SymphonyDefinition model or dict).
             benchmarks: Optional list of benchmark configurations.
 
-        Returns:
+        Returns
+        -------
             CreateSymphonyResponse: Contains symphony_id and version_id.
 
         Example:
@@ -378,8 +382,9 @@ class UserSymphony:
             ...     name="My Strategy",
             ...     symphony=score_data
             ... )
+
         """
-        request_body: Dict[str, Any] = {"name": name, "asset_class": asset_class}
+        request_body: dict[str, Any] = {"name": name, "asset_class": asset_class}
         if description is not None:
             request_body["description"] = description
         if color is None:
@@ -403,13 +408,12 @@ class UserSymphony:
     def copy_symphony(
         self,
         symphony_id: str,
-        name: Optional[str] = None,
-        color: Optional[str] = None,
-        hashtag: Optional[str] = None,
-        benchmarks: Optional[List[Dict[str, Any]]] = None,
+        name: str | None = None,
+        color: str | None = None,
+        hashtag: str | None = None,
+        benchmarks: list[dict[str, Any]] | None = None,
     ) -> CopySymphonyResponse:
-        """
-        Copy an existing symphony.
+        """Copy an existing symphony.
 
         Args:
             symphony_id: ID of the symphony to copy.
@@ -418,7 +422,8 @@ class UserSymphony:
             hashtag: Optional hashtag for the copied symphony.
             benchmarks: Optional benchmark configurations.
 
-        Returns:
+        Returns
+        -------
             CopySymphonyResponse: Contains the new symphony_id and version_id.
 
         Example:
@@ -427,8 +432,9 @@ class UserSymphony:
             ...     name="My Copy"
             ... )
              print(f"Copied: {result.symphony_id}")
+
         """
-        request_body: Dict[str, Any] = {}
+        request_body: dict[str, Any] = {}
         if name is not None:
             request_body["name"] = name
         if color is not None:
@@ -448,22 +454,21 @@ class UserSymphony:
         self,
         symphony_id: str,
         capital: float = 10000.0,
-        abbreviate_days: Optional[int] = None,
+        abbreviate_days: int | None = None,
         apply_reg_fee: bool = True,
         apply_taf_fee: bool = True,
         apply_subscription: ApplySubscription = ApplySubscription.NONE,
         backtest_version: BacktestVersion = BacktestVersion.V2,
         slippage_percent: float = 0.0001,
         spread_markup: float = 0.0,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
         broker: Broker = Broker.ALPACA_WHITE_LABEL,
-        benchmark_symphonies: Optional[List[str]] = None,
-        benchmark_tickers: Optional[List[str]] = None,
-        sparkgraph_color: Optional[str] = None,
+        benchmark_symphonies: list[str] | None = None,
+        benchmark_tickers: list[str] | None = None,
+        sparkgraph_color: str | None = None,
     ) -> BacktestResult:
-        """
-        Run a backtest for an existing symphony by its ID.
+        """Run a backtest for an existing symphony by its ID.
 
         Args:
             symphony_id: The ID of the symphony to backtest.
@@ -482,12 +487,14 @@ class UserSymphony:
             benchmark_tickers: List of ticker symbols to use as benchmarks (e.g., ['SPY', 'QQQ']).
             sparkgraph_color: Custom color for performance chart.
 
-        Returns:
+        Returns
+        -------
             BacktestResult: Parsed backtest result with all statistics.
 
         Example:
              result = client.user_symphony.backtest_symphony("fk6VGRDAAgiH120TfUPS")
              print(f"Sharpe: {result.stats.sharpe_ratio}")
+
         """
         payload = {
             "capital": capital,
@@ -517,22 +524,21 @@ class UserSymphony:
         self,
         symphony_id: str,
         capital: float = 10000.0,
-        abbreviate_days: Optional[int] = None,
+        abbreviate_days: int | None = None,
         apply_reg_fee: bool = True,
         apply_taf_fee: bool = True,
         apply_subscription: ApplySubscription = ApplySubscription.NONE,
         backtest_version: BacktestVersion = BacktestVersion.V2,
         slippage_percent: float = 0.0001,
         spread_markup: float = 0.0,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
         broker: Broker = Broker.ALPACA_WHITE_LABEL,
-        benchmark_symphonies: Optional[List[str]] = None,
-        benchmark_tickers: Optional[List[str]] = None,
-        sparkgraph_color: Optional[str] = None,
+        benchmark_symphonies: list[str] | None = None,
+        benchmark_tickers: list[str] | None = None,
+        sparkgraph_color: str | None = None,
     ) -> BacktestResult:
-        """
-        Run a backtest for an existing symphony by its ID (v2).
+        """Run a backtest for an existing symphony by its ID (v2).
 
         Args:
             symphony_id: The ID of the symphony to backtest.
@@ -551,12 +557,14 @@ class UserSymphony:
             benchmark_tickers: List of ticker symbols to use as benchmarks (e.g., ['SPY', 'QQQ']).
             sparkgraph_color: Custom color for performance chart.
 
-        Returns:
+        Returns
+        -------
             BacktestResult: Parsed backtest result with all statistics.
 
         Example:
              result = client.user_symphony.backtest_symphony_v2("fk6VGRDAAgiH120TfUPS")
              print(f"Sharpe: {result.stats.sharpe_ratio}")
+
         """
         payload = {
             "capital": capital,
@@ -586,17 +594,17 @@ class UserSymphony:
         self,
         symphony_id: str,
         version_id: str,
-        updates: List[Dict[str, Any]],
+        updates: list[dict[str, Any]],
     ) -> UpdateSymphonyNodesResponse:
-        """
-        Partially update nodes of a symphony version's EDN.
+        """Update nodes of a symphony version's EDN.
 
         Args:
             symphony_id: Unique identifier for the symphony.
             version_id: Unique identifier for the symphony version (must be latest).
             updates: List of node updates to apply.
 
-        Returns:
+        Returns
+        -------
             UpdateSymphonyNodesResponse: Response containing symphony_id and version_id.
 
         Example:
@@ -606,6 +614,7 @@ class UserSymphony:
             ...     [{"id": "node-123", "ticker": "QQQ"}]
             ... )
              print(result.symphony_id, result.version_id)
+
         """
         request_body = {"updates": updates}
         response = self._client.patch(
