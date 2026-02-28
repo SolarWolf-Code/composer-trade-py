@@ -367,7 +367,7 @@ _register_node_type("root", SymphonyDefinition)
 SymphonyScore = SymphonyDefinition
 
 
-def validate_symphony_score(score):
+def validate_symphony_score(score: SymphonyDefinition | dict) -> SymphonyDefinition:
     """
     Validate a symphony score and check crypto rebalancing rules.
 

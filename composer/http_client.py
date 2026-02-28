@@ -9,27 +9,27 @@ from typing import Any
 from urllib.parse import urljoin
 
 import httpx
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 logger = logging.getLogger("composer")
 
 
 class RetryConfig(BaseModel):
-    """Configuration for retry behavior.
+    """Configuration for retry behavior."""
 
-    Args:
-        max_retries: Maximum number of retry attempts (default: 3).
-        rate_limit_wait: Initial seconds to wait on 429 responses (default: 10.0).
-        server_error_wait: Initial seconds to wait on 500, 502, 503, 504 (default: 3.0).
-        exponential_base: Base for exponential backoff multiplier (default: 2.0).
-        retry_statuses: HTTP status codes that trigger a retry (default: {429, 500, 502, 503, 504}).
-    """
-
-    max_retries: int = 3
-    rate_limit_wait: float = 10.0
-    server_error_wait: float = 3.0
-    exponential_base: float = 2.0
-    retry_statuses: set[int] = {429, 500, 502, 503, 504}
+    max_retries: int = Field(default=3, description="Maximum number of retry attempts")
+    rate_limit_wait: float = Field(
+        default=10.0, description="Initial seconds to wait on 429 responses"
+    )
+    server_error_wait: float = Field(
+        default=3.0, description="Initial seconds to wait on 500, 502, 503, 504 responses"
+    )
+    exponential_base: float = Field(
+        default=2.0, description="Base for exponential backoff multiplier"
+    )
+    retry_statuses: set[int] = Field(
+        default={429, 500, 502, 503, 504}, description="HTTP status codes that trigger a retry"
+    )
 
 
 class ComposerError(Exception):
