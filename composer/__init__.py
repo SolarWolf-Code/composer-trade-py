@@ -2,6 +2,7 @@
 
 from . import resources
 from .client import ComposerClient
+from .http_client import RetryConfig
 from .models import (
     ApplySubscription,
     Asset,
@@ -50,6 +51,7 @@ from .models import (
 __all__ = [
     # Client
     "ComposerClient",
+    "RetryConfig",
     # Resources
     "resources",
     # Common stats
