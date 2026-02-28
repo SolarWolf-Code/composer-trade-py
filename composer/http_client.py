@@ -3,19 +3,18 @@
 This module provides the HTTP client for making requests to the Composer API.
 """
 
-from dataclasses import dataclass, field
 import logging
 import time
 from typing import Any
 from urllib.parse import urljoin
 
 import httpx
+from pydantic import BaseModel
 
 logger = logging.getLogger("composer")
 
 
-@dataclass
-class RetryConfig:
+class RetryConfig(BaseModel):
     """Configuration for retry behavior.
 
     Args:
@@ -30,7 +29,7 @@ class RetryConfig:
     rate_limit_wait: float = 10.0
     server_error_wait: float = 3.0
     exponential_base: float = 2.0
-    retry_statuses: set[int] = field(default_factory=lambda: {429, 500, 502, 503, 504})
+    retry_statuses: set[int] = {429, 500, 502, 503, 504}
 
 
 class ComposerError(Exception):
