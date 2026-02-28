@@ -31,13 +31,13 @@ docs = [
     "mkdocstrings[python]>=0.25.0",
 ]
 dev = [
-    "pyright>=1.1.408",
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
     "mypy>=1.0.0",
     "hatch>=1.16.3",
     "twine>=6.2.0",
     "build>=1.4.0",
+    "basedpyright>=1.38.2",
 ]
 
 [project.urls]
@@ -67,8 +67,15 @@ select = ["E", "F", "W", "I", "N", "D", "UP", "B", "C4", "SIM"]
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
 
-[tool.mypy]
-python_version = "3.11"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
+[tool.pyright]
+include = ["composer"]
+exclude = ["**/__pycache__"]
+venvPath = "."
+venv = ".venv"
+
+pythonVersion = "3.11"
+typeCheckingMode = "basic"
+
+reportMissingImports = true
+reportUnusedVariable = "warning"
+reportOptionalMemberAccess = "error"
