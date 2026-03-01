@@ -71,11 +71,11 @@ client = ComposerClient(
 ### Disable Retries Entirely
 
 ```python
-from composer import ComposerClient, RetryConfig
+from composer import ComposerClient
 
 client = ComposerClient(
     api_key="api_key",
     api_secret="api_secret",
-    retry_config=RetryConfig(max_retries=0),
+    retry_config=None,
 )
 ```

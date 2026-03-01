@@ -24,6 +24,7 @@ from .resources.user_symphonies import UserSymphonies
 from .resources.user_symphony import UserSymphony
 from .resources.watchlist import Watchlist
 
+_DEFAULT_RETRY_CONFIG = RetryConfig()
 
 class ComposerClient:
     """Main client for interacting with the Composer API.
@@ -43,7 +44,7 @@ class ComposerClient:
         api_key: str,
         api_secret: str,
         timeout: float = 30.0,
-        retry_config: RetryConfig | None = None,
+        retry_config: RetryConfig | None = _DEFAULT_RETRY_CONFIG,
     ):
         """
         Initialize the Composer Client.
@@ -52,12 +53,9 @@ class ComposerClient:
             api_key (str): The API Key ID
             api_secret (str): The API Secret Key
             timeout (float): Request timeout in seconds (default: 30.0)
-            retry_config (RetryConfig | None): Configuration for retry behavior
-                (default: RetryConfig())
+            retry_config (RetryConfig | None): Configuration for retry behavior.
+                Pass None to disable retries (default: RetryConfig())
         """
-        if retry_config is None:
-            retry_config = RetryConfig()
-
         self.http_client = HTTPClient(
             api_key, api_secret, timeout=timeout, retry_config=retry_config
         )
