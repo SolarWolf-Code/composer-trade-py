@@ -40,47 +40,31 @@ class Account(BaseModel):
     account_foreign_id: str | None = Field(
         None, description="Foreign ID from the broker (if applicable)"
     )
-    account_type: str = Field(
-        description="Type of account (e.g., INDIVIDUAL, IRA, etc.)"
-    )
-    asset_classes: list[AssetClass] = Field(
-        description="Asset classes supported by this account"
-    )
+    account_type: str = Field(description="Type of account (e.g., INDIVIDUAL, IRA, etc.)")
+    asset_classes: list[AssetClass] = Field(description="Asset classes supported by this account")
     direct_tradable_asset_classes: DirectTradableAssetClasses = Field(
         description="Asset classes available for direct buy/sell trading"
     )
     symphony_tradable_asset_classes: list[AssetClass] = Field(
         description="Asset classes available for Symphony automation"
     )
-    account_number: str | None = Field(
-        None, description="Account number (if available)"
-    )
+    account_number: str | None = Field(None, description="Account number (if available)")
     status: str = Field(description="Account status (e.g., ACTIVE, PENDING, etc.)")
     broker: str = Field(description="Broker handling this account (e.g., ALPACA, APEX)")
-    created_at: str = Field(
-        description="When the account was created (ISO 8601 format)"
-    )
-    first_deposit_at: str | None = Field(
-        None, description="When the first deposit was made"
-    )
+    created_at: str = Field(description="When the account was created (ISO 8601 format)")
+    first_deposit_at: str | None = Field(None, description="When the first deposit was made")
     first_incoming_acats_transfer_at: str | None = Field(
         None, description="When the first incoming ACATS transfer occurred"
     )
-    first_deploy_at: str | None = Field(
-        None, description="When the first symphony was deployed"
-    )
+    first_deploy_at: str | None = Field(None, description="When the first symphony was deployed")
     first_position_created_at: str | None = Field(
         None, description="When the first position was created"
     )
     is_legacy_crypto_only_account: bool | None = Field(
         None, description="Whether this is a legacy crypto-only account"
     )
-    has_queued_deploy: bool = Field(
-        description="Whether there are any queued symphony deployments"
-    )
-    has_active_position: bool = Field(
-        description="Whether the account has any active positions"
-    )
+    has_queued_deploy: bool = Field(description="Whether there are any queued symphony deployments")
+    has_active_position: bool = Field(description="Whether the account has any active positions")
 
 
 class OptionsDetails(BaseModel):
@@ -88,9 +72,7 @@ class OptionsDetails(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    underlying_asset_symbol: str = Field(
-        description="Underlying asset symbol (e.g., AAPL)"
-    )
+    underlying_asset_symbol: str = Field(description="Underlying asset symbol (e.g., AAPL)")
     strike_price: float = Field(description="Strike price of the option contract")
     expiry: str = Field(description="Expiry date (YYYY-MM-DD format)")
     contract_type: str = Field(description="Type of option: CALL or PUT")
@@ -107,9 +89,7 @@ class Holding(BaseModel):
 
     ticker: str = Field(description="Ticker symbol (e.g., AAPL, CRYPTO::BTC//USD)")
     quantity: float = Field(description="Number of shares/contracts/units held")
-    asset_class: AssetClass = Field(
-        description="Type of asset: CRYPTO, EQUITIES, or OPTIONS"
-    )
+    asset_class: AssetClass = Field(description="Type of asset: CRYPTO, EQUITIES, or OPTIONS")
     options_details: OptionsDetails | None = Field(
         None, description="Details for options contracts (only for OPTIONS)"
     )
@@ -140,9 +120,7 @@ class InvestorDocument(BaseModel):
     type: str = Field(description="Type of document")
     url: str = Field(description="URL to download the document")
     file_name: str = Field(description="File name of the document")
-    tax_ids: list[str] | None = Field(
-        None, description="Tax IDs associated with the document"
-    )
+    tax_ids: list[str] | None = Field(None, description="Tax IDs associated with the document")
 
 
 class AccountsListResponse(BaseModel):
@@ -150,9 +128,7 @@ class AccountsListResponse(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    accounts: list[Account] = Field(
-        description="List of all accounts for the authenticated user"
-    )
+    accounts: list[Account] = Field(description="List of all accounts for the authenticated user")
 
 
 class AccountType(StrEnum):

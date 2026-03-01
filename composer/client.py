@@ -26,6 +26,7 @@ from .resources.watchlist import Watchlist
 
 _DEFAULT_RETRY_CONFIG = RetryConfig()
 
+
 class ComposerClient:
     """Main client for interacting with the Composer API.
 

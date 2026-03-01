@@ -46,9 +46,7 @@ class BacktestParams(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    capital: float = Field(
-        default=10000.0, description="Initial capital for the backtest"
-    )
+    capital: float = Field(default=10000.0, description="Initial capital for the backtest")
     abbreviate_days: int | None = Field(
         None, description="Number of days to abbreviate the backtest (for testing)"
     )
@@ -90,9 +88,7 @@ class BacktestParams(BaseModel):
         None,
         description="List of ticker symbols to use as benchmarks (e.g., ['SPY', 'QQQ'])",
     )
-    sparkgraph_color: str | None = Field(
-        None, description="Custom color for performance chart"
-    )
+    sparkgraph_color: str | None = Field(None, description="Custom color for performance chart")
 
 
 class BacktestRequest(BacktestParams):

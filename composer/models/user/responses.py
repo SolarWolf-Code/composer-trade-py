@@ -1,6 +1,5 @@
 """User response models."""
 
-
 from pydantic import BaseModel, Field
 
 
@@ -43,36 +42,18 @@ class UserPreferencesBanners(BaseModel):
 
     model_config = {"populate_by_name": True}
 
-    dismissed_recurring_deposits: bool | None = Field(
-        None, alias="dismissed-recurring-deposits"
-    )
-    dismissed_crypto_forty_nine: bool | None = Field(
-        None, alias="dismissed-crypto-forty-nine"
-    )
-    dismissed_crypto_2pct_bonus: bool | None = Field(
-        None, alias="dismissed-crypto-2pct-bonus"
-    )
-    dismissed_symphony_history: bool | None = Field(
-        None, alias="dismissed-symphony-history"
-    )
-    dismissed_options_level_1: bool | None = Field(
-        None, alias="dismissed-options-level-1"
-    )
+    dismissed_recurring_deposits: bool | None = Field(None, alias="dismissed-recurring-deposits")
+    dismissed_crypto_forty_nine: bool | None = Field(None, alias="dismissed-crypto-forty-nine")
+    dismissed_crypto_2pct_bonus: bool | None = Field(None, alias="dismissed-crypto-2pct-bonus")
+    dismissed_symphony_history: bool | None = Field(None, alias="dismissed-symphony-history")
+    dismissed_options_level_1: bool | None = Field(None, alias="dismissed-options-level-1")
     dismissed_options_1000_contracts_promo: bool | None = Field(
         None, alias="dismissed-options-1000-contracts-promo"
     )
-    dismissed_crypto_deprecation: bool | None = Field(
-        None, alias="dismissed-crypto-deprecation"
-    )
-    dismissed_direct_trading: bool | None = Field(
-        None, alias="dismissed-direct-trading"
-    )
-    dismissed_trade_preview: bool | None = Field(
-        None, alias="dismissed-trade-preview"
-    )
-    dismissed_trade_with_ai: bool | None = Field(
-        None, alias="dismissed-trade-with-ai"
-    )
+    dismissed_crypto_deprecation: bool | None = Field(None, alias="dismissed-crypto-deprecation")
+    dismissed_direct_trading: bool | None = Field(None, alias="dismissed-direct-trading")
+    dismissed_trade_preview: bool | None = Field(None, alias="dismissed-trade-preview")
+    dismissed_trade_with_ai: bool | None = Field(None, alias="dismissed-trade-with-ai")
     dismissed_options: bool | None = None
     dismissed_run_now: bool | None = Field(None, alias="dismissed-run-now")
 
@@ -83,12 +64,8 @@ class UserPreferences(BaseModel):
     model_config = {"populate_by_name": True}
 
     onboarding: UserPreferencesOnboarding | None = None
-    portfolio_graph: UserPreferencesPortfolioGraph | None = Field(
-        None, alias="portfolio-graph"
-    )
-    symphony_table: UserPreferencesSymphonyTable | None = Field(
-        None, alias="symphony-table"
-    )
+    portfolio_graph: UserPreferencesPortfolioGraph | None = Field(None, alias="portfolio-graph")
+    symphony_table: UserPreferencesSymphonyTable | None = Field(None, alias="symphony-table")
     banners: UserPreferencesBanners | None = None
 
 
