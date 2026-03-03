@@ -130,3 +130,25 @@ For direct API documentation, visit the various Composer API Docs:
 - [Trading API](https://trading-api.composer.trade/api/v1/api-docs/index.html#/)
 - [Backtest API](https://backtest-api.composer.trade/api/v1/api-docs/index.html#/)
 - [Stagehand API](https://stagehand-api.composer.trade/api/v1/api-docs/index.html)
+
+## Development
+
+We recommend using [uv](https://github.com/astral-sh/uv) for development.
+
+To set up the development environment:
+
+```bash
+# Install dependencies
+uv sync --group dev
+
+# Install the pre-commit hook
+pre-commit install
+```
+
+If you are working on docs, install the docs group:
+
+```bash
+uv sync --group docs
+```
+
+The pre-commit hook runs `ruff format`, `ruff check`, and `basedpyright` before each commit to ensure code quality.

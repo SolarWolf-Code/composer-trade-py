@@ -111,9 +111,7 @@ class MarketData:
         -------
             MarketSnapshot with bid, ask, last trade, and change data
         """
-        response = self._client.get(
-            "/api/v1/market-data/snapshot", params={"symbol": symbol}
-        )
+        response = self._client.get("/api/v1/market-data/snapshot", params={"symbol": symbol})
         return MarketSnapshot.model_validate(response)
 
     def get_custom_bars(
@@ -158,9 +156,7 @@ class MarketData:
         -------
             MarketOverview with company info, market cap, etc.
         """
-        response = self._client.get(
-            "/api/v1/market-data/overview", params={"symbol": symbol}
-        )
+        response = self._client.get("/api/v1/market-data/overview", params={"symbol": symbol})
         return MarketOverview.model_validate(response)
 
     def get_top_movers(self) -> TopMoversResponse:

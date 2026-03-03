@@ -1,6 +1,5 @@
 """Quotes resource for quote endpoints."""
 
-
 from ..models.market_data import QuoteResult, _QuoteDict
 
 
@@ -27,6 +26,4 @@ class Quotes:
             "/api/v1/public/quotes",
             json={"tickers": tickers},
         )
-        return _QuoteDict(
-            {ticker: QuoteResult(**data) for ticker, data in response.items()}
-        )
+        return _QuoteDict({ticker: QuoteResult(**data) for ticker, data in response.items()})

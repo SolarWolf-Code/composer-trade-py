@@ -1,6 +1,5 @@
 """Portfolio resource for portfolio and holdings endpoints."""
 
-
 from ..models.accounts import Holding
 from ..models.portfolio import (
     ActivityHistoryResponse,

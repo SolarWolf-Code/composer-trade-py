@@ -140,9 +140,7 @@ class PublicSymphony:
         )
         return SymphonyDefinition.model_validate(response)
 
-    def get_score(
-        self, symphony_id: str, score_version: str = "v1"
-    ) -> SymphonyDefinition:
+    def get_score(self, symphony_id: str, score_version: str = "v1") -> SymphonyDefinition:
         """
         Get an existing symphony's EDN (score).
 
@@ -160,9 +158,7 @@ class PublicSymphony:
              print(score.rebalance)
         """
         params = {"score_version": score_version}
-        response = self._client.get(
-            f"/api/v1/public/symphonies/{symphony_id}/score", params=params
-        )
+        response = self._client.get(f"/api/v1/public/symphonies/{symphony_id}/score", params=params)
         return SymphonyDefinition.model_validate(response)
 
     def get_tickers(self, symphony_id: str) -> list[str]:
@@ -235,9 +231,7 @@ class PublicSymphony:
             "abbreviate_days": abbreviate_days,
             "apply_reg_fee": apply_reg_fee,
             "apply_taf_fee": apply_taf_fee,
-            "apply_subscription": apply_subscription.value
-            if apply_subscription
-            else None,
+            "apply_subscription": apply_subscription.value if apply_subscription else None,
             "backtest_version": backtest_version.value if backtest_version else None,
             "slippage_percent": slippage_percent,
             "spread_markup": spread_markup,
@@ -317,9 +311,7 @@ class PublicSymphony:
             "abbreviate_days": abbreviate_days,
             "apply_reg_fee": apply_reg_fee,
             "apply_taf_fee": apply_taf_fee,
-            "apply_subscription": apply_subscription.value
-            if apply_subscription
-            else None,
+            "apply_subscription": apply_subscription.value if apply_subscription else None,
             "backtest_version": backtest_version.value if backtest_version else None,
             "slippage_percent": slippage_percent,
             "spread_markup": spread_markup,
@@ -389,9 +381,7 @@ class PublicSymphony:
             "abbreviate_days": abbreviate_days,
             "apply_reg_fee": apply_reg_fee,
             "apply_taf_fee": apply_taf_fee,
-            "apply_subscription": apply_subscription.value
-            if apply_subscription
-            else None,
+            "apply_subscription": apply_subscription.value if apply_subscription else None,
             "backtest_version": backtest_version.value if backtest_version else None,
             "slippage_percent": slippage_percent,
             "spread_markup": spread_markup,

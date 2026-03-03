@@ -9,8 +9,27 @@ from typing import Any
 from urllib.parse import urljoin
 
 import httpx
+from pydantic import BaseModel, Field
 
 logger = logging.getLogger("composer")
+
+
+class RetryConfig(BaseModel):
+    """Configuration for retry behavior."""
+
+    max_retries: int = Field(default=3, description="Maximum number of retry attempts")
+    rate_limit_wait: float = Field(
+        default=10.0, description="Initial seconds to wait on 429 responses"
+    )
+    server_error_wait: float = Field(
+        default=3.0, description="Initial seconds to wait on 500, 502, 503, 504 responses"
+    )
+    exponential_base: float = Field(
+        default=2.0, description="Base for exponential backoff multiplier"
+    )
+    retry_statuses: set[int] = Field(
+        default={429, 500, 502, 503, 504}, description="HTTP status codes that trigger a retry"
+    )
 
 
 class ComposerError(Exception):
@@ -76,8 +95,10 @@ class HTTPClient:
         api_secret: str | None = None,
         base_url: str = "https://api.composer.trade/",
         timeout: float = 30.0,
+        retry_config: RetryConfig | None = None,
     ):
         self.base_url = base_url
+        self.retry_config = retry_config
         self._client = httpx.Client(
             timeout=timeout,
             headers=self._build_headers(api_key, api_secret),
@@ -96,7 +117,7 @@ class HTTPClient:
         return headers
 
     def request(self, method: str, endpoint: str, **kwargs) -> Any:
-        """Make an HTTP request to the API.
+        """Make an HTTP request to the API with optional retry logic.
 
         Args:
             method: HTTP method (GET, POST, PUT, PATCH, DELETE).
@@ -108,6 +129,49 @@ class HTTPClient:
             Parsed response data (JSON dict, text, or None).
         """
         url = urljoin(self.base_url, endpoint)
+
+        if self.retry_config is None:
+            return self._execute_request(method, url, **kwargs)
+
+        max_retries = self.retry_config.max_retries
+        exponential_base = self.retry_config.exponential_base
+        last_exception: Exception | None = None
+
+        for attempt in range(max_retries + 1):
+            try:
+                return self._execute_request(method, url, **kwargs)
+            except ComposerAPIError as e:
+                if e.status_code not in self.retry_config.retry_statuses or attempt >= max_retries:
+                    raise
+
+                last_exception = e
+                base_wait = (
+                    self.retry_config.rate_limit_wait
+                    if e.status_code == 429
+                    else self.retry_config.server_error_wait
+                )
+                wait_time = base_wait * (exponential_base**attempt)
+                logger.debug(
+                    f"Retry {attempt + 1}/{max_retries}: {method} {url} - {e.status_code}, "
+                    f"waiting {wait_time:.1f}s..."
+                )
+                time.sleep(wait_time)
+
+        if last_exception:
+            raise last_exception
+
+    def _execute_request(self, method: str, url: str, **kwargs) -> Any:
+        """Execute a single HTTP request.
+
+        Args:
+            method: HTTP method.
+            url: Full URL.
+            **kwargs: Additional arguments to pass to httpx.
+
+        Returns
+        -------
+            Parsed response data (JSON dict, text, or None).
+        """
         start_time = time.perf_counter()
         try:
             logger.debug(f"Request: {method} {url}")

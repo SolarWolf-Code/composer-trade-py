@@ -1,6 +1,5 @@
 """Deploy resource for deployment-related endpoints."""
 
-
 from ..models.deploy import (
     Deploy as DeployModel,
     DeployActionResponse,
@@ -97,9 +96,7 @@ class DeployResource:
         -------
             Details of the specified deploy
         """
-        response = self._client.get(
-            f"/api/v1/deploy/accounts/{account_id}/deploys/{deploy_id}"
-        )
+        response = self._client.get(f"/api/v1/deploy/accounts/{account_id}/deploys/{deploy_id}")
         return DeployModel.model_validate(response)
 
     def delete_deploy(

@@ -3,7 +3,7 @@
 This module provides the main client for interacting with the Composer API.
 """
 
-from .http_client import HTTPClient
+from .http_client import HTTPClient, RetryConfig
 from .resources.accounts import Accounts
 from .resources.ai_agents import AIAgents
 from .resources.auth_management import AuthManagement
@@ -24,6 +24,8 @@ from .resources.user_symphonies import UserSymphonies
 from .resources.user_symphony import UserSymphony
 from .resources.watchlist import Watchlist
 
+_DEFAULT_RETRY_CONFIG = RetryConfig()
+
 
 class ComposerClient:
     """Main client for interacting with the Composer API.
@@ -35,9 +37,16 @@ class ComposerClient:
         api_key: The API Key ID
         api_secret: The API Secret Key
         timeout: Request timeout in seconds (default: 30.0)
+        retry_config: Configuration for retry behavior (default: 3 retries, 10s for 429, 3s for 5xx)
     """
 
-    def __init__(self, api_key: str, api_secret: str, timeout: float = 30.0):
+    def __init__(
+        self,
+        api_key: str,
+        api_secret: str,
+        timeout: float = 30.0,
+        retry_config: RetryConfig | None = _DEFAULT_RETRY_CONFIG,
+    ):
         """
         Initialize the Composer Client.
 
@@ -45,8 +54,12 @@ class ComposerClient:
             api_key (str): The API Key ID
             api_secret (str): The API Secret Key
             timeout (float): Request timeout in seconds (default: 30.0)
+            retry_config (RetryConfig | None): Configuration for retry behavior.
+                Pass None to disable retries (default: RetryConfig())
         """
-        self.http_client = HTTPClient(api_key, api_secret, timeout=timeout)
+        self.http_client = HTTPClient(
+            api_key, api_secret, timeout=timeout, retry_config=retry_config
+        )
         # Separate HTTP clients for backtest API (different base URL)
         # Public client (no auth headers) for public endpoints
         # Authenticated client for endpoints requiring auth
@@ -55,6 +68,7 @@ class ComposerClient:
             api_secret,
             base_url="https://backtest-api.composer.trade/",
             timeout=timeout,
+            retry_config=retry_config,
         )
         # Stagehand API client for portfolio/account endpoints
         self.stagehand_auth_client = HTTPClient(
@@ -62,6 +76,7 @@ class ComposerClient:
             api_secret,
             base_url="https://stagehand-api.composer.trade/",
             timeout=timeout,
+            retry_config=retry_config,
         )
         # Trading API client for deploy and trading endpoints
         self.trading_auth_client = HTTPClient(
@@ -69,6 +84,7 @@ class ComposerClient:
             api_secret,
             base_url="https://trading-api.composer.trade/",
             timeout=timeout,
+            retry_config=retry_config,
         )
 
         # Initialize resources

@@ -1,6 +1,5 @@
 """Watchlist resource - endpoints for managing user's watchlist."""
 
-
 from ..http_client import HTTPClient
 from ..models.backtest import (
     WatchlistResponse,

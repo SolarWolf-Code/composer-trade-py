@@ -12,12 +12,8 @@ class MessageContentItem(BaseModel):
 
     type: str = Field(description="Type of content (e.g., 'text')")
     text: str = Field(description="Content text")
-    user_content: str | None = Field(
-        None, description="What is returned in client requests"
-    )
-    user_content_type: str | None = Field(
-        None, description="How to render user content"
-    )
+    user_content: str | None = Field(None, description="What is returned in client requests")
+    user_content_type: str | None = Field(None, description="How to render user content")
 
 
 class FileItem(BaseModel):
