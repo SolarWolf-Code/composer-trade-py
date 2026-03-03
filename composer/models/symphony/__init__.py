@@ -118,6 +118,14 @@ class SymphonyVersion(BaseModel):
     created_at: str = Field(description="When the version was created (ISO 8601)")
 
 
+class DefSymphonyRequest(BaseModel):
+    """Request to convert defsymphony DSL text to symphony score."""
+
+    model_config = {"populate_by_name": True}
+
+    code: str = Field(description="Defsymphony DSL text to convert")
+
+
 __all__ = [
     "AssetClass",
     "BenchmarkType",
@@ -126,6 +134,7 @@ __all__ = [
     "CreateSymphonyResponse",
     "CopySymphonyRequest",
     "CopySymphonyResponse",
+    "DefSymphonyRequest",
     "UpdateSymphonyResponse",
     "UpdateSymphonyNodesResponse",
     "SymphonyVersion",
