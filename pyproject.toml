@@ -1,6 +1,6 @@
 [project]
 name = "composer-trade-py"
-version = "0.3.0"
+version = "0.4.0"
 authors = [
     {name = "SolarWolf", email = "git@solarwol.xyz"},
 ]
@@ -31,6 +31,7 @@ docs = [
 ]
 dev = [
     "pytest>=7.0.0",
+    "python-dotenv>=1.2.2",
     "basedpyright>=1.38.2",
     "pre-commit>=4.5.1",
 ]

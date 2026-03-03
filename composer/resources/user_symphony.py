@@ -24,6 +24,7 @@ from ..models.common import SymphonyDefinition
 from ..models.symphony import (
     CopySymphonyResponse,
     CreateSymphonyResponse,
+    DefSymphonyRequest,
 )
 
 
@@ -208,6 +209,30 @@ class UserSymphony:
             score=SymphonyDefinition.model_validate(response.get("score")),
             modifications=modifications,
         )
+
+    def from_defsymphony(self, code: str) -> SymphonyDefinition:
+        """Convert defsymphony DSL text to symphony score.
+
+        Args:
+            code: The defsymphony DSL text to convert.
+
+        Returns
+        -------
+            SymphonyDefinition: The parsed symphony score structure.
+
+        Example:
+             code = '(defsymphony "My Strategy" {:asset-class "EQUITIES"} ... )'
+             score = client.user_symphony.from_defsymphony(code)
+             print(score.name)
+             print(score.rebalance)
+
+        """
+        request = DefSymphonyRequest(code=code)
+        response = self._client.post(
+            "/api/v1/symphony-scores/from-defsymphony",
+            json=request.model_dump(),
+        )
+        return SymphonyDefinition.model_validate(response)
 
     def modify_symphony(
         self, symphony_id: str, old_ticker: str, new_ticker: str
