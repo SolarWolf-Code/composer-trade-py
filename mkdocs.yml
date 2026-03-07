@@ -73,6 +73,7 @@ nav:
       - Backtest DataFrame: examples/backtest_dataframe.md
       - Grid Backtest: examples/grid_backtesting.md
       - Copy Symphony: examples/copy_symphony.md
+      - Rebalance Portfolio: examples/rebalance_portfolio.md
       - Create Symphony: examples/create_symphony.md
       - Create Symphony Blocks: examples/create_symphony_blocks.md
       - Place Market Order: examples/place_market_order.md
