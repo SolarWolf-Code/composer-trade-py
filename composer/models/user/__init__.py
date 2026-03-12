@@ -3,6 +3,7 @@
 from .responses import (
     AgreementStatusResponse,
     JWTResponse,
+    ReferralCodeResponse,
     UserOnboardingExtraInfo,
     UserOnboardingState,
     UserOnboardingStateAccount,
@@ -26,4 +27,5 @@ __all__ = [
     "UserOnboardingExtraInfo",
     "UserProfile",
     "AgreementStatusResponse",
+    "ReferralCodeResponse",
 ]

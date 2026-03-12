@@ -138,3 +138,11 @@ class AgreementStatusResponse(BaseModel):
     model_config = {"populate_by_name": True}
 
     has_agreed: bool
+
+
+class ReferralCodeResponse(BaseModel):
+    """Response for user's referral code."""
+
+    model_config = {"populate_by_name": True}
+
+    referral_code: str
