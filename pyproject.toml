@@ -2,7 +2,7 @@
 name = "composer-trade-py"
 version = "0.5.0"
 authors = [
-    {name = "SolarWolf", email = "git@solarwol.xyz"},
+    {name = "SolarWolf", email = "git@solarwolf.xyz"},
 ]
 description = "Python SDK for Composer.Trade API"
 readme = "README.md"
