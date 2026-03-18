@@ -15,6 +15,7 @@ from .resources.dry_run import DryRun
 from .resources.market_data import MarketData
 from .resources.portfolio import Portfolio
 from .resources.public_symphony import PublicSymphony
+from .resources.public_user import PublicUser
 from .resources.quotes import Quotes
 from .resources.reports import Reports
 from .resources.search import Search
@@ -103,6 +104,9 @@ class ComposerClient:
         self.search = Search(self.backtest_auth_client)
         # Quotes uses stagehand API (public endpoint)
         self.quotes = Quotes(self.stagehand_auth_client)
+
+        # Public user endpoints
+        self.public_user = PublicUser(self.stagehand_auth_client)
 
         # New backtest API resources
         # Public endpoints (no auth required)
