@@ -87,4 +87,5 @@ nav:
       - Symphony Live vs Backtest: examples/symphony_live_vs_backtest.md
       - Symphony Score: examples/symphony_score.md
       - Symphony to Python: examples/symphony_to_python.md
+      - Traded Symbols: examples/traded_symbols.md
       - Custom Retry Configuration: examples/retry_config.md
