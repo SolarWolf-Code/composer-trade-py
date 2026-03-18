@@ -205,18 +205,24 @@ class HTTPClient:
             logger.error(f"Error: {method} {url} - {type(e).__name__} ({elapsed:.3f}s)")
             raise ComposerError(f"Request failed: {str(e)}") from e
 
-    def get(self, endpoint: str, params: dict[str, Any] | None = None) -> Any:
+    def get(
+        self,
+        endpoint: str,
+        params: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
+    ) -> Any:
         """Make a GET request.
 
         Args:
             endpoint: API endpoint path.
             params: Query parameters.
+            headers: Additional headers.
 
         Returns
         -------
             Parsed response data.
         """
-        return self.request("GET", endpoint, params=_convert_params(params))
+        return self.request("GET", endpoint, params=_convert_params(params), headers=headers)
 
     def post(self, endpoint: str, json: dict[str, Any] | None = None) -> Any:
         """Make a POST request.

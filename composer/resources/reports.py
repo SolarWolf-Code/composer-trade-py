@@ -1,7 +1,5 @@
 """Reports resource for account reports endpoints."""
 
-from typing import Any
-
 from ..models.reports import ReportType
 
 
@@ -17,7 +15,7 @@ class Reports:
         since: str,
         until: str,
         report_type: ReportType | None = None,
-    ) -> dict[str, Any]:
+    ) -> str:
         """
         Get a report for the given account.
 
@@ -29,7 +27,7 @@ class Reports:
 
         Returns
         -------
-            Report data for the account
+            CSV report data as a string
         """
         params = {
             "since": since,
@@ -41,5 +39,6 @@ class Reports:
         response = self._client.get(
             f"/api/v1/reports/{account_id}",
             params=params,
+            headers={"Accept": "text/csv"},
         )
         return response
